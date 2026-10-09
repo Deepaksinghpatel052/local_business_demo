@@ -1,0 +1,10 @@
+# Python
+venv/
+__pycache__/
+
+# Build output (python new_demo.py --zip <slug>)
+dist/*.zip
+
+# OS junk
+.DS_Store
+Thumbs.db

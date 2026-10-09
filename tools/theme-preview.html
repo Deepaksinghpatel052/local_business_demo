@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Theme Preview</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- the real template CSS, so the preview looks exactly like a demo -->
+  <link rel="stylesheet" href="../template/css/style.css">
+  <style>
+    /* Tool chrome: fixed neutral colours, independent of the previewed theme */
+    body.tool { background: #eef0f3; color: #1f2328; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .tool-bar { background: #111318; color: #f3f4f6; padding: .75rem 0; }
+    .tool-bar h1 { font-family: inherit; font-size: 1.05rem; margin: 0; font-weight: 700; }
+    .panel { background: #fff; border: 1px solid #dfe3e8; border-radius: 14px; padding: 1.25rem; color: #1f2328; font-family: system-ui, sans-serif; }
+    .panel h2 { font-family: inherit; font-size: .78rem; text-transform: uppercase; letter-spacing: .1em; color: #5b6470; margin: 0 0 .75rem; font-weight: 700; }
+    .panel .form-label { font-size: .85rem; margin-bottom: .25rem; }
+    .panel .form-control, .panel .form-select { background: #fff; color: #1f2328; border-color: #d0d6dd; border-radius: 8px; padding: .4rem .6rem; }
+    .drop { border: 2px dashed #c3cad3; border-radius: 12px; padding: 1rem; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; }
+    .drop.is-over, .drop:hover { border-color: #4f46e5; background: #f5f5ff; }
+    .drop img { max-height: 90px; max-width: 100%; display: block; margin: 0 auto .5rem; }
+    .swatches { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .swatch { width: 34px; height: 34px; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 0 0 1px #c3cad3; cursor: pointer; padding: 0; }
+    .color-row { display: grid; grid-template-columns: 1fr 44px 92px; gap: .5rem; align-items: center; margin-bottom: .5rem; }
+    .color-row label { font-size: .85rem; margin: 0; }
+    .color-row input[type=color] { width: 44px; height: 34px; padding: 2px; border: 1px solid #d0d6dd; border-radius: 8px; background: #fff; }
+    .color-row input[type=text] { font-family: ui-monospace, Consolas, monospace; font-size: .8rem; }
+    .contrast { font-size: .78rem; display: flex; flex-wrap: wrap; gap: .35rem; }
+    .contrast span { padding: .15rem .45rem; border-radius: 50rem; background: #f1f3f5; }
+    .contrast .pass { background: #dcfce7; color: #166534; }
+    .contrast .fail { background: #fee2e2; color: #991b1b; }
+    pre.output { background: #111318; color: #e5e7eb; border-radius: 10px; padding: 1rem; font-size: .8rem; white-space: pre-wrap; margin: 0; max-height: 320px; }
+    .preview-frame { border-radius: 16px; overflow: hidden; border: 1px solid #dfe3e8; box-shadow: 0 10px 30px -12px rgba(0,0,0,.25); }
+    /* preview overrides: smaller hero, nothing sticky/fixed */
+    .preview { background: var(--bg); color: var(--text); font-family: var(--body-font); }
+    .preview .hero { min-height: 360px; }
+    .preview .section { padding: 3rem 0; }
+    .preview .site-nav { position: relative; }
+    @media (min-width: 992px) { .sticky-lg { position: sticky; top: 1rem; } }
+  </style>
+</head>
+<body class="tool">
+  <div class="tool-bar"><div class="container-xl d-flex align-items-center gap-2">
+    <i class="bi bi-palette2"></i><h1>Theme Preview: logo → colour palette → <code class="text-warning">theme</code> for data.js</h1>
+  </div></div>
+
+  <div class="container-xl py-4">
+    <div class="row g-4">
+      <!-- Controls -->
+      <div class="col-lg-4">
+        <div class="sticky-lg d-grid gap-3">
+          <div class="panel">
+            <h2>1. Logo</h2>
+            <label class="drop d-block" id="drop" for="logoInput">
+              <img id="logoImg" alt="" hidden>
+              <span id="dropText"><i class="bi bi-upload"></i> Click or drop a logo (PNG/JPG/SVG)</span>
+              <input type="file" id="logoInput" accept="image/*" class="visually-hidden">
+            </label>
+            <div class="mt-3" id="paletteWrap" hidden>
+              <div class="form-label">Extracted colours: click to use as <select id="swatchTarget" class="form-select form-select-sm d-inline-block w-auto"><option value="primary">primary</option><option value="accent">accent</option><option value="background">background</option><option value="text">text</option></select></div>
+              <div class="swatches" id="swatches"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>2. Start from a category preset</h2>
+            <select class="form-select" id="category"></select>
+          </div>
+
+          <div class="panel">
+            <h2>3. Colours</h2>
+            <div id="colorRows"></div>
+            <div class="form-check form-switch mt-2">
+              <input class="form-check-input" type="checkbox" id="customDark">
+              <label class="form-check-label small" for="customDark">Set the hover shade myself (otherwise generated from primary)</label>
+            </div>
+            <div class="contrast mt-3" id="contrast"></div>
+          </div>
+
+          <div class="panel">
+            <h2>4. Fonts & shape</h2>
+            <div class="row g-2">
+              <div class="col-6"><label class="form-label" for="headingFont">Heading font</label><select class="form-select" id="headingFont"></select></div>
+              <div class="col-6"><label class="form-label" for="bodyFont">Body font</label><select class="form-select" id="bodyFont"></select></div>
+              <div class="col-6"><label class="form-label" for="buttonStyle">Buttons</label>
+                <select class="form-select" id="buttonStyle"><option value="rounded">rounded</option><option value="pill">pill</option><option value="square">square</option></select></div>
+              <div class="col-6"><label class="form-label" for="borderRadius">Card radius: <span id="radiusVal"></span></label>
+                <input type="range" class="form-range" id="borderRadius" min="0" max="28" step="1"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>5. Copy into data.js</h2>
+            <pre class="output" id="output"></pre>
+            <div class="d-flex gap-2 mt-2">
+              <button class="btn btn-dark flex-fill" id="copyBtn" type="button" style="--bs-btn-border-radius:8px"><i class="bi bi-clipboard"></i> Copy theme</button>
+              <button class="btn btn-outline-secondary" id="resetBtn" type="button" style="--bs-btn-border-radius:8px">Reset</button>
+            </div>
+            <p class="small text-secondary mt-2 mb-0">Paste it over the <code>theme: …</code> line in <code>demos/&lt;slug&gt;/data.js</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live preview (uses the real template classes) -->
+      <div class="col-lg-8">
+        <div class="preview-frame">
+          <div class="preview" id="preview">
+            <nav class="navbar site-nav is-scrolled"><div class="container">
+              <a class="navbar-brand" href="#" onclick="return false"><span id="pvLogo"></span><span class="brand-name">Your Business</span></a>
+              <div class="d-none d-md-flex gap-3 me-auto ms-3"><a class="nav-link active" href="#" onclick="return false">About</a><a class="nav-link" href="#" onclick="return false">Services</a><a class="nav-link" href="#" onclick="return false">Contact</a></div>
+              <a class="btn btn-primary btn-call" href="#" onclick="return false"><i class="bi bi-telephone-fill"></i> Call Now</a>
+            </div></nav>
+            <section class="hero">
+              <img class="hero-bg" id="pvHero" alt="">
+              <div class="hero-overlay"></div>
+              <div class="container hero-content">
+                <span class="hero-kicker"><i class="bi bi-shop"></i> Category · City</span>
+                <h1 class="hero-title">Your Business Name</h1>
+                <p class="hero-tagline">A short, friendly tagline goes here</p>
+                <div class="hero-meta"><span class="rating-badge"><i class="bi bi-google"></i> 4.6 ★ from 312 Google reviews</span></div>
+                <div class="hero-cta"><a class="btn btn-primary btn-lg" href="#" onclick="return false"><i class="bi bi-telephone-fill"></i> Call Now</a><a class="btn btn-whatsapp btn-lg" href="#" onclick="return false"><i class="bi bi-whatsapp"></i> WhatsApp Us</a></div>
+              </div>
+            </section>
+            <section class="highlights"><div class="container"><ul class="highlight-list">
+              <li><i class="bi bi-stars"></i><span>Highlight one</span></li><li><i class="bi bi-truck"></i><span>Home Delivery</span></li><li><i class="bi bi-p-circle"></i><span>Parking</span></li>
+            </ul></div></section>
+            <section class="section alt-bg"><div class="container">
+              <div class="section-head text-center"><span class="kicker"><span>What we offer</span></span><h2 class="section-title"><span>Our Services</span></h2></div>
+              <div class="row g-4">
+                <div class="col-md-4"><article class="service-card"><div class="service-icon"><i class="bi bi-award"></i></div><div class="service-body"><h3 class="service-title">Service one</h3><p class="service-desc">A short description of this service.</p><div class="service-foot"><span class="price">₹499</span><a class="service-link" href="#" onclick="return false">Enquire <i class="bi bi-arrow-right"></i></a></div></div></article></div>
+                <div class="col-md-4"><div class="why-card"><div class="why-icon"><i class="bi bi-shield-check"></i></div><h3 class="why-title">Why choose us</h3><p class="why-text">Icons, cards and accents follow the theme.</p></div></div>
+                <div class="col-md-4"><div class="counter h-100 d-flex flex-column justify-content-center"><span class="counter-num">25+</span><span class="counter-label">Years of service</span></div></div>
+              </div>
+              <div class="d-flex flex-wrap gap-2 justify-content-center mt-4">
+                <a class="btn btn-primary" href="#" onclick="return false">Primary button</a>
+                <a class="btn btn-outline-primary" href="#" onclick="return false">Outline button</a>
+                <span class="since-badge position-static">Since 1998</span>
+              </div>
+            </div></section>
+            <section class="cta-band"><div class="container"><div class="cta-inner"><div><h2>Call-to-action band</h2><p>Uses primary → hover shade gradient.</p></div><div class="cta-actions"><a class="btn btn-light btn-lg" href="#" onclick="return false"><i class="bi bi-whatsapp"></i> Book now</a></div></div></div></section>
+            <footer class="site-footer" style="padding-top:2rem"><div class="container"><div class="footer-bottom mt-0" style="padding-bottom:1.5rem"><span>© Your Business</span><span>Website by You</span></div></div></footer>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.4.0/color-thief.umd.js"></script>
+  <script src="../template/js/themes.js"></script>
+  <script>
+  (function ($) {
+    'use strict';
+    var PRESETS = window.THEME_PRESETS, CATEGORIES = window.THEME_CATEGORIES, FONT_WEIGHTS = window.FONT_WEIGHTS;
+    var SERIF = ['Playfair Display', 'Cormorant Garamond', 'Cinzel', 'Lora', 'DM Serif Display', 'Marcellus', 'Merriweather', 'Yeseva One', 'Rozha One'];
+    var BTN_RADIUS = { pill: '50rem', rounded: '10px', square: '3px' };
+    var COLORS = [['primary', 'Primary (buttons, links)'], ['primaryDark', 'Hover shade'], ['accent', 'Accent (badges, lines)'],
+      ['background', 'Page background'], ['surface', 'Cards / navbar'], ['text', 'Text']];
+    var state = {}, logoData = '';
+
+    /* ---- colour helpers (same maths as template/js/main.js) ---- */
+    function normHex(h, fb) { var m = String(h || '').trim().match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i); if (!m) return fb || null; var x = m[1]; if (x.length === 3) x = x[0] + x[0] + x[1] + x[1] + x[2] + x[2]; return '#' + x.toUpperCase(); }
+    function rgb(h) { h = normHex(h, '#000000'); return [1, 3, 5].map(function (i) { return parseInt(h.substr(i, 2), 16); }); }
+    function hex(r) { return '#' + r.map(function (v) { return ('0' + Math.round(Math.max(0, Math.min(255, v))).toString(16)).slice(-2); }).join('').toUpperCase(); }
+    function mix(a, b, w) { var x = rgb(a), y = rgb(b); return hex([0, 1, 2].map(function (i) { return x[i] * (1 - w) + y[i] * w; })); }
+    function shade(h, amt) { return amt < 0 ? mix(h, '#000000', -amt) : mix(h, '#FFFFFF', amt); }
+    function lum(h) { var c = rgb(h).map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; }
+    function contrast(a, b) { var l1 = lum(a), l2 = lum(b); return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05); }
+    function onColor(bg) { return contrast(bg, '#FFFFFF') >= contrast(bg, '#111111') ? '#FFFFFF' : '#111111'; }
+    function ensure(fg, bg, r) { if (contrast(fg, bg) >= r) return fg; var t = lum(bg) > 0.35 ? '#000000' : '#FFFFFF'; for (var s = 0.05; s <= 1; s += 0.05) { var c = mix(fg, t, s); if (contrast(c, bg) >= r) return c; } return t; }
+    function hsl(c) { var r = c[0] / 255, g = c[1] / 255, b = c[2] / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), h = 0, s = 0, l = (mx + mn) / 2; if (mx !== mn) { var d = mx - mn; s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn); h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; } return [h, s, l]; }
+    function stack(f) { return '"' + f + '", ' + (SERIF.indexOf(f) > -1 ? 'Georgia, serif' : 'system-ui, sans-serif'); }
+
+    var loaded = {};
+    function loadFont(f) {
+      if (!f || loaded[f]) return; loaded[f] = true;
+      var w = FONT_WEIGHTS[f];
+      $('<link rel="stylesheet">').attr('href', 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(f).replace(/%20/g, '+') + (w && w !== '400' ? ':wght@' + w : '') + '&display=swap').appendTo('head');
+    }
+
+    /* ---- apply state to the preview (mirrors applyTheme in main.js) ---- */
+    function render() {
+      var p = state.primary, bg = state.background, surface = state.surface, text = state.text, accent = state.accent;
+      var dark = $('#customDark').prop('checked') ? state.primaryDark : shade(p, -0.22);
+      if (!$('#customDark').prop('checked')) { state.primaryDark = dark; syncInputs('primaryDark'); }
+      var isDark = lum(bg) < 0.2, border = mix(bg, text, isDark ? 0.16 : 0.11), footer = isDark ? mix(bg, '#000000', 0.45) : mix('#0D0D12', p, 0.16);
+      var v = {
+        '--primary': p, '--primary-rgb': rgb(p).join(','), '--primary-dark': dark, '--primary-dark-rgb': rgb(dark).join(','),
+        '--on-primary': onColor(p), '--primary-ink': ensure(p, bg, 4.5), '--primary-soft': mix(bg, p, isDark ? 0.16 : 0.09),
+        '--accent': accent, '--accent-rgb': rgb(accent).join(','), '--on-accent': onColor(accent), '--accent-ink': ensure(accent, surface, 3),
+        '--bg': bg, '--surface': surface, '--surface-alt': mix(bg, p, isDark ? 0.07 : 0.04), '--text': text,
+        '--text-muted': ensure(mix(text, bg, 0.3), bg, 4.5), '--border': border, '--footer-bg': footer, '--on-footer': onColor(footer),
+        '--heading-font': stack(state.headingFont), '--body-font': stack(state.bodyFont),
+        '--radius': state.borderRadius, '--btn-radius': BTN_RADIUS[state.buttonStyle],
+        '--bs-body-color': text, '--bs-border-color': border
+      };
+      var el = document.getElementById('preview');
+      Object.keys(v).forEach(function (k) { el.style.setProperty(k, v[k]); });
+      el.className = 'preview preset-' + state.preset;
+      loadFont(state.headingFont); loadFont(state.bodyFont);
+      $('#radiusVal').text(state.borderRadius);
+      $('#pvLogo').html(logoData ? '<img class="brand-logo" src="' + logoData + '" alt="">' : '<span class="text-logo">YB</span>');
+
+      var checks = [['Button text on primary', contrast(onColor(p), p), 4.5], ['Text on background', contrast(text, bg), 4.5],
+        ['Primary as link on background', contrast(p, bg), 4.5], ['Text on accent', contrast(onColor(accent), accent), 4.5]];
+      $('#contrast').html(checks.map(function (c) {
+        return '<span class="' + (c[1] >= c[2] ? 'pass' : 'fail') + '">' + c[0] + ': ' + c[1].toFixed(1) + (c[1] >= c[2] ? ' ✓' : ' (auto-fixed)') + '</span>';
+      }).join(''));
+      output();
+    }
+
+    function output() {
+      var keys = ['primary'].concat($('#customDark').prop('checked') ? ['primaryDark'] : []).concat(['accent', 'background', 'surface', 'text']);
+      var lines = keys.map(function (k) { return '    ' + k + ': "' + state[k] + '"'; })
+        .concat(['    headingFont: "' + state.headingFont + '"', '    bodyFont: "' + state.bodyFont + '"',
+          '    buttonStyle: "' + state.buttonStyle + '"', '    borderRadius: "' + state.borderRadius + '"']);
+      $('#output').text('  theme: {\n' + lines.join(',\n') + '\n  },');
+    }
+
+    function syncInputs(only) {
+      COLORS.forEach(function (c) {
+        if (only && c[0] !== only) return;
+        $('#c-' + c[0]).val(state[c[0]]); $('#t-' + c[0]).val(state[c[0]]);
+      });
+    }
+
+    function loadPreset(cat) {
+      var key = CATEGORIES[cat].preset, P = PRESETS[key];
+      state = $.extend({ preset: key, category: cat }, P.palette, { headingFont: P.headingFont, bodyFont: P.bodyFont, buttonStyle: P.buttonStyle, borderRadius: P.borderRadius });
+      state.primaryDark = shade(state.primary, -0.22);
+      $('#customDark').prop('checked', false);
+      $('#headingFont').val(state.headingFont); $('#bodyFont').val(state.bodyFont);
+      $('#buttonStyle').val(state.buttonStyle); $('#borderRadius').val(parseInt(state.borderRadius, 10));
+      $('#pvHero').attr('src', '../template/placeholders/' + key + '/hero.jpg');
+      syncInputs(); render();
+    }
+
+    /* ---- logo upload + ColorThief ---- */
+    function pick(palette) {
+      var c = palette.map(function (x) { var h = hsl(x); return { hex: hex(x), h: h[0], s: h[1], l: h[2] }; });
+      var usable = c.filter(function (x) { return x.s > 0.22 && x.l > 0.12 && x.l < 0.78; })
+        .sort(function (a, b) { return (b.s * (1 - Math.abs(b.l - 0.45))) - (a.s * (1 - Math.abs(a.l - 0.45))); });
+      var primary = usable[0] || c.filter(function (x) { return x.l < 0.6; })[0];
+      if (!primary) return null;
+      var accent = usable.slice(1).filter(function (x) { var d = Math.abs(x.h - primary.h); return Math.min(d, 360 - d) > 28; })[0];
+      return { primary: primary.hex, accent: accent ? accent.hex : null };
+    }
+    function useLogo(file) {
+      if (!file || !/^image\//.test(file.type)) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        logoData = reader.result;
+        var img = document.getElementById('logoImg');
+        img.onload = function () {
+          try {
+            var pal = new window.ColorThief().getPalette(img, 8) || [];
+            $('#swatches').html(pal.map(function (x) { var h = hex(x); return '<button type="button" class="swatch" style="background:' + h + '" title="' + h + '" data-hex="' + h + '" aria-label="Use ' + h + '"></button>'; }).join(''));
+            $('#paletteWrap').prop('hidden', false);
+            var picked = pick(pal);
+            if (picked) { state.primary = picked.primary; if (picked.accent) state.accent = picked.accent; syncInputs(); }
+          } catch (e) { $('#dropText').text('Could not read colours from this image: ' + e.message); }
+          render();
+        };
+        img.src = logoData; img.hidden = false;
+        $('#dropText').text(file.name + ' (click to change)');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    /* ---- build controls ---- */
+    $('#category').html(Object.keys(CATEGORIES).map(function (k) { return '<option value="' + k + '">' + k + ' (' + CATEGORIES[k].preset + ')</option>'; }).join(''));
+    var fonts = Object.keys(FONT_WEIGHTS).filter(function (f) { return f !== 'Noto Sans Devanagari'; }).sort();
+    $('#headingFont, #bodyFont').html(fonts.map(function (f) { return '<option>' + f + '</option>'; }).join(''));
+    $('#colorRows').html(COLORS.map(function (c) {
+      return '<div class="color-row"><label for="c-' + c[0] + '">' + c[1] + '</label><input type="color" id="c-' + c[0] + '" data-key="' + c[0] + '"><input type="text" class="form-control" id="t-' + c[0] + '" data-key="' + c[0] + '" maxlength="7" aria-label="' + c[1] + ' hex"></div>';
+    }).join(''));
+
+    $(document).on('input', '.color-row input', function () {
+      var k = $(this).data('key'), v = normHex(this.value);
+      if (!v) return;
+      if (k === 'primaryDark') $('#customDark').prop('checked', true);
+      state[k] = v; syncInputs(k); render();
+    });
+    $('#customDark').on('change', render);
+    $('#category').on('change', function () { loadPreset(this.value); });
+    $('#headingFont, #bodyFont, #buttonStyle').on('change', function () { state[this.id] = this.value; render(); });
+    $('#borderRadius').on('input', function () { state.borderRadius = this.value + 'px'; render(); });
+    $('#swatches').on('click', '.swatch', function () { state[$('#swatchTarget').val()] = $(this).data('hex'); syncInputs(); render(); });
+    $('#logoInput').on('change', function () { useLogo(this.files[0]); });
+    $('#drop').on('dragover', function (e) { e.preventDefault(); $(this).addClass('is-over'); })
+      .on('dragleave drop', function () { $(this).removeClass('is-over'); })
+      .on('drop', function (e) { e.preventDefault(); useLogo(e.originalEvent.dataTransfer.files[0]); });
+    $('#resetBtn').on('click', function () { loadPreset($('#category').val()); });
+    $('#copyBtn').on('click', function () {
+      var text = $('#output').text(), $b = $(this);
+      var done = function () { $b.html('<i class="bi bi-check2"></i> Copied!'); setTimeout(function () { $b.html('<i class="bi bi-clipboard"></i> Copy theme'); }, 1500); };
+      var fallback = function () {
+        var ta = $('<textarea>').val(text).css({ position: 'fixed', opacity: 0 }).appendTo('body');
+        ta[0].select(); try { document.execCommand('copy'); done(); } catch (e) { window.prompt('Copy this:', text); } ta.remove();
+      };
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+    });
+
+    $('#category').val('restaurant');
+    loadPreset('restaurant');
+  })(jQuery);
+  </script>
+</body>
+</html>

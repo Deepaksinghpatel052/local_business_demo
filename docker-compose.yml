@@ -1,0 +1,10 @@
+services:
+  demos:
+    build: .
+    image: local-business-demos
+    container_name: local-business-demos
+    ports:
+      - "8080:80"
+    volumes:
+      - ./demos:/usr/share/nginx/demos:ro   # live: edits to demos/ show on refresh
+    restart: unless-stopped

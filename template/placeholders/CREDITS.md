@@ -1,0 +1,49 @@
+# Placeholder image credits
+
+All photos are from Unsplash (https://unsplash.com/license): free to use, no attribution required.
+
+- food/hero.jpg: https://images.unsplash.com/photo-1517248135467-4c7edcad34c4
+- food/1.jpg: https://images.unsplash.com/photo-1504674900247-0877df9cc836
+- food/2.jpg: https://images.unsplash.com/photo-1414235077428-338989a2e8c0
+- food/3.jpg: https://images.unsplash.com/photo-1565299624946-b28f40a0ae38
+- food/4.jpg: https://images.unsplash.com/photo-1509440159596-0249088772ff
+- beauty/hero.jpg: https://images.unsplash.com/photo-1560066984-138dadb4c035
+- beauty/1.jpg: https://images.unsplash.com/photo-1487412947147-5cebf100ffc2
+- beauty/2.jpg: https://images.unsplash.com/photo-1522337360788-8b13dee7a37e
+- beauty/3.jpg: https://images.unsplash.com/photo-1570172619644-dfd03ed5d881
+- beauty/4.jpg: https://images.unsplash.com/photo-1544161515-4ab6ce6db874
+- fitness/hero.jpg: https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f
+- fitness/1.jpg: https://images.unsplash.com/photo-1517836357463-d25dfeac3438
+- fitness/2.jpg: https://images.unsplash.com/photo-1534438327276-14e5300c3a48
+- fitness/3.jpg: https://images.unsplash.com/photo-1540497077202-7c8a3999166f
+- fitness/4.jpg: https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b
+- medical/hero.jpg: https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d
+- medical/1.jpg: https://images.unsplash.com/photo-1631217868264-e5b90bb7e133
+- medical/2.jpg: https://images.unsplash.com/photo-1576091160399-112ba8d25d1d
+- medical/3.jpg: https://images.unsplash.com/photo-1629909613654-28e377c37b09
+- medical/4.jpg: https://images.unsplash.com/photo-1579684385127-1ef15d508118
+- education/hero.jpg: https://images.unsplash.com/photo-1509062522246-3755977927d7
+- education/1.jpg: https://images.unsplash.com/photo-1580582932707-520aed937b7b
+- education/2.jpg: https://images.unsplash.com/photo-1427504494785-3a9ca7044f45
+- education/3.jpg: https://images.unsplash.com/photo-1524178232363-1fb2b075b655
+- education/4.jpg: https://images.unsplash.com/photo-1503676260728-1c00da094a0b
+- industrial/hero.jpg: https://images.unsplash.com/photo-1486262715619-67b85e0b08d3
+- industrial/1.jpg: https://images.unsplash.com/photo-1487754180451-c456f719a1fc
+- industrial/2.jpg: https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1
+- industrial/3.jpg: https://images.unsplash.com/photo-1581092918056-0c4c3acd3789
+- industrial/4.jpg: https://images.unsplash.com/photo-1550009158-9ebf69173e03
+- luxury/hero.jpg: https://images.unsplash.com/photo-1573408301185-9146fe634ad0
+- luxury/1.jpg: https://images.unsplash.com/photo-1515562141207-7a88fb7ce338
+- luxury/2.jpg: https://images.unsplash.com/photo-1605100804763-247f67b3557e
+- luxury/3.jpg: https://images.unsplash.com/photo-1602173574767-37ac01994b2a
+- luxury/4.jpg: https://images.unsplash.com/photo-1611591437281-460bfbe1220a
+- hospitality/hero.jpg: https://images.unsplash.com/photo-1571896349842-33c89424de2d
+- hospitality/1.jpg: https://images.unsplash.com/photo-1611892440504-42a792e24d32
+- hospitality/2.jpg: https://images.unsplash.com/photo-1582719478250-c89cae4dc85b
+- hospitality/3.jpg: https://images.unsplash.com/photo-1566073771259-6a8506099945
+- hospitality/4.jpg: https://images.unsplash.com/photo-1520250497591-112f2f40a3f4
+- general/hero.jpg: https://images.unsplash.com/photo-1497366216548-37526070297c
+- general/1.jpg: https://images.unsplash.com/photo-1441986300917-64674bd600d8
+- general/2.jpg: https://images.unsplash.com/photo-1556740758-90de374c12ad
+- general/3.jpg: https://images.unsplash.com/photo-1600880292203-757bb62b4baf
+- general/4.jpg: https://images.unsplash.com/photo-1560518883-ce09059eeffa
