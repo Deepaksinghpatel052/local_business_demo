@@ -40,20 +40,33 @@ ROOT = Path(__file__).resolve().parent
 TEMPLATE = ROOT / "template"
 DEMOS = ROOT / "demos"
 DIST = ROOT / "dist"
-TEMPLATE_ITEMS = ["index.html", "css", "js", "placeholders"]   # copied into every demo
+TEMPLATE_ITEMS = ["index.html", "css", "js", "placeholders"]   # copied into every demo (placeholders: own category only)
 
 # category -> (preset, label). Keep in sync with template/js/themes.js
 CATEGORIES = {
     "restaurant": ("food", "Restaurant"), "cafe": ("food", "Cafe"), "bakery": ("food", "Bakery"),
-    "salon": ("beauty", "Salon"), "spa": ("beauty", "Spa"), "boutique": ("beauty", "Boutique"),
+    "salon": ("beauty", "Salon"), "spa": ("wellness", "Spa"), "boutique": ("beauty", "Boutique"),
     "gym": ("fitness", "Gym"),
     "clinic": ("medical", "Clinic"), "dentist": ("medical", "Dental Clinic"), "hospital": ("medical", "Hospital"),
     "school": ("education", "School"), "coaching": ("education", "Coaching Institute"),
     "hotel": ("hospitality", "Hotel"),
     "car-service": ("industrial", "Car Service Centre"), "electronics": ("industrial", "Electronics Store"),
-    "hardware": ("industrial", "Hardware Store"),
+    "hardware": ("industrial", "Hardware Store"), "garage": ("industrial", "Car Garage"),
+    "bar": ("nightlife", "Bar"),
+    "travel": ("travel", "Tour & Travel Agency"),
+    "handyman": ("trades", "Handyman Service"),
     "jewellery": ("luxury", "Jewellery Store"),
     "real-estate": ("general", "Real Estate Agency"), "general": ("general", "Local Business"),
+}
+
+# category -> placeholder photo folder in template/placeholders/. Keep in sync with `photos` in themes.js
+PHOTOS = {
+    "restaurant": "food", "cafe": "cafe", "bakery": "bakery", "bar": "nightlife",
+    "salon": "beauty", "spa": "wellness", "boutique": "boutique", "gym": "fitness",
+    "clinic": "medical", "dentist": "dentist", "hospital": "hospital",
+    "school": "education", "coaching": "coaching", "hotel": "hospitality", "travel": "travel",
+    "car-service": "industrial", "garage": "garage", "electronics": "electronics", "hardware": "hardware",
+    "handyman": "trades", "jewellery": "luxury", "real-estate": "real-estate", "general": "general",
 }
 
 META_START, META_END = "<!-- META:START", "<!-- META:END -->"
@@ -96,7 +109,7 @@ def build_data_js(name, slug, category):
         services = ('[\n    { title: "Monthly", price: "TODO", desc: "", features: ["TODO", "TODO"] },\n'
                     '    { title: "Quarterly", price: "TODO", desc: "", features: ["TODO", "TODO"], popular: true },\n'
                     '    { title: "Yearly", price: "TODO", desc: "", features: ["TODO", "TODO"] }\n  ]')
-    if preset == "food":
+    if preset in ("food", "nightlife"):
         menu = ('[\n    // { name: "Starters", icon: "bi-fire", items: [ { title: "Paneer Tikka", desc: "", price: "Rs 220", veg: true, tag: "Bestseller" } ] },\n'
                 '    { name: "TODO", items: [ { title: "TODO", desc: "", price: "TODO", veg: true } ] }\n  ]')
     if preset == "medical":
@@ -118,7 +131,7 @@ def build_data_js(name, slug, category):
 window.BUSINESS = {{
   name: {js(name)},
   slug: {js(slug)},
-  category: {js(category)},   // restaurant | cafe | bakery | salon | spa | gym | clinic | dentist | hospital | school | coaching | hotel | car-service | electronics | hardware | boutique | jewellery | real-estate | general
+  category: {js(category)},   // restaurant | cafe | bakery | salon | spa | gym | clinic | dentist | hospital | school | coaching | hotel | car-service | garage | electronics | hardware | boutique | jewellery | real-estate | bar | travel | handyman | general
   tagline: "{T}",
   about: "{T}",
   established: "{T}",        // year, e.g. "1998"
@@ -193,7 +206,7 @@ def bake_meta(folder):
     desc = ". ".join(x for x in [f["tagline"], f["address"], ("Call " + f["phone"]) if f["phone"] else ""] if x)
     desc = (desc + ".")[:160] if desc else title
     base = "https://%s.%s/" % (f["slug"] or folder.name, BASE_DOMAIN)
-    hero = f["heroImage"] or "placeholders/%s/hero.jpg" % preset
+    hero = f["heroImage"] or "placeholders/%s/hero.jpg" % PHOTOS.get(f["category"], preset)
     image = hero if hero.startswith("http") else base + hero.lstrip("./")
     e = lambda s: html.escape(s, quote=True)
     block = (
@@ -216,10 +229,18 @@ def bake_meta(folder):
 # ---------------------------------------------------------------------------
 # Commands
 # ---------------------------------------------------------------------------
-def copy_template(dest):
+def copy_template(dest, category):
+    """Copy the template code into a demo. Only this category's placeholder photos are copied."""
     for item in TEMPLATE_ITEMS:
         src, dst = TEMPLATE / item, dest / item
-        if src.is_dir():
+        if item == "placeholders":
+            if dst.exists():
+                shutil.rmtree(dst)
+            dst.mkdir()
+            folder = PHOTOS.get(category, "general")
+            shutil.copytree(src / folder, dst / folder)
+            shutil.copy2(src / "CREDITS.md", dst / "CREDITS.md")
+        elif src.is_dir():
             if dst.exists():
                 shutil.rmtree(dst)
             shutil.copytree(src, dst)
@@ -237,7 +258,7 @@ def cmd_create(name, category, slug=None):
         die("demos/%s already exists. Pick another --slug or delete the folder." % slug)
     data_js = build_data_js(name, slug, category)
     dest.mkdir(parents=True)
-    copy_template(dest)
+    copy_template(dest, category)
     (dest / "data.js").write_text(data_js, encoding="utf-8")
     (dest / "images").mkdir()
     (dest / "images" / ".gitkeep").write_text("", encoding="utf-8")
@@ -314,7 +335,7 @@ def cmd_update(target):
     folders = sorted(p for p in DEMOS.iterdir() if (p / "data.js").exists()) if target == "all" else [demo_dir(target)]
     for folder in folders:
         launched = is_launched(folder)
-        copy_template(folder)
+        copy_template(folder, read_field((folder / "data.js").read_text(encoding="utf-8"), "category"))
         if launched:
             set_live(folder)
         bake_meta(folder)

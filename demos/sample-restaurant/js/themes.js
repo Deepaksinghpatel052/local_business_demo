@@ -36,6 +36,15 @@
     'Outfit': '400;500;600;700',
     'Josefin Sans': '400;600;700',
     'Marcellus': '400',
+    'Fredoka': '400;500;600;700',
+    'Quicksand': '500;600;700',
+    'Manrope': '400;500;600;700;800',
+    'Sora': '400;600;700;800',
+    'Space Grotesk': '400;500;600;700',
+    'Archivo': '400;500;600;700;800',
+    'Saira': '400;500;600;700',
+    'Fraunces': '500;600;700',
+    'Bodoni Moda': '400;500;600;700',
     'Bebas Neue': '400',
     'Yeseva One': '400',
     'Rozha One': '400',
@@ -74,7 +83,7 @@
       cta: { title: 'Hungry already?', text: 'Order on WhatsApp in seconds, or call us to book a table.', button: 'orderNow' }
     },
 
-    /* Salon / spa / boutique — soft rose, nude, gold, elegant serif */
+    /* Salon / boutique — soft rose, nude, gold, elegant serif */
     beauty: {
       label: 'Beauty & Wellness',
       palette: { primary: '#A85C6A', accent: '#C9A96E', background: '#FBF6F3', surface: '#FFFFFF', text: '#3B2A2F' },
@@ -102,6 +111,36 @@
         { q: 'Which payment methods do you accept?', a: 'Cash, UPI and all major cards.' }
       ],
       cta: { title: 'Treat yourself today', text: 'Pick a time that suits you and we will keep your slot ready.', button: 'bookSlot' }
+    },
+
+    /* Spa / massage — calm sage, sand and stone, classical serif */
+    wellness: {
+      label: 'Spa & Wellness',
+      palette: { primary: '#5E7D6A', accent: '#C2A16B', background: '#F6F4EF', surface: '#FFFFFF', text: '#26302A' },
+      headingFont: 'Marcellus',
+      bodyFont: 'Lato',
+      buttonStyle: 'pill',
+      borderRadius: '20px',
+      alternatives: [
+        { name: 'Teak & Cream', primary: '#8A5A3B', accent: '#D9B98C', background: '#FAF6F0', surface: '#FFFFFF', text: '#2E2119' },
+        { name: 'Lotus Plum', primary: '#6B4E71', accent: '#D8B4A0', background: '#F9F6F8', surface: '#FFFFFF', text: '#2A2030' }
+      ],
+      highlightIcon: 'bi-flower1',
+      taglineDefault: 'Massages and spa therapies to relax, restore and recharge in {city}',
+      aboutDefault: '{name} is a peaceful {category} in {city} where trained therapists help you leave stress behind. Choose from Swedish, deep tissue, Thai, Balinese and Ayurvedic massages, body scrubs and steam, all in private, softly lit rooms with fresh linen and natural oils.',
+      whyChooseUs: [
+        { icon: 'bi-person-check', title: 'Certified therapists', text: 'Trained, experienced and respectful, with male and female therapists available.' },
+        { icon: 'bi-droplet', title: 'Natural oils', text: 'Aromatherapy and Ayurvedic oils chosen for your skin and needs.' },
+        { icon: 'bi-shield-check', title: 'Clean & private', text: 'Private rooms, fresh linen and disposables for every guest.' },
+        { icon: 'bi-moon-stars', title: 'Total calm', text: 'Soft lighting, quiet music and herbal tea after every session.' }
+      ],
+      faqs: [
+        { q: 'Which massage should I choose?', a: 'Swedish is best for relaxation, deep tissue for tight muscles and pain, and Thai or Balinese for stretching and energy. Tell us how you feel and our therapist will suggest the right one.' },
+        { q: 'Do you have male and female therapists?', a: 'Yes. Let us know your preference when you book and we will arrange it.' },
+        { q: 'What should I wear, and when should I arrive?', a: 'Come as you are. We provide a robe, disposables and towels. Please arrive 10 minutes early to fill a short health form and relax with a welcome drink.' },
+        { q: 'Do you offer couple massages and gift vouchers?', a: 'Yes, we have side-by-side couple rooms and gift vouchers for birthdays and anniversaries. Ask us on WhatsApp.' }
+      ],
+      cta: { title: 'Time to unwind', text: 'Book your massage on WhatsApp and we will keep a quiet room ready for you.', button: 'bookMassage' }
     },
 
     /* Gym — black with neon green / orange, bold condensed headings */
@@ -284,6 +323,96 @@
       cta: { title: 'Plan your stay', text: 'Check room availability on WhatsApp in a minute.', button: 'checkAvailability' }
     },
 
+    /* Bar / pub / lounge — dark with warm amber and a neon-pink accent */
+    nightlife: {
+      label: 'Nightlife',
+      palette: { primary: '#E0A84F', accent: '#E0457B', background: '#0F0D13', surface: '#1A1720', text: '#F3EEE6' },
+      headingFont: 'Josefin Sans',
+      bodyFont: 'Outfit',
+      buttonStyle: 'pill',
+      borderRadius: '14px',
+      alternatives: [
+        { name: 'Neon Violet', primary: '#B57BFF', accent: '#22D3EE', background: '#0D0B14', surface: '#18152A', text: '#F1EEFA' },
+        { name: 'Whisky Oak', primary: '#C8853B', accent: '#E9D8A6', background: '#15100B', surface: '#211912', text: '#F5EDE1' }
+      ],
+      highlightIcon: 'bi-moon-stars',
+      taglineDefault: 'Great drinks, good music and better company in {city}',
+      aboutDefault: '{name} is a lively {category} in {city} for after-work drinks, weekend nights and everything in between. Expect well-made cocktails, chilled beer, tasty bar food and a crowd that knows how to have a good time.',
+      whyChooseUs: [
+        { icon: 'bi-cup-straw', title: 'Signature cocktails', text: 'Classics and house specials, mixed by experienced bartenders.' },
+        { icon: 'bi-music-note-beamed', title: 'Music & vibes', text: 'DJ nights, live gigs and playlists that keep the night going.' },
+        { icon: 'bi-egg-fried', title: 'Bar bites', text: 'Hot, tasty food made to go with your drinks.' },
+        { icon: 'bi-people', title: 'Groups & parties', text: 'Space and packages for birthdays, office parties and get-togethers.' }
+      ],
+      faqs: [
+        { q: 'Do I need to reserve a table?', a: 'Walk-ins are welcome, but on Friday and Saturday nights we recommend reserving on WhatsApp so your table is ready.' },
+        { q: 'Is there a cover charge or entry fee?', a: 'Entry rules can change on event nights. Message us on WhatsApp and we will tell you what applies on your date.' },
+        { q: 'Do you host private parties?', a: 'Yes. Share the date, number of guests and budget on WhatsApp and we will suggest a package.' },
+        { q: 'Is there an age limit?', a: 'Alcohol is served only to guests of legal drinking age. Please carry a valid photo ID.' }
+      ],
+      cta: { title: 'Plans for tonight?', text: 'Reserve your table on WhatsApp and skip the wait at the door.', button: 'reserveTable' }
+    },
+
+    /* Tours & travels — ocean blue with a sunset coral accent */
+    travel: {
+      label: 'Travel',
+      palette: { primary: '#0B6E8C', accent: '#F4845F', background: '#F4F9FB', surface: '#FFFFFF', text: '#0F2A33' },
+      headingFont: 'Outfit',
+      bodyFont: 'Inter',
+      buttonStyle: 'pill',
+      borderRadius: '18px',
+      alternatives: [
+        { name: 'Desert Sun', primary: '#B45309', accent: '#0EA5E9', background: '#FDF8F1', surface: '#FFFFFF', text: '#2A1B0B' },
+        { name: 'Himalayan Green', primary: '#166534', accent: '#F59E0B', background: '#F4FAF5', surface: '#FFFFFF', text: '#122016' }
+      ],
+      highlightIcon: 'bi-compass',
+      taglineDefault: 'Holidays, tours and travel planned for you from {city}',
+      aboutDefault: '{name} is a trusted {category} in {city}. From weekend getaways to family holidays, pilgrimages and international trips, we plan the whole journey: tickets, hotels, sightseeing and transport, so you only have to pack your bags.',
+      whyChooseUs: [
+        { icon: 'bi-map', title: 'Customised trips', text: 'Itineraries built around your dates, budget and interests.' },
+        { icon: 'bi-currency-rupee', title: 'Best prices', text: 'Good deals on hotels, tickets and packages, with no hidden costs.' },
+        { icon: 'bi-headset', title: 'Support on the trip', text: 'A real person to call if anything changes while you travel.' },
+        { icon: 'bi-shield-check', title: 'Safe & reliable', text: 'Verified hotels, licensed drivers and trusted partners.' }
+      ],
+      faqs: [
+        { q: 'Can you customise a package for us?', a: 'Yes. Tell us your destination, dates, number of travellers and budget on WhatsApp, and we will send you a plan.' },
+        { q: 'Do you book flights, trains and hotels separately?', a: 'Yes, we can book just tickets or just hotels as well as complete packages.' },
+        { q: 'How do I pay?', a: 'An advance confirms your booking and the balance is paid before the trip. We accept UPI, bank transfer and cards.' },
+        { q: 'What is your cancellation policy?', a: 'It depends on the hotels and tickets in your package. We explain the rules clearly before you pay.' }
+      ],
+      cta: { title: 'Where to next?', text: 'Share your dream destination on WhatsApp and get a free trip plan.', button: 'planTrip' }
+    },
+
+    /* Handyman / home repairs — safety orange with deep navy */
+    trades: {
+      label: 'Home Services',
+      palette: { primary: '#E8661A', accent: '#1E3A5F', background: '#F5F6F8', surface: '#FFFFFF', text: '#1A202C' },
+      headingFont: 'Barlow',
+      bodyFont: 'Inter',
+      buttonStyle: 'rounded',
+      borderRadius: '10px',
+      alternatives: [
+        { name: 'Tool Blue', primary: '#1D4ED8', accent: '#F59E0B', background: '#F3F6FB', surface: '#FFFFFF', text: '#111827' },
+        { name: 'Workshop Green', primary: '#15803D', accent: '#1F2937', background: '#F4F7F4', surface: '#FFFFFF', text: '#14201A' }
+      ],
+      highlightIcon: 'bi-house-gear',
+      taglineDefault: 'Repairs and odd jobs done right, at your doorstep in {city}',
+      aboutDefault: '{name} is a reliable {category} in {city} for all the small jobs around your home or office. Plumbing, electrical work, carpentry, painting and installations, handled by skilled, verified people who turn up on time and clean up after.',
+      whyChooseUs: [
+        { icon: 'bi-person-check', title: 'Verified experts', text: 'Skilled, background-checked technicians for every job.' },
+        { icon: 'bi-clock-history', title: 'On-time visits', text: 'We arrive in the slot you book, usually the same day.' },
+        { icon: 'bi-receipt', title: 'Upfront pricing', text: 'Clear visit charges and a quote before any work starts.' },
+        { icon: 'bi-shield-check', title: 'Work guarantee', text: 'If something is not right, we come back and fix it.' }
+      ],
+      faqs: [
+        { q: 'Do you charge for a visit?', a: 'A small visit charge may apply, and it is adjusted in the bill if you go ahead with the work. Ask us on WhatsApp for current rates.' },
+        { q: 'How soon can someone come?', a: 'Most bookings are attended the same day or the next day. Urgent jobs are prioritised whenever possible.' },
+        { q: 'Do you bring materials and spare parts?', a: 'We carry common tools and parts. For anything else, we share the cost with you before buying.' },
+        { q: 'Which payment methods do you accept?', a: 'Cash, UPI and all major cards, after the job is done.' }
+      ],
+      cta: { title: 'Something needs fixing?', text: 'Send a photo of the problem on WhatsApp and book a visit.', button: 'bookVisit' }
+    },
+
     /* General — neutral modern */
     general: {
       label: 'Local Business',
@@ -322,10 +451,16 @@
    * style      = 'cards' | 'menu' | 'plans' (menu tabs need menuCategories)
    * icon       = default icon for services and the text logo
    * services list = shown when data.js has no services
+   * hero       = 'full' (photo behind text) | 'center' (showcase) | 'split' (text + photo side by side)
+   * photos     = placeholder folder in placeholders/ used when the business has no photos
+   * order      = default section order, following how customers of this business decide
+   * look       = this category's own palette, fonts, copy, FAQs and CTA (overrides its preset)
    */
   var CATEGORIES = {
     restaurant: {
       preset: 'food', label: 'restaurant', schema: 'Restaurant', services: 'menu', style: 'menu', icon: 'bi-egg-fried',
+      hero: 'full', photos: 'food',
+      order: ['hero', 'highlights', 'services', 'gallery', 'about', 'why', 'testimonials', 'cta', 'hours', 'faq', 'contact'],
       defaultServices: [
         { title: 'Dine-in', desc: 'Comfortable seating for families and groups.', icon: 'bi-shop' },
         { title: 'Takeaway', desc: 'Call ahead and pick up your order hot and fresh.', icon: 'bi-bag' },
@@ -335,6 +470,32 @@
     },
     cafe: {
       preset: 'food', label: 'café', schema: 'CafeOrCoffeeShop', services: 'menu', style: 'menu', icon: 'bi-cup-hot',
+      hero: 'split', photos: 'cafe',
+      order: ['hero', 'highlights', 'services', 'about', 'gallery', 'why', 'testimonials', 'hours', 'cta', 'faq', 'contact'],
+      look: {
+        palette: { primary: '#6F4E37', accent: '#D9A066', background: '#F7F1EA', surface: '#FFFFFF', text: '#2B1D14' },
+        headingFont: 'Lora', bodyFont: 'DM Sans', buttonStyle: 'rounded', borderRadius: '16px',
+        alternatives: [
+          { name: 'Matcha', primary: '#4D7C4A', accent: '#E8C07D', background: '#F4F7F0', surface: '#FFFFFF', text: '#1E2A1C' },
+          { name: 'Blue Roast', primary: '#2C4A6B', accent: '#E7B07A', background: '#F4F6F9', surface: '#FFFFFF', text: '#17222F' }
+        ],
+        highlightIcon: 'bi-cup-hot',
+        taglineDefault: 'Freshly brewed coffee, good food and cosy corners in {city}',
+        aboutDefault: '{name} is a friendly {category} in {city} for your morning coffee, a working lunch or a long evening chat. We brew every cup fresh, bake snacks in-house and keep the Wi-Fi fast and the music easy.',
+        whyChooseUs: [
+          { icon: 'bi-cup-hot', title: 'Freshly brewed', text: 'Espresso, pour-over and cold brew made to order.' },
+          { icon: 'bi-wifi', title: 'Work friendly', text: 'Fast Wi-Fi, charging points and quiet corners.' },
+          { icon: 'bi-basket', title: 'All-day menu', text: 'Breakfast, sandwiches, bowls and desserts.' },
+          { icon: 'bi-emoji-smile', title: 'Friendly baristas', text: 'They remember your order, and your name.' }
+        ],
+        faqs: [
+          { q: 'Can I work from the café?', a: 'Of course. We have free Wi-Fi and charging points. On busy weekend afternoons we may ask laptop users to share larger tables.' },
+          { q: 'Do you take table reservations?', a: 'We keep most tables for walk-ins, but message us on WhatsApp for groups of six or more.' },
+          { q: 'Can we host a small birthday or meetup?', a: 'Yes. Share the date and headcount on WhatsApp and we will suggest a set menu.' },
+          { q: 'Do you have dairy-free options?', a: 'Yes, oat and almond milk are available for all coffees.' }
+        ],
+        cta: { title: 'Your table is waiting', text: 'Order ahead on WhatsApp or drop in for a fresh cup.', button: 'orderNow' }
+      },
       defaultServices: [
         { title: 'Coffee & Tea', desc: 'Freshly brewed hot and cold beverages.', icon: 'bi-cup-hot' },
         { title: 'Snacks & Bites', desc: 'Sandwiches, fries and quick bites.', icon: 'bi-basket' },
@@ -344,6 +505,32 @@
     },
     bakery: {
       preset: 'food', label: 'bakery', schema: 'Bakery', services: 'menu', style: 'menu', icon: 'bi-cake2',
+      hero: 'center', photos: 'bakery',
+      order: ['hero', 'services', 'gallery', 'highlights', 'about', 'why', 'testimonials', 'cta', 'hours', 'faq', 'contact'],
+      look: {
+        palette: { primary: '#B4436C', accent: '#F2B880', background: '#FFF7F3', surface: '#FFFFFF', text: '#3A2228' },
+        headingFont: 'Fredoka', bodyFont: 'Nunito', buttonStyle: 'pill', borderRadius: '24px',
+        alternatives: [
+          { name: 'Chocolate', primary: '#5C3A21', accent: '#F4C27F', background: '#FBF6F0', surface: '#FFFFFF', text: '#2B1B10' },
+          { name: 'Pistachio', primary: '#5F8A4E', accent: '#F3A6B5', background: '#F7FAF3', surface: '#FFFFFF', text: '#1F2A1A' }
+        ],
+        highlightIcon: 'bi-cake2',
+        taglineDefault: 'Freshly baked cakes, breads and treats every morning in {city}',
+        aboutDefault: '{name} is a neighbourhood {category} in {city} baking fresh every single morning. From soft breads and buttery cookies to custom birthday and wedding cakes, everything is made in our own kitchen with quality ingredients.',
+        whyChooseUs: [
+          { icon: 'bi-sunrise', title: 'Baked fresh daily', text: 'Nothing on our shelves is older than a day.' },
+          { icon: 'bi-cake2', title: 'Custom cakes', text: 'Any theme, photo cake or design you can imagine.' },
+          { icon: 'bi-egg', title: 'Eggless options', text: 'Most cakes and cookies are available eggless.' },
+          { icon: 'bi-truck', title: 'Same-day delivery', text: 'Order before noon for delivery the same evening.' }
+        ],
+        faqs: [
+          { q: 'How early should I order a custom cake?', a: 'One day is enough for most cakes. Tiered and theme cakes need 2-3 days. Send the design, flavour and date on WhatsApp.' },
+          { q: 'Do you make eggless cakes?', a: 'Yes, almost every cake and cookie can be made eggless at no extra cost.' },
+          { q: 'Do you deliver?', a: 'Yes, we deliver across the city. Delivery charges depend on distance.' },
+          { q: 'Do you take bulk orders?', a: 'Yes, for offices, schools, weddings and festivals. Please give us a few days\' notice.' }
+        ],
+        cta: { title: 'Order your celebration cake', text: 'Share the design, flavour and date on WhatsApp and we will bake it fresh.', button: 'orderCake' }
+      },
       defaultServices: [
         { title: 'Custom Cakes', desc: 'Birthday, anniversary and theme cakes made to order.', icon: 'bi-cake2' },
         { title: 'Fresh Breads', desc: 'Baked fresh every morning.', icon: 'bi-basket' },
@@ -353,6 +540,8 @@
     },
     salon: {
       preset: 'beauty', label: 'salon', schema: 'BeautySalon', services: 'services', style: 'cards', icon: 'bi-scissors',
+      hero: 'full', photos: 'beauty',
+      order: ['hero', 'highlights', 'services', 'gallery', 'about', 'why', 'testimonials', 'cta', 'hours', 'faq', 'contact'],
       defaultServices: [
         { title: 'Haircut & Styling', desc: 'Cuts, blow-dry and styling for every look.', icon: 'bi-scissors' },
         { title: 'Hair Colour', desc: 'Global colour, highlights and balayage.', icon: 'bi-palette' },
@@ -361,16 +550,46 @@
       ]
     },
     spa: {
-      preset: 'beauty', label: 'spa', schema: 'DaySpa', services: 'treatments', style: 'cards', icon: 'bi-flower1',
+      preset: 'wellness', label: 'spa', schema: 'DaySpa', services: 'therapies', style: 'cards', icon: 'bi-flower1',
+      hero: 'full', photos: 'wellness',
+      order: ['hero', 'highlights', 'about', 'services', 'why', 'gallery', 'testimonials', 'cta', 'hours', 'faq', 'contact'],
       defaultServices: [
-        { title: 'Swedish Massage', desc: 'A relaxing full-body massage to melt away stress.', icon: 'bi-flower1' },
-        { title: 'Deep Tissue', desc: 'Targeted relief for tight, tired muscles.', icon: 'bi-heart' },
-        { title: 'Body Scrub', desc: 'Exfoliating scrubs for soft, renewed skin.', icon: 'bi-droplet' },
-        { title: 'Couple Packages', desc: 'Side-by-side treatments for two.', icon: 'bi-people' }
+        { title: 'Swedish Massage', desc: 'Long, gentle strokes for full-body relaxation.', icon: 'bi-flower1' },
+        { title: 'Deep Tissue Massage', desc: 'Firm pressure to release knots and muscle pain.', icon: 'bi-activity' },
+        { title: 'Thai Massage', desc: 'Stretching and pressure points for energy and flexibility.', icon: 'bi-person-arms-up' },
+        { title: 'Balinese Massage', desc: 'Aromatic oils with rhythmic, soothing techniques.', icon: 'bi-droplet' },
+        { title: 'Foot Reflexology', desc: 'Pressure-point foot massage for tired feet.', icon: 'bi-heart' },
+        { title: 'Couple Massage', desc: 'Side-by-side massages for two in a private room.', icon: 'bi-people' }
       ]
     },
     boutique: {
       preset: 'beauty', label: 'boutique', schema: 'ClothingStore', services: 'collections', style: 'cards', icon: 'bi-bag-heart',
+      hero: 'center', photos: 'boutique',
+      order: ['hero', 'gallery', 'services', 'highlights', 'about', 'why', 'testimonials', 'cta', 'hours', 'faq', 'contact'],
+      look: {
+        palette: { primary: '#1F1A17', accent: '#C08B5C', background: '#FAF7F2', surface: '#FFFFFF', text: '#1F1A17' },
+        headingFont: 'Bodoni Moda', bodyFont: 'Manrope', buttonStyle: 'square', borderRadius: '2px',
+        alternatives: [
+          { name: 'Rani Pink', primary: '#B0125B', accent: '#E8B44F', background: '#FDF6F8', surface: '#FFFFFF', text: '#2A0F1C' },
+          { name: 'Indigo Block', primary: '#233D7A', accent: '#D9A441', background: '#F5F7FB', surface: '#FFFFFF', text: '#151E33' }
+        ],
+        highlightIcon: 'bi-bag-heart',
+        taglineDefault: 'Handpicked ethnic and western wear in {city}',
+        aboutDefault: '{name} is a {category} in {city} with handpicked sarees, suits, kurtis and western wear for every occasion. New designs arrive every week, and our in-house tailors make sure everything fits you perfectly.',
+        whyChooseUs: [
+          { icon: 'bi-stars', title: 'New arrivals weekly', text: 'Fresh designs every week, not last season\'s stock.' },
+          { icon: 'bi-scissors', title: 'Custom stitching', text: 'Blouses, suits and alterations by in-house tailors.' },
+          { icon: 'bi-rulers', title: 'Every size', text: 'From XS to 4XL, with a perfect fit guaranteed.' },
+          { icon: 'bi-whatsapp', title: 'Shop on WhatsApp', text: 'See photos and prices before you visit.' }
+        ],
+        faqs: [
+          { q: 'Can I see the collection on WhatsApp?', a: 'Yes. Tell us what you are looking for and your budget, and we will send photos and prices.' },
+          { q: 'Do you do alterations and custom stitching?', a: 'Yes. Most alterations are ready in 2-3 days and custom stitching in about a week.' },
+          { q: 'What is your exchange policy?', a: 'Unworn items with tags can be exchanged within 7 days of purchase.' },
+          { q: 'Do you ship outside the city?', a: 'Yes, we ship across India. Ask us on WhatsApp for shipping charges.' }
+        ],
+        cta: { title: 'New arrivals are in', text: 'Ask on WhatsApp for photos and prices of the latest collection.', button: 'enquireNow' }
+      },
       defaultServices: [
         { title: 'Ethnic Wear', desc: 'Sarees, suits and lehengas for every occasion.', icon: 'bi-bag-heart' },
         { title: 'Western Wear', desc: 'Dresses, tops and everyday styles.', icon: 'bi-handbag' },
@@ -380,6 +599,8 @@
     },
     gym: {
       preset: 'fitness', label: 'gym', schema: 'HealthClub', services: 'plans', style: 'plans', icon: 'bi-lightning-charge',
+      hero: 'full', photos: 'fitness',
+      order: ['hero', 'highlights', 'services', 'why', 'gallery', 'testimonials', 'cta', 'hours', 'faq', 'about', 'contact'],
       defaultServices: [
         { title: 'Monthly', price: 'Ask us', desc: 'Full gym access.', features: ['All equipment', 'Locker room', 'General trainer'] },
         { title: 'Quarterly', price: 'Ask us', desc: 'Our most popular plan.', features: ['All equipment', 'Diet guidance', 'Body assessment'], popular: true },
@@ -388,6 +609,8 @@
     },
     clinic: {
       preset: 'medical', label: 'clinic', schema: 'MedicalClinic', services: 'services', style: 'cards', icon: 'bi-heart-pulse',
+      hero: 'split', photos: 'medical',
+      order: ['hero', 'highlights', 'doctor', 'services', 'why', 'testimonials', 'hours', 'cta', 'faq', 'about', 'gallery', 'contact'],
       defaultServices: [
         { title: 'General Consultation', desc: 'Diagnosis and treatment for everyday health concerns.', icon: 'bi-clipboard2-pulse' },
         { title: 'Health Check-ups', desc: 'Preventive check-up packages for all ages.', icon: 'bi-heart-pulse' },
@@ -397,6 +620,32 @@
     },
     dentist: {
       preset: 'medical', label: 'dental clinic', schema: 'Dentist', services: 'treatments', style: 'cards', icon: 'bi-emoji-smile',
+      hero: 'split', photos: 'dentist',
+      order: ['hero', 'highlights', 'services', 'doctor', 'why', 'gallery', 'testimonials', 'cta', 'hours', 'faq', 'about', 'contact'],
+      look: {
+        palette: { primary: '#0E7490', accent: '#2DD4BF', background: '#F1FAFB', surface: '#FFFFFF', text: '#0E2A33' },
+        headingFont: 'Quicksand', bodyFont: 'Nunito', buttonStyle: 'pill', borderRadius: '22px',
+        alternatives: [
+          { name: 'Fresh Mint', primary: '#0F766E', accent: '#A3E635', background: '#F2FBF8', surface: '#FFFFFF', text: '#0F2A26' },
+          { name: 'Calm Lilac', primary: '#6D28D9', accent: '#22D3EE', background: '#F8F6FD', surface: '#FFFFFF', text: '#1E1636' }
+        ],
+        highlightIcon: 'bi-emoji-smile',
+        taglineDefault: 'Gentle, painless dental care for the whole family in {city}',
+        aboutDefault: '{name} is a modern {category} in {city} where every treatment starts with a clear explanation. From check-ups and cleaning to root canals, braces and implants, we keep things gentle, sterile and honestly priced.',
+        whyChooseUs: [
+          { icon: 'bi-emoji-smile', title: 'Painless treatment', text: 'Gentle techniques and modern anaesthesia.' },
+          { icon: 'bi-display', title: 'Digital X-rays', text: 'Low-radiation imaging and clear diagnosis on screen.' },
+          { icon: 'bi-shield-plus', title: 'Fully sterilised', text: 'Autoclaved instruments and single-use disposables.' },
+          { icon: 'bi-credit-card', title: 'Clear costs & EMI', text: 'Written estimates and easy EMI on bigger treatments.' }
+        ],
+        faqs: [
+          { q: 'Is a root canal painful?', a: 'No. With local anaesthesia and modern rotary instruments, most patients feel no more than a filling.' },
+          { q: 'How many visits does a root canal take?', a: 'Many root canals are completed in a single sitting. Complex cases may need two.' },
+          { q: 'Braces or clear aligners: which is better?', a: 'Both work well. We will check your teeth and explain the cost, time and comfort of each option.' },
+          { q: 'Do you treat children?', a: 'Yes. We see children from the age of three, with extra patience and a friendly setup.' }
+        ],
+        cta: { title: 'Smile with confidence', text: 'Book a dental check-up on WhatsApp and we will confirm a time.', button: 'bookAppointment' }
+      },
       defaultServices: [
         { title: 'Check-up & Cleaning', desc: 'Scaling, polishing and a complete oral check-up.', icon: 'bi-emoji-smile' },
         { title: 'Root Canal', desc: 'Painless single-sitting RCT where possible.', icon: 'bi-shield-plus' },
@@ -406,6 +655,32 @@
     },
     hospital: {
       preset: 'medical', label: 'hospital', schema: 'Hospital', services: 'departments', style: 'cards', icon: 'bi-hospital',
+      hero: 'full', photos: 'hospital',
+      order: ['hero', 'highlights', 'services', 'doctor', 'why', 'about', 'testimonials', 'cta', 'gallery', 'faq', 'hours', 'contact'],
+      look: {
+        palette: { primary: '#1E3A8A', accent: '#DC2626', background: '#F5F7FB', surface: '#FFFFFF', text: '#0F1B33' },
+        headingFont: 'Manrope', bodyFont: 'Inter', buttonStyle: 'rounded', borderRadius: '10px',
+        alternatives: [
+          { name: 'Care Teal', primary: '#0F766E', accent: '#E11D48', background: '#F3F9F8', surface: '#FFFFFF', text: '#0F2422' },
+          { name: 'Trust Blue', primary: '#0369A1', accent: '#F97316', background: '#F4F8FB', surface: '#FFFFFF', text: '#0C1F2E' }
+        ],
+        highlightIcon: 'bi-hospital',
+        taglineDefault: '24x7 emergency and specialist care in {city}',
+        aboutDefault: '{name} is a multi-speciality {category} in {city} with round-the-clock emergency care, experienced specialists, modern operation theatres and an in-house lab and pharmacy, all under one roof.',
+        whyChooseUs: [
+          { icon: 'bi-truck-front', title: '24x7 emergency', text: 'Emergency doctors and ambulance available day and night.' },
+          { icon: 'bi-person-badge', title: 'Specialist doctors', text: 'Experienced consultants across major specialities.' },
+          { icon: 'bi-hospital', title: 'ICU & modern OTs', text: 'Critical care and fully equipped operation theatres.' },
+          { icon: 'bi-wallet2', title: 'Cashless insurance', text: 'Tie-ups with leading insurers and TPAs.' }
+        ],
+        faqs: [
+          { q: 'What should I do in an emergency?', a: 'Call us immediately on the number above. Our emergency department and ambulance are available 24x7.' },
+          { q: 'Do you accept cashless insurance?', a: 'Yes, we work with most major insurers and TPAs. Please bring your insurance card and ID.' },
+          { q: 'What are the OPD and visiting hours?', a: 'OPD timings vary by department. Call or WhatsApp us for the doctor\'s schedule and visiting hours.' },
+          { q: 'How do I get my test reports?', a: 'Reports can be collected from the lab desk or sent to you on WhatsApp.' }
+        ],
+        cta: { title: 'Emergency? We are open 24x7', text: 'Call us right away, or book an OPD appointment on WhatsApp.', button: 'bookAppointment' }
+      },
       defaultServices: [
         { title: '24x7 Emergency', desc: 'Round-the-clock emergency care.', icon: 'bi-heart-pulse' },
         { title: 'General Medicine', desc: 'Diagnosis and treatment by experienced physicians.', icon: 'bi-clipboard2-pulse' },
@@ -415,6 +690,11 @@
     },
     school: {
       preset: 'education', label: 'school', schema: 'School', services: 'programs', style: 'cards', icon: 'bi-mortarboard',
+      hero: 'center', photos: 'education',
+      order: ['hero', 'highlights', 'about', 'services', 'results', 'why', 'gallery', 'testimonials', 'cta', 'faq', 'hours', 'contact'],
+      look: {
+        cta: { title: 'Admissions are open', text: 'Ask us about seats, fees and a campus visit on WhatsApp.', button: 'admissionEnquiry' }
+      },
       defaultServices: [
         { title: 'Pre-Primary', desc: 'Play-based learning for our youngest learners.', icon: 'bi-balloon' },
         { title: 'Primary', desc: 'Strong foundations in language, maths and science.', icon: 'bi-book' },
@@ -424,6 +704,32 @@
     },
     coaching: {
       preset: 'education', label: 'coaching institute', schema: 'EducationalOrganization', services: 'courses', style: 'cards', icon: 'bi-book',
+      hero: 'split', photos: 'coaching',
+      order: ['hero', 'highlights', 'results', 'services', 'why', 'testimonials', 'cta', 'about', 'gallery', 'faq', 'hours', 'contact'],
+      look: {
+        palette: { primary: '#4338CA', accent: '#F97316', background: '#F7F7FC', surface: '#FFFFFF', text: '#1E1B3A' },
+        headingFont: 'Sora', bodyFont: 'Inter', buttonStyle: 'rounded', borderRadius: '12px',
+        alternatives: [
+          { name: 'Topper Red', primary: '#B91C1C', accent: '#FACC15', background: '#FCF8F7', surface: '#FFFFFF', text: '#2A1414' },
+          { name: 'Focus Teal', primary: '#0F766E', accent: '#F59E0B', background: '#F3FAF9', surface: '#FFFFFF', text: '#0F2422' }
+        ],
+        highlightIcon: 'bi-trophy',
+        taglineDefault: 'Result-focused coaching with small batches in {city}',
+        aboutDefault: '{name} is a {category} in {city} built around one goal: results. Experienced faculty, small batches, a full test series and personal doubt sessions help every student reach their target score.',
+        whyChooseUs: [
+          { icon: 'bi-person-workspace', title: 'Expert faculty', text: 'Teachers with years of exam-specific experience.' },
+          { icon: 'bi-journal-check', title: 'Full test series', text: 'Weekly tests with All-India level analysis.' },
+          { icon: 'bi-people', title: 'Small batches', text: 'Every student is known and tracked personally.' },
+          { icon: 'bi-chat-dots', title: 'Daily doubt sessions', text: 'Get stuck questions solved the same day.' }
+        ],
+        faqs: [
+          { q: 'Can I attend a free demo class?', a: 'Yes. Message us on WhatsApp to book a free demo class in your subject.' },
+          { q: 'What are the batch timings?', a: 'We run morning, evening and weekend batches. Ask us for the current schedule.' },
+          { q: 'Can fees be paid in instalments?', a: 'Yes, fees can be paid in easy instalments. Scholarships are available on merit.' },
+          { q: 'Do you have online classes?', a: 'Yes, live online classes and recorded lectures are available for most courses.' }
+        ],
+        cta: { title: 'Book a free demo class', text: 'See how we teach before you join. Seats are limited in every batch.', button: 'bookDemo' }
+      },
       defaultServices: [
         { title: 'Class 9-10 Foundation', desc: 'Maths and science with regular tests.', icon: 'bi-journal-check' },
         { title: 'Class 11-12 Boards', desc: 'Complete board exam preparation.', icon: 'bi-book' },
@@ -433,6 +739,8 @@
     },
     hotel: {
       preset: 'hospitality', label: 'hotel', schema: 'Hotel', services: 'rooms', style: 'cards', icon: 'bi-building',
+      hero: 'full', photos: 'hospitality',
+      order: ['hero', 'highlights', 'services', 'gallery', 'about', 'why', 'testimonials', 'cta', 'faq', 'hours', 'contact'],
       defaultServices: [
         { title: 'Standard Room', desc: 'Comfortable room with all essentials.', icon: 'bi-house-door' },
         { title: 'Deluxe Room', desc: 'More space, a better view and extra comfort.', icon: 'bi-stars' },
@@ -442,6 +750,8 @@
     },
     'car-service': {
       preset: 'industrial', label: 'car service centre', schema: 'AutoRepair', services: 'services', style: 'cards', icon: 'bi-car-front',
+      hero: 'full', photos: 'industrial',
+      order: ['hero', 'highlights', 'services', 'why', 'cta', 'about', 'testimonials', 'hours', 'gallery', 'faq', 'contact'],
       defaultServices: [
         { title: 'Periodic Service', desc: 'Oil change, filters and a complete check-up.', icon: 'bi-wrench-adjustable' },
         { title: 'Denting & Painting', desc: 'Accident repair and factory-finish paint.', icon: 'bi-brush' },
@@ -449,8 +759,69 @@
         { title: 'Wheel Alignment', desc: 'Computerised alignment and balancing.', icon: 'bi-gear' }
       ]
     },
+    garage: {
+      preset: 'industrial', label: 'car garage', schema: 'AutoRepair', services: 'services', style: 'cards', icon: 'bi-wrench-adjustable',
+      hero: 'full', photos: 'garage',
+      order: ['hero', 'highlights', 'services', 'why', 'testimonials', 'cta', 'hours', 'faq', 'about', 'gallery', 'contact'],
+      look: {
+        palette: { primary: '#F2B705', accent: '#1C1C1E', background: '#F3F2EE', surface: '#FFFFFF', text: '#1C1C1E' },
+        headingFont: 'Saira', bodyFont: 'Roboto', buttonStyle: 'square', borderRadius: '4px',
+        alternatives: [
+          { name: 'Racing Green', primary: '#15803D', accent: '#1C1C1E', background: '#F2F4F1', surface: '#FFFFFF', text: '#141A15' },
+          { name: 'Workshop Blue', primary: '#1D4ED8', accent: '#F59E0B', background: '#F1F3F7', surface: '#FFFFFF', text: '#111827' }
+        ],
+        highlightIcon: 'bi-wrench-adjustable',
+        taglineDefault: 'Honest car repairs for every make and model in {city}',
+        aboutDefault: '{name} is a trusted multi-brand {category} in {city}. Our mechanics show you exactly what is wrong, give you a fair estimate before starting, and hand back your old parts so you know the work was done.',
+        whyChooseUs: [
+          { icon: 'bi-car-front', title: 'All makes & models', text: 'Maruti to Mercedes, petrol, diesel and CNG.' },
+          { icon: 'bi-eye', title: 'See the problem', text: 'We show you the fault and return your old parts.' },
+          { icon: 'bi-currency-rupee', title: 'Fair labour rates', text: 'Much lower than authorised workshops.' },
+          { icon: 'bi-cone-striped', title: 'Breakdown help', text: 'Roadside help and towing when you are stuck.' }
+        ],
+        faqs: [
+          { q: 'Can I get an estimate before you start?', a: 'Always. We inspect the car, explain the problem and start only after you approve the estimate.' },
+          { q: 'Do you use genuine parts?', a: 'Yes. We offer genuine (OEM) parts and good-quality alternatives, and tell you the price of both.' },
+          { q: 'Do you offer pick-up and drop?', a: 'Yes, within the city. Send your location on WhatsApp.' },
+          { q: 'Will my car insurance cover repairs here?', a: 'For accident repairs we help with the claim paperwork. Ask us about your insurer.' }
+        ],
+        cta: { title: 'Car trouble?', text: 'Send a photo or describe the problem on WhatsApp for a quick estimate.', button: 'getQuote' }
+      },
+      defaultServices: [
+        { title: 'General Repairs', desc: 'Engine, brakes, clutch and suspension work for all makes.', icon: 'bi-wrench-adjustable' },
+        { title: 'Breakdown Help', desc: 'Roadside help and towing when your car will not start.', icon: 'bi-cone-striped' },
+        { title: 'Battery & Tyres', desc: 'Battery replacement, puncture repair and new tyres.', icon: 'bi-battery-charging' },
+        { title: 'Periodic Service', desc: 'Oil change, filters and a full check-up at fair rates.', icon: 'bi-car-front' }
+      ]
+    },
     electronics: {
       preset: 'industrial', label: 'electronics store', schema: 'ElectronicsStore', services: 'products', style: 'cards', icon: 'bi-cpu',
+      hero: 'split', photos: 'electronics',
+      order: ['hero', 'highlights', 'services', 'why', 'about', 'gallery', 'testimonials', 'hours', 'cta', 'faq', 'contact'],
+      look: {
+        palette: { primary: '#2563EB', accent: '#06B6D4', background: '#F5F8FF', surface: '#FFFFFF', text: '#0B1220' },
+        headingFont: 'Space Grotesk', bodyFont: 'Inter', buttonStyle: 'rounded', borderRadius: '14px',
+        alternatives: [
+          { name: 'Neon Purple', primary: '#7C3AED', accent: '#22D3EE', background: '#F8F6FE', surface: '#FFFFFF', text: '#171233' },
+          { name: 'Signal Red', primary: '#DC2626', accent: '#0EA5E9', background: '#FBF7F7', surface: '#FFFFFF', text: '#1F1313' }
+        ],
+        highlightIcon: 'bi-cpu',
+        taglineDefault: 'Latest phones, laptops and appliances at the best prices in {city}',
+        aboutDefault: '{name} is a trusted {category} in {city} for mobiles, laptops, TVs and home appliances from the top brands. Genuine products with bill and warranty, easy EMI, exchange offers and quick repairs.',
+        whyChooseUs: [
+          { icon: 'bi-patch-check', title: 'Genuine products', text: 'Original stock with GST bill and brand warranty.' },
+          { icon: 'bi-credit-card', title: 'Easy EMI', text: 'No-cost EMI on most cards and finance options.' },
+          { icon: 'bi-arrow-repeat', title: 'Exchange offers', text: 'Best value for your old phone or appliance.' },
+          { icon: 'bi-tools', title: 'Repairs & service', text: 'Screen, battery and board repairs done quickly.' }
+        ],
+        faqs: [
+          { q: 'Do you offer EMI?', a: 'Yes, no-cost EMI is available on most products with major cards and finance companies.' },
+          { q: 'Can I exchange my old phone?', a: 'Yes. Bring it in or send photos on WhatsApp for an exchange value.' },
+          { q: 'Are products covered by warranty?', a: 'All products come with the official brand warranty and a GST invoice.' },
+          { q: 'Do you deliver and install?', a: 'Yes, TVs and appliances are delivered and installed at home.' }
+        ],
+        cta: { title: 'Looking for a new gadget?', text: 'Ask for today\'s price and offers on WhatsApp.', button: 'checkPrice' }
+      },
       defaultServices: [
         { title: 'Mobiles & Accessories', desc: 'Latest phones, chargers and covers.', icon: 'bi-phone' },
         { title: 'TV & Appliances', desc: 'Top brands at the best prices.', icon: 'bi-tv' },
@@ -460,6 +831,32 @@
     },
     hardware: {
       preset: 'industrial', label: 'hardware store', schema: 'HardwareStore', services: 'products', style: 'cards', icon: 'bi-tools',
+      hero: 'split', photos: 'hardware',
+      order: ['hero', 'highlights', 'services', 'about', 'why', 'hours', 'gallery', 'testimonials', 'cta', 'faq', 'contact'],
+      look: {
+        palette: { primary: '#166534', accent: '#FACC15', background: '#F5F7F2', surface: '#FFFFFF', text: '#14201A' },
+        headingFont: 'Archivo', bodyFont: 'Roboto', buttonStyle: 'rounded', borderRadius: '6px',
+        alternatives: [
+          { name: 'Brick Red', primary: '#B91C1C', accent: '#FACC15', background: '#F8F5F3', surface: '#FFFFFF', text: '#231312' },
+          { name: 'Cement Grey', primary: '#374151', accent: '#F97316', background: '#F4F4F5', surface: '#FFFFFF', text: '#111827' }
+        ],
+        highlightIcon: 'bi-tools',
+        taglineDefault: 'Tools, plumbing, electricals and paints under one roof in {city}',
+        aboutDefault: '{name} is a well-stocked {category} in {city} for homeowners, contractors and builders. Tools, plumbing, electricals, paints and fittings from trusted brands, at fair prices with delivery to your site.',
+        whyChooseUs: [
+          { icon: 'bi-box-seam', title: 'Huge stock', text: 'Thousands of items, so you get everything in one trip.' },
+          { icon: 'bi-patch-check', title: 'Trusted brands', text: 'Asian Paints, Havells, Supreme, Bosch and more.' },
+          { icon: 'bi-percent', title: 'Contractor rates', text: 'Special prices for bulk and regular buyers.' },
+          { icon: 'bi-truck', title: 'Site delivery', text: 'Delivery to your home or site, same day.' }
+        ],
+        faqs: [
+          { q: 'Do you give discounts on bulk orders?', a: 'Yes. Contractors and bulk buyers get special rates. Send your list on WhatsApp for a quote.' },
+          { q: 'Do you deliver to site?', a: 'Yes, we deliver across the city, usually the same day.' },
+          { q: 'Can you mix paint colours?', a: 'Yes, we have computerised colour mixing for thousands of shades.' },
+          { q: 'Can I return unused items?', a: 'Unused items in original packing can be returned with the bill within 7 days.' }
+        ],
+        cta: { title: 'Need materials for your project?', text: 'Send your list on WhatsApp and we will share a quote.', button: 'getQuote' }
+      },
       defaultServices: [
         { title: 'Tools', desc: 'Hand tools and power tools from trusted brands.', icon: 'bi-hammer' },
         { title: 'Plumbing', desc: 'Pipes, fittings and sanitary ware.', icon: 'bi-droplet' },
@@ -469,6 +866,8 @@
     },
     jewellery: {
       preset: 'luxury', label: 'jewellery store', schema: 'JewelryStore', services: 'collections', style: 'cards', icon: 'bi-gem',
+      hero: 'center', photos: 'luxury',
+      order: ['hero', 'highlights', 'gallery', 'services', 'about', 'why', 'testimonials', 'cta', 'hours', 'faq', 'contact'],
       defaultServices: [
         { title: 'Gold Jewellery', desc: 'Hallmarked necklaces, bangles and rings.', icon: 'bi-gem' },
         { title: 'Diamond Collection', desc: 'Certified diamonds in timeless designs.', icon: 'bi-stars' },
@@ -478,6 +877,32 @@
     },
     'real-estate': {
       preset: 'general', label: 'real estate agency', schema: 'RealEstateAgent', services: 'properties', style: 'cards', icon: 'bi-house-door',
+      hero: 'split', photos: 'real-estate',
+      order: ['hero', 'highlights', 'services', 'why', 'about', 'testimonials', 'cta', 'gallery', 'faq', 'hours', 'contact'],
+      look: {
+        palette: { primary: '#0F3D3E', accent: '#C9A66B', background: '#F7F5F0', surface: '#FFFFFF', text: '#142425' },
+        headingFont: 'Fraunces', bodyFont: 'Manrope', buttonStyle: 'rounded', borderRadius: '12px',
+        alternatives: [
+          { name: 'Terracotta', primary: '#9A3412', accent: '#E9C46A', background: '#FBF6F2', surface: '#FFFFFF', text: '#2A160C' },
+          { name: 'Skyline Blue', primary: '#1E3A5F', accent: '#F2A541', background: '#F4F7FA', surface: '#FFFFFF', text: '#122033' }
+        ],
+        highlightIcon: 'bi-house-check',
+        taglineDefault: 'Verified homes, plots and rentals in {city}',
+        aboutDefault: '{name} is a trusted {category} in {city} helping families and investors buy, sell and rent property with confidence. Every listing is verified, and we handle site visits, negotiation, home loans and registration for you.',
+        whyChooseUs: [
+          { icon: 'bi-patch-check', title: 'Verified listings', text: 'Clear titles and genuine owners only.' },
+          { icon: 'bi-building-check', title: 'RERA registered', text: 'Transparent dealings you can trust.' },
+          { icon: 'bi-bank', title: 'Home loan help', text: 'Tie-ups with leading banks for quick approvals.' },
+          { icon: 'bi-file-earmark-text', title: 'Legal paperwork', text: 'Agreements, registration and documentation handled.' }
+        ],
+        faqs: [
+          { q: 'Do you charge for site visits?', a: 'No. Site visits are free, and we can pick you up for visits to multiple properties.' },
+          { q: 'What is your brokerage?', a: 'Brokerage depends on the property and deal type. We tell you upfront, before any visit.' },
+          { q: 'Which documents should I check before buying?', a: 'Title deed, encumbrance certificate, approved plan, RERA registration and tax receipts. We verify all of these for you.' },
+          { q: 'Can you help with a home loan?', a: 'Yes. We work with leading banks and help with the paperwork for a quick approval.' }
+        ],
+        cta: { title: 'Looking for the right property?', text: 'Tell us your budget and area on WhatsApp and book a free site visit.', button: 'siteVisit' }
+      },
       defaultServices: [
         { title: 'Buy a Home', desc: 'Verified flats, houses and plots.', icon: 'bi-house-door' },
         { title: 'Sell Property', desc: 'The right buyer at the right price.', icon: 'bi-cash-coin' },
@@ -485,8 +910,43 @@
         { title: 'Legal Help', desc: 'Documentation and registration support.', icon: 'bi-file-earmark-text' }
       ]
     },
+    bar: {
+      preset: 'nightlife', label: 'bar', schema: 'BarOrPub', services: 'menu', style: 'menu', icon: 'bi-cup-straw',
+      hero: 'center', photos: 'nightlife',
+      order: ['hero', 'highlights', 'services', 'gallery', 'hours', 'why', 'testimonials', 'cta', 'about', 'faq', 'contact'],
+      defaultServices: [
+        { title: 'Cocktails', desc: 'Classic and signature cocktails, shaken and stirred.', icon: 'bi-cup-straw' },
+        { title: 'Beer & Spirits', desc: 'Chilled beer on tap and a wide range of spirits.', icon: 'bi-cup' },
+        { title: 'Bar Food', desc: 'Starters, platters and snacks to share.', icon: 'bi-egg-fried' },
+        { title: 'Live Music & DJ', desc: 'Weekend gigs, DJ nights and match screenings.', icon: 'bi-music-note-beamed' }
+      ]
+    },
+    travel: {
+      preset: 'travel', label: 'tour & travel agency', schema: 'TravelAgency', services: 'packages', style: 'cards', icon: 'bi-airplane',
+      hero: 'center', photos: 'travel',
+      order: ['hero', 'services', 'gallery', 'why', 'highlights', 'testimonials', 'cta', 'about', 'faq', 'hours', 'contact'],
+      defaultServices: [
+        { title: 'Holiday Packages', desc: 'Hotels, sightseeing and transfers in one plan.', icon: 'bi-luggage' },
+        { title: 'Flight & Train Tickets', desc: 'Domestic and international bookings at good fares.', icon: 'bi-airplane' },
+        { title: 'Cab & Tempo Traveller', desc: 'Outstation cabs and group vehicles with drivers.', icon: 'bi-car-front' },
+        { title: 'Visa & Passport Help', desc: 'Guidance and paperwork for smooth approvals.', icon: 'bi-passport' }
+      ]
+    },
+    handyman: {
+      preset: 'trades', label: 'handyman service', schema: 'HomeAndConstructionBusiness', services: 'services', style: 'cards', icon: 'bi-tools',
+      hero: 'split', photos: 'trades',
+      order: ['hero', 'highlights', 'services', 'why', 'cta', 'testimonials', 'faq', 'about', 'gallery', 'hours', 'contact'],
+      defaultServices: [
+        { title: 'Plumbing', desc: 'Leaks, taps, blockages and bathroom fittings.', icon: 'bi-droplet' },
+        { title: 'Electrical', desc: 'Wiring, switches, fans and light fittings.', icon: 'bi-lightning' },
+        { title: 'Carpentry', desc: 'Furniture repair, doors, locks and assembly.', icon: 'bi-hammer' },
+        { title: 'Painting & Repairs', desc: 'Touch-ups, wall repairs and small renovations.', icon: 'bi-paint-bucket' }
+      ]
+    },
     general: {
       preset: 'general', label: 'local business', schema: 'LocalBusiness', services: 'services', style: 'cards', icon: 'bi-shop',
+      hero: 'full', photos: 'general',
+      order: ['hero', 'highlights', 'about', 'services', 'why', 'gallery', 'testimonials', 'cta', 'hours', 'faq', 'contact'],
       defaultServices: [
         { title: 'Quality Service', desc: 'Done right, every time.', icon: 'bi-award' },
         { title: 'Expert Advice', desc: 'Honest guidance from experienced people.', icon: 'bi-chat-dots' },
@@ -497,6 +957,16 @@
 
   /* Keyword → icon map for highlight badges ("Free Parking" → bi-p-circle). */
   var HIGHLIGHT_ICONS = [
+    [/cocktail|beer|bar\b|drinks|brew/i, 'bi-cup-straw'],
+    [/music|\bdj\b|live band|karaoke/i, 'bi-music-note-beamed'],
+    [/screening|sports|match/i, 'bi-tv'],
+    [/visa|passport/i, 'bi-passport'],
+    [/flight|ticket|tour|holiday|trip/i, 'bi-airplane'],
+    [/cab|taxi|tempo|bus\b/i, 'bi-car-front'],
+    [/plumb|leak/i, 'bi-droplet'],
+    [/electric|wiring/i, 'bi-lightning'],
+    [/carpent|furniture/i, 'bi-hammer'],
+    [/towing|breakdown|roadside/i, 'bi-cone-striped'],
     [/veg|vegetarian/i, 'bi-flower3'],
     [/deliver/i, 'bi-truck'],
     [/park/i, 'bi-p-circle'],

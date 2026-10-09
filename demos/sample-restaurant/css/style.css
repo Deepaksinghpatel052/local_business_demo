@@ -21,6 +21,7 @@
 
 /* ---------- Base ---------- */
 html { scroll-behavior: smooth; }
+#main > section { overflow-x: clip; }   /* slide-in animations must never widen the page */
 body {
   font-family: var(--body-font);
   background: var(--bg);
@@ -115,6 +116,7 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + 8px); }
 .btn-lang { color: var(--text); border: 1px solid var(--border); --bs-btn-padding-y: .35rem; --bs-btn-font-weight: 500; }
 .btn-lang:hover { border-color: var(--primary); color: var(--primary-ink); }
 @media (min-width: 992px) { .btn-lang { margin-right: .75rem; } }   /* gap before the Call button */
+.site-nav .btn-call { white-space: nowrap; flex: none; }
 @media (max-width: 991.98px) {
   .navbar-collapse { padding: .5rem 0 1rem; }
   .navbar-collapse .btn-lang { margin-top: .5rem; }
@@ -144,6 +146,29 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + 8px); }
 .rating-badge .bi-google { color: #4285f4; }
 .hero-cta { display: flex; flex-wrap: wrap; gap: .75rem; }
 @media (max-width: 575.98px) { .hero-cta .btn { flex: 1 1 100%; } }
+
+/* ---------- Hero layouts (set per category: hero-full | hero-center | hero-split) ---------- */
+/* Center: showcase businesses (hotel, jewellery, bakery, travel, bar, boutique, school) */
+.hero-center .hero { text-align: center; justify-content: center; min-height: clamp(560px, 92vh, 880px); }
+.hero-center .hero-title, .hero-center .hero-tagline { margin-left: auto; margin-right: auto; }
+.hero-center .hero-title { max-width: 18ch; }
+.hero-center .hero-meta, .hero-center .hero-cta { justify-content: center; }
+.hero-center .hero-overlay { background: radial-gradient(ellipse at center, rgba(0, 0, 0, .3) 0%, rgba(0, 0, 0, .68) 100%), linear-gradient(rgba(var(--primary-dark-rgb), .3), rgba(var(--primary-dark-rgb), .3)); }
+
+/* Split: trust & information businesses (clinic, dentist, coaching, real estate, handyman, shops) */
+.hero-split .hero { color: var(--text); background: var(--surface-alt); flex-direction: column; align-items: stretch; min-height: 0; }
+.hero-split .hero-overlay { display: none; }
+.hero-split .hero-bg { position: relative; inset: auto; height: 260px; z-index: 0; }
+.hero-split .hero-content { padding-top: 2rem; padding-bottom: 3rem; }
+.hero-split .hero-title { text-shadow: none; color: var(--text); }
+.hero-split .hero-kicker { background: var(--primary-soft); border-color: transparent; color: var(--primary-ink); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.hero-split .rating-badge, .hero-split .hero .status-badge { background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+@media (min-width: 992px) {
+  .hero-split .hero { flex-direction: row; align-items: center; min-height: clamp(520px, 78vh, 760px); }
+  .hero-split .hero-bg { position: absolute; inset: 0 0 0 auto; width: 46%; height: 100%; border-radius: 0 0 0 calc(var(--radius) * 4); }
+  .hero-split .hero-content { padding-top: 4rem; padding-bottom: 4rem; }
+  .hero-split .hero-content > * { max-width: 50%; }
+}
 
 /* ---------- Status badge (open / closed) ---------- */
 .status-badge { display: inline-flex; align-items: center; flex-wrap: wrap; gap: .45rem; font-size: .9rem; }
@@ -548,6 +573,97 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + 8px); }
 
 /* Hospitality: relaxed serif kicker */
 .preset-hospitality .kicker { font-family: var(--heading-font); font-style: italic; text-transform: none; font-size: 1.1rem; letter-spacing: .01em; font-weight: 400; }
+
+/* Wellness: calm spa, soft sand lines, round icons */
+.preset-wellness h1, .preset-wellness h2, .preset-wellness h3 { font-weight: 400; letter-spacing: .02em; }
+.preset-wellness .kicker { font-family: var(--heading-font); text-transform: none; letter-spacing: .08em; font-size: 1.05rem; font-weight: 400; color: var(--accent-ink); }
+.preset-wellness .section-head .section-title::after { width: 70px; height: 1px; background: var(--accent); }
+.preset-wellness .why-icon, .preset-wellness .service-icon { border-radius: 50%; background: var(--primary-soft); color: var(--primary-ink); }
+.preset-wellness .service-card, .preset-wellness .why-card { border-color: rgba(var(--accent-rgb), .3); box-shadow: var(--shadow-sm); }
+.preset-wellness .hero-overlay { background: linear-gradient(100deg, rgba(24, 32, 27, .8) 0%, rgba(24, 32, 27, .45) 60%, rgba(var(--primary-rgb), .2) 100%); }
+
+/* Nightlife: dark lounge, amber glow, neon-pink kicker */
+.preset-nightlife h1, .preset-nightlife h2, .preset-nightlife h3 { text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+.preset-nightlife .hero-title { text-shadow: 0 0 28px rgba(var(--primary-rgb), .45); }
+.preset-nightlife .kicker { color: var(--accent); letter-spacing: .28em; text-shadow: 0 0 12px rgba(var(--accent-rgb), .55); }
+.preset-nightlife .section-head .section-title::after { width: 90px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), var(--primary), transparent); box-shadow: 0 0 10px rgba(var(--accent-rgb), .6); }
+.preset-nightlife .service-card, .preset-nightlife .why-card { border-color: rgba(var(--primary-rgb), .22); }
+.preset-nightlife .service-card:hover, .preset-nightlife .why-card:hover { box-shadow: 0 0 0 1px rgba(var(--primary-rgb), .5), 0 12px 36px rgba(var(--accent-rgb), .18); }
+.preset-nightlife .why-icon { background: transparent; color: var(--primary-ink); border: 1px solid rgba(var(--primary-rgb), .6); box-shadow: 0 0 16px rgba(var(--primary-rgb), .25); }
+.preset-nightlife .hero-overlay { background: linear-gradient(180deg, rgba(10, 8, 14, .55) 0%, rgba(10, 8, 14, .8) 70%, rgba(var(--accent-rgb), .25) 100%); }
+
+/* Travel: airy, rounded, sunset accent */
+.preset-travel .section-title { font-weight: 700; }
+.preset-travel .kicker { color: var(--accent-ink); }
+.preset-travel .kicker::before { content: "\2708\FE0E  "; }
+.preset-travel .section-head .section-title::after { width: 64px; height: 4px; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+.preset-travel .service-card, .preset-travel .why-card { box-shadow: var(--shadow-sm); border-color: transparent; }
+.preset-travel .why-icon, .preset-travel .service-icon { background: rgba(var(--accent-rgb), .15); color: var(--accent-ink); border-radius: 50%; }
+.preset-travel .hero-overlay { background: linear-gradient(110deg, rgba(5, 30, 40, .78) 0%, rgba(5, 30, 40, .4) 60%, rgba(var(--accent-rgb), .2) 100%); }
+
+/* Trades: practical, bold, orange left edge */
+.preset-trades h1, .preset-trades h2, .preset-trades h3 { font-weight: 700; }
+.preset-trades .kicker { color: var(--primary-ink); font-weight: 700; }
+.preset-trades .section-head .section-title::after { width: 56px; height: 5px; border-radius: 3px; background: var(--primary); }
+.preset-trades .service-card, .preset-trades .why-card { border-left: 4px solid var(--primary); }
+.preset-trades .why-icon { background: var(--accent); color: #fff; }
+.preset-trades .service-icon { background: rgba(var(--primary-rgb), .12); color: var(--primary-ink); }
+.preset-trades .hero-overlay { background: linear-gradient(100deg, rgba(14, 24, 40, .88) 0%, rgba(14, 24, 40, .55) 65%, rgba(var(--primary-rgb), .25) 100%); }
+
+/* ---------- Category touches (on top of the family preset) ---------- */
+/* Café: relaxed serif, no food ornaments */
+.cat-cafe .kicker::before, .cat-cafe .kicker::after { content: none; }
+.cat-cafe .hero-title { font-style: normal; }
+.cat-cafe .section-head .section-title::after { width: 48px; height: 3px; background: var(--accent); }
+
+/* Bakery: sweet, playful, dashed "doily" cards */
+.cat-bakery .hero-title { font-style: normal; }
+.cat-bakery .kicker::before, .cat-bakery .kicker::after { content: "\2665"; color: var(--primary-ink); }
+.cat-bakery .service-card, .cat-bakery .why-card { border: 2px dashed rgba(var(--accent-rgb), .7); }
+
+/* Boutique: fashion editorial, sharp edges, wide tracking */
+.cat-boutique .hero-title { text-transform: uppercase; letter-spacing: .06em; }
+.cat-boutique .kicker { font-family: var(--body-font); font-style: normal; text-transform: uppercase; letter-spacing: .3em; font-size: .72rem; font-weight: 700; }
+.cat-boutique .section-head .section-title::after { width: 40px; height: 2px; background: var(--text); }
+.cat-boutique .service-card, .cat-boutique .why-card { border-color: var(--border); }
+.cat-boutique .why-icon { border-radius: 0; background: transparent; border: 1px solid var(--text); color: var(--text); }
+
+/* Dentist: soft, round and friendly */
+.cat-dentist .why-icon, .cat-dentist .service-icon { border-radius: 50%; }
+.cat-dentist .section-head .section-title::after { width: 56px; height: 6px; border-radius: 6px; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+
+/* Hospital: urgent red accents for emergency */
+.cat-hospital .kicker { color: var(--accent-ink); }
+.cat-hospital .service-card { border-top: 3px solid var(--accent); }
+.cat-hospital .section-head .section-title::after { background: var(--accent); }
+
+/* Coaching: energetic orange marker, no highlighter */
+.cat-coaching .kicker { background: none; color: var(--accent-ink); padding: 0; }
+.cat-coaching .section-head .section-title span { background: none; padding: 0; }
+.cat-coaching .section-head .section-title::after { display: block; width: 56px; height: 4px; border-radius: 2px; background: var(--accent); }
+.cat-coaching .why-icon { background: rgba(var(--accent-rgb), .15); color: var(--accent-ink); }
+
+/* Garage: yellow & black workshop, chevron kicker */
+.cat-garage .kicker::before { content: "\25B6\FE0E  "; }
+.cat-garage .service-card, .cat-garage .why-card { border-top-color: var(--primary); }
+
+/* Electronics: clean, bright tech store (light navbar instead of the dark workshop one) */
+.cat-electronics .site-nav { background: var(--surface); }
+.cat-electronics .site-nav .nav-link, .cat-electronics .navbar-brand, .cat-electronics .navbar-brand:hover, .cat-electronics .btn-lang { color: var(--text); }
+.cat-electronics .site-nav .nav-link.active, .cat-electronics .site-nav .nav-link:hover { color: var(--primary-ink); box-shadow: none; }
+.cat-electronics .navbar-toggler { color: var(--text); border-color: var(--border); }
+.cat-electronics h1, .cat-electronics h2, .cat-electronics h3 { text-transform: none; letter-spacing: -.01em; }
+.cat-electronics .kicker::before { content: none; }
+.cat-electronics .service-card, .cat-electronics .why-card { border-top: 0; box-shadow: var(--shadow-sm); }
+.cat-electronics .section-head .section-title::after { width: 64px; height: 4px; border-radius: 4px; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+
+/* Hardware: sturdy green & yellow, square icons */
+.cat-hardware .why-icon { border-radius: 4px; background: var(--accent); color: var(--on-accent); }
+
+/* Real estate: elegant serif kicker, gold hairlines */
+.cat-real-estate .kicker { font-family: var(--heading-font); text-transform: none; letter-spacing: .02em; font-size: 1.05rem; font-style: italic; font-weight: 500; color: var(--accent-ink); }
+.cat-real-estate .section-head .section-title::after { width: 80px; height: 1px; background: var(--accent); }
+.cat-real-estate .service-card, .cat-real-estate .why-card { border-color: rgba(var(--accent-rgb), .4); }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {

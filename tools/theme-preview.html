@@ -228,13 +228,13 @@
     }
 
     function loadPreset(cat) {
-      var key = CATEGORIES[cat].preset, P = PRESETS[key];
+      var C = CATEGORIES[cat], key = C.preset, P = $.extend({}, PRESETS[key], C.look || {});
       state = $.extend({ preset: key, category: cat }, P.palette, { headingFont: P.headingFont, bodyFont: P.bodyFont, buttonStyle: P.buttonStyle, borderRadius: P.borderRadius });
       state.primaryDark = shade(state.primary, -0.22);
       $('#customDark').prop('checked', false);
       $('#headingFont').val(state.headingFont); $('#bodyFont').val(state.bodyFont);
       $('#buttonStyle').val(state.buttonStyle); $('#borderRadius').val(parseInt(state.borderRadius, 10));
-      $('#pvHero').attr('src', '../template/placeholders/' + key + '/hero.jpg');
+      $('#pvHero').attr('src', '../template/placeholders/' + (C.photos || key) + '/hero.jpg');
       syncInputs(); render();
     }
 

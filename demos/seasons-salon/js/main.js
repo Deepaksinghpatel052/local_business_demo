@@ -27,7 +27,7 @@
 
   var DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
   var SCHEMA_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  var SERIF_FONTS = ['Playfair Display', 'Cormorant Garamond', 'Cinzel', 'Lora', 'DM Serif Display', 'Marcellus', 'Merriweather', 'Yeseva One', 'Rozha One'];
+  var SERIF_FONTS = ['Fraunces', 'Bodoni Moda', 'Playfair Display', 'Cormorant Garamond', 'Cinzel', 'Lora', 'DM Serif Display', 'Marcellus', 'Merriweather', 'Yeseva One', 'Rozha One'];
   var BTN_RADIUS = { pill: '50rem', rounded: '10px', square: '3px' };
   var DEFAULT_ORDER = ['hero', 'highlights', 'about', 'services', 'why', 'doctor', 'results',
     'gallery', 'testimonials', 'cta', 'hours', 'faq', 'contact'];
@@ -42,6 +42,8 @@
       callNow: 'Call Now', whatsappUs: 'WhatsApp Us', orderNow: 'Order on WhatsApp', bookSlot: 'Book Your Slot',
       freeTrial: 'Book Free Trial', bookAppointment: 'Book Appointment', bookDemo: 'Book Free Demo Class',
       getQuote: 'Get a Quote', enquireNow: 'Enquire Now', checkAvailability: 'Check Availability',
+      reserveTable: 'Reserve a Table', planTrip: 'Plan My Trip', bookVisit: 'Book a Visit',
+      admissionEnquiry: 'Admission Enquiry', siteVisit: 'Book a Site Visit', bookMassage: 'Book a Massage', orderCake: 'Order a Cake', checkPrice: 'Check Price',
       getDirections: 'Get Directions', sendWhatsapp: 'Send on WhatsApp', enquire: 'Enquire',
       kick_about: 'Our story', kick_services: 'What we offer', kick_why: 'Our promise', kick_gallery: 'Take a look',
       kick_reviews: 'Testimonials', kick_hours: 'Visit us', kick_faq: 'Good to know', kick_contact: 'Get in touch',
@@ -51,6 +53,7 @@
       menu: 'Our Menu', services: 'Our Services', treatments: 'Treatments', collections: 'Our Collections',
       plans: 'Membership Plans', departments: 'Departments', programs: 'Our Programs', courses: 'Courses',
       rooms: 'Rooms & Stays', products: 'Our Products', properties: 'Properties', specials: 'House specials',
+      packages: 'Tour Packages', therapies: 'Massages & Therapies',
       whyTitle: 'Why Choose Us', doctorTitle: 'Meet the Doctor', resultsTitle: 'Our Results', galleryTitle: 'Gallery',
       reviewsTitle: 'What Our Customers Say', hoursTitle: 'Opening Hours', faqTitle: 'Frequently Asked Questions',
       contactTitle: 'Contact Us', experience: 'Experience', popular: 'Most popular',
@@ -82,6 +85,8 @@
       callNow: 'अभी कॉल करें', whatsappUs: 'व्हाट्सऐप करें', orderNow: 'व्हाट्सऐप पर ऑर्डर करें', bookSlot: 'अपना स्लॉट बुक करें',
       freeTrial: 'फ्री ट्रायल बुक करें', bookAppointment: 'अपॉइंटमेंट बुक करें', bookDemo: 'फ्री डेमो क्लास बुक करें',
       getQuote: 'कोटेशन पाएँ', enquireNow: 'अभी पूछें', checkAvailability: 'उपलब्धता जानें',
+      reserveTable: 'टेबल बुक करें', planTrip: 'मेरी यात्रा प्लान करें', bookVisit: 'विज़िट बुक करें',
+      admissionEnquiry: 'एडमिशन की जानकारी', siteVisit: 'साइट विज़िट बुक करें', bookMassage: 'मसाज बुक करें', orderCake: 'केक ऑर्डर करें', checkPrice: 'कीमत जानें',
       getDirections: 'रास्ता देखें', sendWhatsapp: 'व्हाट्सऐप पर भेजें', enquire: 'पूछें',
       kick_about: 'हमारी कहानी', kick_services: 'हम क्या देते हैं', kick_why: 'हमारा वादा', kick_gallery: 'एक झलक',
       kick_reviews: 'ग्राहकों की राय', kick_hours: 'हमसे मिलें', kick_faq: 'जानने योग्य बातें', kick_contact: 'संपर्क में रहें',
@@ -91,6 +96,7 @@
       menu: 'हमारा मेन्यू', services: 'हमारी सेवाएँ', treatments: 'ट्रीटमेंट', collections: 'हमारा कलेक्शन',
       plans: 'मेंबरशिप प्लान', departments: 'विभाग', programs: 'हमारे प्रोग्राम', courses: 'कोर्स',
       rooms: 'कमरे', products: 'हमारे प्रोडक्ट', properties: 'प्रॉपर्टी', specials: 'खास पेशकश',
+      packages: 'टूर पैकेज', therapies: 'मसाज और थेरेपी',
       whyTitle: 'हमें क्यों चुनें', doctorTitle: 'डॉक्टर से मिलें', resultsTitle: 'हमारे परिणाम', galleryTitle: 'गैलरी',
       reviewsTitle: 'हमारे ग्राहक क्या कहते हैं', hoursTitle: 'खुलने का समय', faqTitle: 'अक्सर पूछे जाने वाले सवाल',
       contactTitle: 'संपर्क करें', experience: 'अनुभव', popular: 'सबसे लोकप्रिय',
@@ -239,8 +245,10 @@
   var CAT_KEY = CATEGORIES[B.category] ? B.category : 'general';
   var CAT = CATEGORIES[CAT_KEY] || { preset: 'general', label: 'local business', schema: 'LocalBusiness', services: 'services', style: 'cards', icon: 'bi-shop', defaultServices: [] };
   var PRESET_KEY = PRESETS[CAT.preset] ? CAT.preset : 'general';
-  var PRESET = PRESETS[PRESET_KEY];
-  var PH = 'placeholders/' + PRESET_KEY + '/';
+  var PRESET = $.extend({}, PRESETS[PRESET_KEY], CAT.look || {});   // the category's own look wins over its family
+  var PH = 'placeholders/' + (CAT.photos || PRESET_KEY) + '/';
+  var HERO_STYLE = CAT.hero || 'full';
+  var CAT_ORDER = CAT.order ? CAT.order.concat(DEFAULT_ORDER.filter(function (k) { return CAT.order.indexOf(k) < 0; })) : DEFAULT_ORDER;
   var DEV = $.extend({}, DEFAULT_DEVELOPER, B.developer || {});
   Object.keys(DEV).forEach(function (k) { if (isPlaceholder(DEV[k])) DEV[k] = DEFAULT_DEVELOPER[k] || ''; });
 
@@ -290,6 +298,14 @@
     getQuote: 'Hi {name}, I would like a quote.',
     enquireNow: 'Hi {name}, I would like to know more about your collection.',
     checkAvailability: 'Hi {name}, I would like to check room availability.',
+    reserveTable: 'Hi {name}, I would like to reserve a table.',
+    planTrip: 'Hi {name}, I would like help planning a trip.',
+    bookVisit: 'Hi {name}, I would like to book a visit for some work at my place.',
+    admissionEnquiry: 'Hi {name}, I would like to know about admissions.',
+    siteVisit: 'Hi {name}, I am looking for a property and would like to book a site visit.',
+    bookMassage: 'Hi {name}, I would like to book a massage.',
+    orderCake: 'Hi {name}, I would like to order a cake.',
+    checkPrice: 'Hi {name}, I would like to know today\'s prices and offers.',
     whatsappUs: 'Hi {name}, I found your website and would like to know more.'
   };
   function ctaLink(key) { return waLink(fill(CTA_MESSAGES[key] || CTA_MESSAGES.whatsappUs, TOKENS)); }
@@ -1247,7 +1263,7 @@
   function boot() {
     applyTheme(brandTheme);
 
-    var order = (B.sections && B.sections.length ? B.sections : DEFAULT_ORDER).filter(function (k) { return S[k]; });
+    var order = (B.sections && B.sections.length ? B.sections : CAT_ORDER).filter(function (k) { return S[k]; });
     var rendered = [], html = '';
     order.forEach(function (k) {
       var out = S[k]();
@@ -1268,7 +1284,7 @@
       $('meta[name="robots"]').remove();
     }
 
-    $('body').addClass('preset-' + PRESET_KEY + ' cat-' + CAT_KEY + ' btn-' + (brandTheme.buttonStyle || PRESET.buttonStyle));
+    $('body').addClass('preset-' + PRESET_KEY + ' cat-' + CAT_KEY + ' hero-' + HERO_STYLE + ' btn-' + (brandTheme.buttonStyle || PRESET.buttonStyle));
     applySeo();
     applyLang();
     bindChrome();
