@@ -81,6 +81,28 @@ python -m venv venv
 
 There are three ways to view the demos. Pick one.
 
+### Ports: set them in one place (`.env`)
+
+All local ports live in the **`.env`** file in the project root:
+
+```ini
+DOCKER_PORT=8080    # Docker: http://localhost:8080/ and http://<slug>.localhost:8080/
+SERVE_PORT=8000     # Python preview: python new_demo.py --serve <slug>
+```
+
+To run on a different port, change the number there and nowhere else:
+
+| To change | Edit in `.env` | Then |
+|---|---|---|
+| Docker port | `DOCKER_PORT=9090` | `docker compose up -d` → http://localhost:9090/ |
+| Python preview port | `SERVE_PORT=5500` | `python new_demo.py --serve <slug>` → http://localhost:5500/ |
+
+Docker Compose reads `.env` automatically, and `new_demo.py` reads the same file. If `.env` is
+missing, the defaults 8080 and 8000 are used. A one-off override also works:
+`DOCKER_PORT=9090 docker compose up -d` (macOS/Linux/Git Bash).
+
+The URLs below use the default port 8080. Replace it with your `DOCKER_PORT` if you changed it.
+
 ### Option A: Docker (recommended, all demos at once)
 
 Make sure **Docker Desktop is running**, then from the project folder:
@@ -104,18 +126,18 @@ Open in Chrome or Edge:
 - Stop: `docker compose down`. Logs: `docker compose logs -f`.
 - The container restarts automatically whenever Docker Desktop is running.
 
-Docker files: `Dockerfile` (Nginx image), `docker-compose.yml` (port 8080, live mount),
+Docker files: `Dockerfile` (Nginx image), `docker-compose.yml` (port from `.env`, live mount),
 `docker/nginx.conf` (maps `<slug>.localhost` to `demos/<slug>/`).
 
 ### Option B: Python (one demo, no Docker)
 
 ```bash
-cd demos/seasons-salon
-python -m http.server 8000
+python new_demo.py --serve seasons-salon
 ```
 
-Open http://localhost:8000. This behaves exactly like the demo's subdomain root.
-Press `Ctrl+C` to stop.
+Open http://localhost:8000 (the `SERVE_PORT` from `.env`). This behaves exactly like the
+demo's subdomain root. Press `Ctrl+C` to stop. If the port is busy you get a clear message:
+change `SERVE_PORT` in `.env` or stop the other program.
 
 ### Option C: Open the file directly
 
@@ -245,7 +267,7 @@ See [Images](#8-images) for sizes.
 ### Step 5: Preview
 
 - **Docker running?** Just open http://seasons-salon.localhost:8080/ (refresh after every edit).
-- Or: `cd demos/seasons-salon && python -m http.server 8000` and open http://localhost:8000.
+- Or: `python new_demo.py --serve seasons-salon` and open http://localhost:8000 (your `SERVE_PORT`).
 
 Check the [checklist](#13-checklist-before-you-send-a-demo): phone width, Call/WhatsApp buttons,
 open/closed badge, Hindi toggle.
@@ -576,6 +598,7 @@ rsync -av demos/seasons-salon/ user@SERVER_IP:/var/www/demos/seasons-salon/
 | `python new_demo.py "Name" <category>` | Create `demos/<slug>/` (template + pre-filled `data.js` + empty `images/`) |
 | `python new_demo.py "Name" <category> --slug my-slug` | Same, with a custom subdomain slug |
 | `python new_demo.py --list` | List all demos with category and demo/live status |
+| `python new_demo.py --serve <slug>` | Preview one demo at `http://localhost:<SERVE_PORT>/` (port from `.env`) |
 | `python new_demo.py --meta <slug>` | Rewrite the static title / Open Graph tags from `data.js` (for WhatsApp previews) |
 | `python new_demo.py --zip <slug>` | Create `dist/<slug>.zip`, ready for cPanel/Hostinger |
 | `python new_demo.py --launch <slug>` | Client paid: turn off demo mode and remove noindex |
@@ -587,7 +610,8 @@ rsync -av demos/seasons-salon/ user@SERVER_IP:/var/www/demos/seasons-salon/
 
 | Command | What it does |
 |---|---|
-| `docker compose up -d --build` | Build and start (http://localhost:8080) |
+| `docker compose up -d --build` | Build and start (http://localhost:<DOCKER_PORT>, default 8080) |
+| `docker compose up -d` | Apply a changed `DOCKER_PORT` from `.env` |
 | `docker compose down` | Stop and remove the container |
 | `docker compose restart` | Restart |
 | `docker compose logs -f` | Follow the Nginx logs |
@@ -623,7 +647,8 @@ git push                        # upload to GitHub
 | Problem | Fix |
 |---|---|
 | `docker: failed to connect to the docker API` | Docker Desktop is not running. Start it, wait until it says "running", then retry. |
-| Port 8080 already in use | Change `"8080:80"` to e.g. `"8090:80"` in `docker-compose.yml`, then use port 8090. |
+| Port 8080 already in use (Docker) | Set e.g. `DOCKER_PORT=8090` in `.env`, run `docker compose up -d`, open http://localhost:8090/. |
+| `port 8000 is already in use` (`--serve`) | Set another `SERVE_PORT` in `.env`, or stop the program using it. |
 | `http://<slug>.localhost:8080` does not open | Use Chrome or Edge, or the path style `http://localhost:8080/<slug>/`. Check the folder name equals the slug. |
 | `python` not found (Windows) | Use `py` instead, or reinstall Python with "Add to PATH" ticked. |
 | `unknown category 'xyz'` | Use one of the [category keys](#6-categories) exactly, e.g. `real-estate`, `car-service`. |
@@ -659,7 +684,8 @@ local_business_demo/
 ├── deploy/nginx-wildcard.conf   # production Nginx config: every subdomain → its folder, SSL
 ├── docker/nginx.conf            # local Docker Nginx config (<slug>.localhost)
 ├── Dockerfile                   # Nginx image with all demos
-├── docker-compose.yml           # runs it on port 8080, demos/ mounted live
+├── docker-compose.yml           # runs it on DOCKER_PORT, demos/ mounted live
+├── .env                         # local ports: DOCKER_PORT, SERVE_PORT (one place)
 ├── dist/                        # ZIPs made by --zip (not committed)
 ├── new_demo.py                  # create / list / zip / launch / update demos
 └── README.md

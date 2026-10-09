@@ -11,11 +11,17 @@ Usage
   python new_demo.py --update <slug|all>            copy the latest template code into a demo
   python new_demo.py --meta <slug>                  refresh <title>/Open Graph tags from data.js
   python new_demo.py --list                         list demos
+  python new_demo.py --serve <slug>                 preview one demo at http://localhost:<SERVE_PORT>/
+
+Ports live in .env (DOCKER_PORT for Docker, SERVE_PORT for --serve).
 
 Categories: see CATEGORIES below (same list as template/js/themes.js).
 """
 import argparse
+import functools
 import html
+import http.server
+import os
 import json
 import re
 import shutil
@@ -70,6 +76,32 @@ PHOTOS = {
 }
 
 META_START, META_END = "<!-- META:START", "<!-- META:END -->"
+
+
+# ---------------------------------------------------------------------------
+# Ports: one place, the .env file next to this script
+# ---------------------------------------------------------------------------
+def read_env():
+    """Read KEY=VALUE lines from .env (environment variables win over the file)."""
+    env = {}
+    path = ROOT / ".env"
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                env[k.strip()] = v.strip().strip("\"'")
+    env.update({k: v for k, v in os.environ.items() if k in ("DOCKER_PORT", "SERVE_PORT")})
+    return env
+
+
+def port(key, default):
+    value = read_env().get(key, "")
+    if not value:
+        return default
+    if not value.isdigit() or not 1 <= int(value) <= 65535:
+        die("%s=%s in .env is not a valid port (1-65535)." % (key, value))
+    return int(value)
 
 
 def die(msg):
@@ -269,11 +301,12 @@ Next steps
   1. Fill in  demos/{s}/data.js  (name, phone, address, hours, rating, reviews...)
   2. Add photos to  demos/{s}/images/  (compress first at squoosh.app or tinypng.com)
   3. Preview:  open demos/{s}/index.html in a browser
-     or:       cd demos/{s} && python -m http.server 8000   ->  http://localhost:8000
+     or:       python new_demo.py --serve {s}   ->  http://localhost:{sp}/
+     Docker:   http://{s}.localhost:{dp}/
   4. Deploy:   scp -r demos/{s} user@server:/var/www/demos/
      or ZIP:   python new_demo.py --zip {s}
   5. Send:     https://{s}.{d}/   (add ?pitch=1 to show the pitch panel)
-""".format(s=slug, d=BASE_DOMAIN))
+""".format(s=slug, d=BASE_DOMAIN, sp=port("SERVE_PORT", 8000), dp=port("DOCKER_PORT", 8080)))
 
 
 def cmd_zip(slug):
@@ -357,6 +390,27 @@ def cmd_list():
         print("  %-32s %-12s %-5s %s" % r)
 
 
+def cmd_serve(slug):
+    """Serve one demo folder like its subdomain root, on SERVE_PORT from .env."""
+    folder = demo_dir(slug)
+    p = port("SERVE_PORT", 8000)
+    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(folder))
+
+    class Server(http.server.ThreadingHTTPServer):
+        # On Windows, address reuse lets two servers share one port silently; refuse instead.
+        allow_reuse_address = sys.platform != "win32"
+
+    try:
+        server = Server(("", p), handler)
+    except OSError:
+        die("port %d is already in use. Change SERVE_PORT in .env (or stop the other program)." % p)
+    print("Serving %s at http://localhost:%d/   (Ctrl+C to stop)" % (slug, p))
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nStopped.")
+
+
 def main():
     ap = argparse.ArgumentParser(description="Create and package local business demo websites.")
     ap.add_argument("name", nargs="?", help='business name, e.g. "Sharma Sweets"')
@@ -367,6 +421,7 @@ def main():
     ap.add_argument("--update", metavar="SLUG", help="copy latest template code into a demo (or 'all')")
     ap.add_argument("--meta", metavar="SLUG", help="refresh static <title>/Open Graph tags from data.js")
     ap.add_argument("--list", action="store_true", help="list demos")
+    ap.add_argument("--serve", metavar="SLUG", help="preview a demo at http://localhost:<SERVE_PORT from .env>/")
     a = ap.parse_args()
 
     if a.zip:
@@ -380,6 +435,8 @@ def main():
         print("Meta tags refreshed for %s" % a.meta)
     elif a.list:
         cmd_list()
+    elif a.serve:
+        cmd_serve(a.serve)
     elif a.name and a.category:
         cmd_create(a.name, a.category, a.slug)
     else:
