@@ -19,8 +19,8 @@ window.BUSINESS = {
   about: "PrimeRide Taxi Service is a Gwalior cab service for everyday city rides, early-morning trains, late-night flights and outstation trips to Agra, Jhansi, Orchha, Shivpuri, Bhopal and Delhi. Clean AC cars, verified local drivers and the full fare agreed before you travel.",
   established: "TODO",        // year, e.g. "1998"
   owner: "TODO",
-  phone: "+91 79999 08258",   // PLACEHOLDER: replace with the real number
-  whatsapp: "917999908258",   // PLACEHOLDER: digits with country code
+  phone: "+91 93010 87764",   // PLACEHOLDER: replace with the real number
+  whatsapp: "919301087764",   // PLACEHOLDER: digits with country code
   email: "TODO",
   address: "Gwalior, Madhya Pradesh",   // PLACEHOLDER: replace with the full Google Maps address
   city: "Gwalior",
