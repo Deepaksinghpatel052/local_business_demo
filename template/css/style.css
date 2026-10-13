@@ -386,6 +386,21 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + 8px); }
 .cta-actions .btn-light { --bs-btn-color: #111; }
 .cta-actions .btn-outline-light { --bs-btn-color: var(--on-primary); --bs-btn-border-color: var(--on-primary); }
 
+/* ---------- Fleet (vehicle types) ---------- */
+.vehicle-card {
+  height: 100%; display: flex; flex-direction: column; padding: 1.5rem; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius); transition: transform .2s ease, box-shadow .2s ease;
+}
+.vehicle-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.vehicle-media { margin: -1.5rem -1.5rem 1.25rem; border-radius: var(--radius) var(--radius) 0 0; overflow: hidden; }
+.vehicle-media img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; }
+.vehicle-icon { font-size: 3rem; line-height: 1; color: var(--primary-ink); margin-bottom: .75rem; }
+.vehicle-name { font-size: 1.3rem; margin-bottom: .2rem; }
+.vehicle-models { color: var(--text-muted); font-size: .92rem; margin-bottom: .9rem; }
+.vehicle-specs { list-style: none; padding: 0; margin: 0 0 1.25rem; display: flex; flex-wrap: wrap; gap: .4rem; }
+.vehicle-specs li { display: inline-flex; align-items: center; gap: .35rem; padding: .3rem .7rem; border-radius: 50rem; background: var(--primary-soft); font-size: .85rem; font-weight: 600; }
+.vehicle-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+
 /* ---------- Hours ---------- */
 .hours-card, .status-card, .contact-card {
   height: 100%; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm);
@@ -609,6 +624,39 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + 8px); }
 .preset-trades .why-icon { background: var(--accent); color: #fff; }
 .preset-trades .service-icon { background: rgba(var(--primary-rgb), .12); color: var(--primary-ink); }
 .preset-trades .hero-overlay { background: linear-gradient(100deg, rgba(14, 24, 40, .88) 0%, rgba(14, 24, 40, .55) 65%, rgba(var(--primary-rgb), .25) 100%); }
+
+/* Taxi: cab-yellow hero, black chequered stripes like a taxi door */
+.preset-taxi { --checker: repeating-conic-gradient(#15171C 0 25%, #fff 0 50%) 0 0 / 16px 16px; }
+.preset-taxi h1, .preset-taxi h2, .preset-taxi h3 { font-weight: 800; font-style: italic; letter-spacing: -.01em; }
+.preset-taxi .hero { background: var(--primary); color: var(--on-primary); padding-bottom: 16px; }
+.preset-taxi .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 16px; background: var(--checker); z-index: 1; }
+.preset-taxi .hero-title, .preset-taxi .hero-tagline { color: var(--on-primary); }
+.preset-taxi .hero-kicker { background: #15171C; color: #fff; border-color: transparent; }
+.preset-taxi .hero-kicker .bi { color: var(--primary); }
+.preset-taxi .hero .btn-primary {
+  --bs-btn-bg: #15171C; --bs-btn-border-color: #15171C; --bs-btn-color: #fff;
+  --bs-btn-hover-bg: #000; --bs-btn-hover-border-color: #000; --bs-btn-hover-color: var(--primary);
+  --bs-btn-active-bg: #000; --bs-btn-active-border-color: #000; --bs-btn-active-color: var(--primary);
+}
+.preset-taxi .hero .rating-badge, .preset-taxi .hero .status-badge { border-color: transparent; }
+.preset-taxi .kicker { color: var(--text); font-weight: 700; }
+.preset-taxi .kicker::before { content: ""; display: inline-block; width: 24px; height: 8px; margin-right: .5rem; vertical-align: middle; background: repeating-conic-gradient(#15171C 0 25%, var(--primary) 0 50%) 0 0 / 8px 8px; }
+.preset-taxi .section-head .section-title::after { width: 96px; height: 8px; border-radius: 0; background: repeating-conic-gradient(var(--text) 0 25%, transparent 0 50%) 0 0 / 8px 8px; }
+.preset-taxi .service-card, .preset-taxi .why-card { border: 2px solid var(--border); box-shadow: none; }
+.preset-taxi .service-card:hover, .preset-taxi .why-card:hover { border-color: var(--primary); }
+.preset-taxi .service-icon, .preset-taxi .why-icon { background: var(--primary); color: var(--on-primary); border-radius: 50%; }
+.preset-taxi .vehicle-card { border: 2px solid var(--border); overflow: hidden; }
+.preset-taxi .vehicle-card:hover { border-color: var(--primary); }
+.preset-taxi .vehicle-icon { margin: -1.5rem -1.5rem 1.25rem; padding: 1.25rem 0 1.75rem; text-align: center; font-size: 3.5rem; color: #15171C;
+  background: linear-gradient(var(--primary), var(--primary)) top / 100% calc(100% - 8px) no-repeat, repeating-conic-gradient(#15171C 0 25%, #fff 0 50%) 0 100% / 8px 8px; }
+.preset-taxi .vehicle-specs li { background: rgba(var(--primary-rgb), .18); }
+.preset-taxi .highlights { background: #15171C; border-bottom: 0; }
+.preset-taxi .highlight-list li { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .2); }
+.preset-taxi .highlight-list .bi { color: var(--primary); }
+.preset-taxi .cta-inner { background: #15171C; color: #fff; }
+.preset-taxi .cta-actions .btn-light { --bs-btn-bg: var(--primary); --bs-btn-border-color: var(--primary); --bs-btn-color: var(--on-primary); --bs-btn-hover-bg: #fff; --bs-btn-hover-border-color: #fff; }
+.preset-taxi .site-footer { background: #15171C; color: #fff; }
+.preset-taxi .cta-actions .btn-outline-light { --bs-btn-color: #fff; --bs-btn-border-color: rgba(255, 255, 255, .6); }
 
 /* ---------- Category touches (on top of the family preset) ---------- */
 /* Café: relaxed serif, no food ornaments */

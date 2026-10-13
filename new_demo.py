@@ -61,6 +61,7 @@ CATEGORIES = {
     "bar": ("nightlife", "Bar"),
     "travel": ("travel", "Tour & Travel Agency"),
     "handyman": ("trades", "Handyman Service"),
+    "taxi": ("taxi", "Taxi Service"),
     "jewellery": ("luxury", "Jewellery Store"),
     "real-estate": ("general", "Real Estate Agency"), "general": ("general", "Local Business"),
 }
@@ -72,7 +73,7 @@ PHOTOS = {
     "clinic": "medical", "dentist": "dentist", "hospital": "hospital",
     "school": "education", "coaching": "coaching", "hotel": "hospitality", "travel": "travel",
     "car-service": "industrial", "garage": "garage", "electronics": "electronics", "hardware": "hardware",
-    "handyman": "trades", "jewellery": "luxury", "real-estate": "real-estate", "general": "general",
+    "handyman": "trades", "taxi": "taxi", "jewellery": "luxury", "real-estate": "real-estate", "general": "general",
 }
 
 META_START, META_END = "<!-- META:START", "<!-- META:END -->"
@@ -150,6 +151,9 @@ def build_data_js(name, slug, category):
                   '    photo: "", about: "", specialities: []\n  },\n')
     if preset == "education":
         extra += '  results: [                 // e.g. { value: "95%", label: "Board pass rate" }\n    { value: "TODO", label: "TODO" }\n  ],\n'
+    if preset == "taxi":
+        extra += ('  vehicles: [],               // empty = Hatchback, Sedan, SUV, Innova Crysta, Tempo Traveller\n'
+                  '                              // or [{ name: "Sedan", models: "Dzire or similar", seats: 4, bags: 3, rate: "₹11/km", image: "", icon: "bi-car-front" }]\n')
 
     return f'''/*
  * data.js: the ONLY file you edit for this business.
@@ -163,7 +167,7 @@ def build_data_js(name, slug, category):
 window.BUSINESS = {{
   name: {js(name)},
   slug: {js(slug)},
-  category: {js(category)},   // restaurant | cafe | bakery | salon | spa | gym | clinic | dentist | hospital | school | coaching | hotel | car-service | garage | electronics | hardware | boutique | jewellery | real-estate | bar | travel | handyman | general
+  category: {js(category)},   // restaurant | cafe | bakery | salon | spa | gym | clinic | dentist | hospital | school | coaching | hotel | car-service | garage | electronics | hardware | boutique | jewellery | real-estate | bar | travel | taxi | handyman | general
   tagline: "{T}",
   about: "{T}",
   established: "{T}",        // year, e.g. "1998"

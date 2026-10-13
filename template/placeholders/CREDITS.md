@@ -117,3 +117,8 @@ All photos are from Unsplash (https://unsplash.com/license): free to use, no att
 - real-estate/2.jpg: https://images.unsplash.com/photo-1545324418-cc1a3fa10c00
 - real-estate/3.jpg: https://images.unsplash.com/photo-1600607687939-ce8a6c25118c
 - real-estate/4.jpg: https://images.unsplash.com/photo-1502672260266-1c1ef2d93688
+- taxi/hero.jpg: https://images.unsplash.com/photo-1556122071-e404eaedb77f
+- taxi/1.jpg: https://images.unsplash.com/photo-1449965408869-eaa3f722e40d
+- taxi/2.jpg: https://images.unsplash.com/photo-1494783367193-149034c05e8f
+- taxi/3.jpg: https://images.unsplash.com/photo-1529074963764-98f45c47344b
+- taxi/4.jpg: https://images.unsplash.com/photo-1617469767053-d3b523a0b982
