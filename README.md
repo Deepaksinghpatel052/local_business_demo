@@ -11,7 +11,7 @@ Google Maps, live "Open now / Closed now" hours, services or menu, gallery, Goog
 reviews, FAQs, an enquiry form that opens WhatsApp, a Hindi toggle and SEO tags.
 
 **Every category has its own design.** A spa, a garage and a coaching centre do not look alike:
-each of the 23 categories has its own colours, fonts, photos, layout, wording and section order,
+each of the 24 categories has its own colours, fonts, photos, layout, wording and section order,
 based on how that kind of business sells.
 
 **How it is built**
@@ -207,7 +207,7 @@ images/                          <- put this business's photos here
 
 - The **slug** (`seasons-salon`) becomes the subdomain. To choose your own:
   `python new_demo.py "Seasons Salon" salon --slug seasons-btm`
-- The category must be one of the [23 categories](#6-categories). Run `python new_demo.py --help`
+- The category must be one of the [24 categories](#6-categories). Run `python new_demo.py --help`
   to see the list.
 
 ### Step 3: Fill in data.js
@@ -347,6 +347,7 @@ Every category has its own design and a sample demo to look at
 | `garage` | Local car garages & mechanics | full photo | Get a Quote | `sample-garage` |
 | `electronics` | Mobile, TV, appliance stores | split | Check Price | `sample-electronics` |
 | `hardware` | Hardware, paint and sanitary stores | split | Get a Quote | `sample-hardware` |
+| `taxi` | Taxi and cab services, car rentals with driver | split, yellow | Book a Cab | `sample-taxi` |
 | `handyman` | Plumbers, electricians, carpenters, home repairs | split | Book a Visit | `sample-handyman` |
 | `jewellery` | Jewellers | centred | Enquire Now | `sample-jewellery` |
 | `real-estate` | Property dealers, real estate agents | split | Book a Site Visit | `sample-real-estate` |
@@ -354,7 +355,7 @@ Every category has its own design and a sample demo to look at
 
 The services heading also changes by category: *Our Menu, Our Services, Massages & Therapies,
 Our Collections, Membership Plans, Treatments, Departments, Our Programs, Courses, Rooms & Stays,
-Tour Packages, Our Products, Properties*.
+Tour Packages, Rides & Fares, Our Products, Properties*.
 
 ---
 
@@ -385,6 +386,7 @@ Tour Packages, Our Products, Properties*.
 | `faqs` | Q&A, common review questions | `{ q, a }`. Empty = category FAQs |
 | `social` | Links on the profile | `instagram`, `facebook`, `youtube` (also `twitter`, `linkedin`) |
 | `doctor` | (clinic, dentist, hospital) | `{ name, qualification, experience, photo, about, specialities: [] }`: "Meet the Doctor" card |
+| `vehicles` | (taxi) Photos, reviews, ask the owner | `{ name, models, seats, bags, rate, image, icon, ac }`: "Choose Your Vehicle" cards and the form's "Vehicle type" dropdown. Empty = Hatchback, Sedan, SUV, Innova Crysta, Tempo Traveller |
 | `results` | (school, coaching) toppers, pass rates | `[{ value: "95%", label: "Board pass rate" }]` |
 | `languages` | | `["en", "hi"]` shows the हिंदी toggle. `["en"]` hides it |
 | `theme` | | `{}` (category design), `"auto"` or manual colours. See [Design](#9-design-colours-fonts-and-layouts) |
@@ -392,7 +394,7 @@ Tour Packages, Our Products, Properties*.
 | `happyCustomers` | | Optional. Otherwise about `reviewCount × 10` |
 | `developer` | | Your details (filled in by `new_demo.py`) |
 
-**Section keys:** `hero, highlights, about, services, why, doctor, results, gallery, testimonials, cta, hours, faq, contact`.
+**Section keys:** `hero, highlights, about, services, fleet, why, doctor, results, gallery, testimonials, cta, hours, faq, contact`.
 Each category already has its own default order (see [Design](#9-design-colours-fonts-and-layouts)).
 Example to override: `sections: ["hero", "services", "gallery", "testimonials", "contact"]`.
 
@@ -430,11 +432,11 @@ Each category in `template/js/themes.js` defines:
 
 Examples of the section order: menu first for food, doctor first for clinics, results first for
 coaching, collection photos first for boutiques and jewellers, plans first for gyms, packages
-first for travel.
+first for travel, rides and fares first for taxis.
 
 Categories also belong to a **family preset** that supplies anything the category does not set
 (`food`, `beauty`, `wellness`, `fitness`, `medical`, `education`, `hospitality`, `travel`,
-`industrial`, `trades`, `luxury`, `nightlife`, `general`).
+`taxi`, `industrial`, `trades`, `luxury`, `nightlife`, `general`).
 
 ### Three ways to theme one business (`theme` in data.js)
 

@@ -29,7 +29,7 @@
   var SCHEMA_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   var SERIF_FONTS = ['Fraunces', 'Bodoni Moda', 'Playfair Display', 'Cormorant Garamond', 'Cinzel', 'Lora', 'DM Serif Display', 'Marcellus', 'Merriweather', 'Yeseva One', 'Rozha One'];
   var BTN_RADIUS = { pill: '50rem', rounded: '10px', square: '3px' };
-  var DEFAULT_ORDER = ['hero', 'highlights', 'about', 'services', 'why', 'doctor', 'results',
+  var DEFAULT_ORDER = ['hero', 'highlights', 'about', 'services', 'fleet', 'why', 'doctor', 'results',
     'gallery', 'testimonials', 'cta', 'hours', 'faq', 'contact'];
 
   /* ---------------------------------------------------------------------
@@ -38,22 +38,23 @@
   var I18N = {
     en: {
       nav_about: 'About', nav_gallery: 'Gallery', nav_reviews: 'Reviews', nav_hours: 'Timings',
-      nav_faq: 'FAQ', nav_contact: 'Contact', langSwitch: 'हिंदी', langSwitchLabel: 'Switch to Hindi',
+      nav_faq: 'FAQ', nav_contact: 'Contact', nav_fleet: 'Fleet', langSwitch: 'हिंदी', langSwitchLabel: 'Switch to Hindi',
       callNow: 'Call Now', whatsappUs: 'WhatsApp Us', orderNow: 'Order on WhatsApp', bookSlot: 'Book Your Slot',
       freeTrial: 'Book Free Trial', bookAppointment: 'Book Appointment', bookDemo: 'Book Free Demo Class',
       getQuote: 'Get a Quote', enquireNow: 'Enquire Now', checkAvailability: 'Check Availability',
-      reserveTable: 'Reserve a Table', planTrip: 'Plan My Trip', bookVisit: 'Book a Visit',
+      reserveTable: 'Reserve a Table', planTrip: 'Plan My Trip', bookVisit: 'Book a Visit', bookCab: 'Book a Cab',
       admissionEnquiry: 'Admission Enquiry', siteVisit: 'Book a Site Visit', bookMassage: 'Book a Massage', orderCake: 'Order a Cake', checkPrice: 'Check Price',
       getDirections: 'Get Directions', sendWhatsapp: 'Send on WhatsApp', enquire: 'Enquire',
       kick_about: 'Our story', kick_services: 'What we offer', kick_why: 'Our promise', kick_gallery: 'Take a look',
       kick_reviews: 'Testimonials', kick_hours: 'Visit us', kick_faq: 'Good to know', kick_contact: 'Get in touch',
-      kick_doctor: 'Your doctor', kick_results: 'Proud moments',
+      kick_doctor: 'Your doctor', kick_results: 'Proud moments', kick_fleet: 'Our fleet',
       aboutTitle: 'About Us', since: 'Since {y}', yearsInBusiness: 'Years of service', googleRating: 'Google rating',
       happyCustomers: 'Happy customers', googleReviews: 'Google reviews',
       menu: 'Our Menu', services: 'Our Services', treatments: 'Treatments', collections: 'Our Collections',
       plans: 'Membership Plans', departments: 'Departments', programs: 'Our Programs', courses: 'Courses',
       rooms: 'Rooms & Stays', products: 'Our Products', properties: 'Properties', specials: 'House specials',
-      packages: 'Tour Packages', therapies: 'Massages & Therapies',
+      packages: 'Tour Packages', therapies: 'Massages & Therapies', rides: 'Rides & Fares',
+      fleetTitle: 'Choose Your Vehicle', seats: '{n} seats', bags: '{n} bags', acCar: 'AC', bookThisCar: 'Book this car', vehicleType: 'Vehicle type',
       whyTitle: 'Why Choose Us', doctorTitle: 'Meet the Doctor', resultsTitle: 'Our Results', galleryTitle: 'Gallery',
       reviewsTitle: 'What Our Customers Say', hoursTitle: 'Opening Hours', faqTitle: 'Frequently Asked Questions',
       contactTitle: 'Contact Us', experience: 'Experience', popular: 'Most popular',
@@ -81,22 +82,23 @@
     },
     hi: {
       nav_about: 'हमारे बारे में', nav_gallery: 'गैलरी', nav_reviews: 'समीक्षाएँ', nav_hours: 'समय',
-      nav_faq: 'सवाल-जवाब', nav_contact: 'संपर्क', langSwitch: 'English', langSwitchLabel: 'Switch to English',
+      nav_faq: 'सवाल-जवाब', nav_contact: 'संपर्क', nav_fleet: 'गाड़ियाँ', langSwitch: 'English', langSwitchLabel: 'Switch to English',
       callNow: 'अभी कॉल करें', whatsappUs: 'व्हाट्सऐप करें', orderNow: 'व्हाट्सऐप पर ऑर्डर करें', bookSlot: 'अपना स्लॉट बुक करें',
       freeTrial: 'फ्री ट्रायल बुक करें', bookAppointment: 'अपॉइंटमेंट बुक करें', bookDemo: 'फ्री डेमो क्लास बुक करें',
       getQuote: 'कोटेशन पाएँ', enquireNow: 'अभी पूछें', checkAvailability: 'उपलब्धता जानें',
-      reserveTable: 'टेबल बुक करें', planTrip: 'मेरी यात्रा प्लान करें', bookVisit: 'विज़िट बुक करें',
+      reserveTable: 'टेबल बुक करें', planTrip: 'मेरी यात्रा प्लान करें', bookVisit: 'विज़िट बुक करें', bookCab: 'कैब बुक करें',
       admissionEnquiry: 'एडमिशन की जानकारी', siteVisit: 'साइट विज़िट बुक करें', bookMassage: 'मसाज बुक करें', orderCake: 'केक ऑर्डर करें', checkPrice: 'कीमत जानें',
       getDirections: 'रास्ता देखें', sendWhatsapp: 'व्हाट्सऐप पर भेजें', enquire: 'पूछें',
       kick_about: 'हमारी कहानी', kick_services: 'हम क्या देते हैं', kick_why: 'हमारा वादा', kick_gallery: 'एक झलक',
       kick_reviews: 'ग्राहकों की राय', kick_hours: 'हमसे मिलें', kick_faq: 'जानने योग्य बातें', kick_contact: 'संपर्क में रहें',
-      kick_doctor: 'आपके डॉक्टर', kick_results: 'गर्व के पल',
+      kick_doctor: 'आपके डॉक्टर', kick_results: 'गर्व के पल', kick_fleet: 'हमारी गाड़ियाँ',
       aboutTitle: 'हमारे बारे में', since: '{y} से', yearsInBusiness: 'साल की सेवा', googleRating: 'गूगल रेटिंग',
       happyCustomers: 'खुश ग्राहक', googleReviews: 'गूगल रिव्यू',
       menu: 'हमारा मेन्यू', services: 'हमारी सेवाएँ', treatments: 'ट्रीटमेंट', collections: 'हमारा कलेक्शन',
       plans: 'मेंबरशिप प्लान', departments: 'विभाग', programs: 'हमारे प्रोग्राम', courses: 'कोर्स',
       rooms: 'कमरे', products: 'हमारे प्रोडक्ट', properties: 'प्रॉपर्टी', specials: 'खास पेशकश',
-      packages: 'टूर पैकेज', therapies: 'मसाज और थेरेपी',
+      packages: 'टूर पैकेज', therapies: 'मसाज और थेरेपी', rides: 'सवारी और किराया',
+      fleetTitle: 'अपनी गाड़ी चुनें', seats: '{n} सीट', bags: '{n} बैग', acCar: 'एसी', bookThisCar: 'यह गाड़ी बुक करें', vehicleType: 'गाड़ी का प्रकार',
       whyTitle: 'हमें क्यों चुनें', doctorTitle: 'डॉक्टर से मिलें', resultsTitle: 'हमारे परिणाम', galleryTitle: 'गैलरी',
       reviewsTitle: 'हमारे ग्राहक क्या कहते हैं', hoursTitle: 'खुलने का समय', faqTitle: 'अक्सर पूछे जाने वाले सवाल',
       contactTitle: 'संपर्क करें', experience: 'अनुभव', popular: 'सबसे लोकप्रिय',
@@ -300,6 +302,7 @@
     checkAvailability: 'Hi {name}, I would like to check room availability.',
     reserveTable: 'Hi {name}, I would like to reserve a table.',
     planTrip: 'Hi {name}, I would like help planning a trip.',
+    bookCab: 'Hi {name}, I would like to book a cab. Pickup: , Drop: , Date & time: ',
     bookVisit: 'Hi {name}, I would like to book a visit for some work at my place.',
     admissionEnquiry: 'Hi {name}, I would like to know about admissions.',
     siteVisit: 'Hi {name}, I am looking for a property and would like to book a site visit.',
@@ -798,6 +801,31 @@
       head('kick_services', CAT.services) + body + '</div></section>';
   };
 
+  /* Fleet (taxi): vehicle types with seats and bags. "Book this car" picks it in the enquiry form. */
+  function vehicles() {
+    return (B.vehicles && B.vehicles.length ? B.vehicles : (CAT.defaultVehicles || [])).filter(function (v) { return v.name; });
+  }
+  S.fleet = function () {
+    var list = vehicles();
+    if (!list.length) return '';
+    return '<section id="fleet" class="section fleet"><div class="container">' + head('kick_fleet', 'fleetTitle') +
+      '<div class="row g-4 justify-content-center">' + list.map(function (v, i) {
+        var specs = [];
+        if (v.seats) specs.push('<li><i class="bi bi-people" aria-hidden="true"></i> ' + tr('seats', { n: v.seats }) + '</li>');
+        if (v.bags) specs.push('<li><i class="bi bi-suitcase2" aria-hidden="true"></i> ' + tr('bags', { n: v.bags }) + '</li>');
+        if (v.ac !== false) specs.push('<li><i class="bi bi-snow" aria-hidden="true"></i> ' + tr('acCar') + '</li>');
+        return '<div class="col-sm-6 col-lg-4"' + aos('fade-up', (i % 3) * 80) + '><article class="vehicle-card">' +
+          (v.image ? '<div class="vehicle-media">' + img(v.image, altText(v.name), { fallback: phImg(i), w: 800, h: 500 }) + '</div>'
+            : '<div class="vehicle-icon"><i class="bi ' + esc(v.icon || 'bi-car-front') + '" aria-hidden="true"></i></div>') +
+          '<h3 class="vehicle-name">' + esc(v.name) + '</h3>' +
+          (v.models ? '<p class="vehicle-models">' + esc(v.models) + '</p>' : '') +
+          (specs.length ? '<ul class="vehicle-specs">' + specs.join('') + '</ul>' : '') +
+          '<div class="vehicle-foot">' + (v.rate ? '<span class="price">' + esc(v.rate) + '</span>' : '<span></span>') +
+          '<a class="btn btn-primary btn-sm js-pick-vehicle" href="#contact" data-vehicle="' + esc(v.name) + '">' + tr('bookThisCar') + '</a></div>' +
+          '</article></div>';
+      }).join('') + '</div></div></section>';
+  };
+
   S.why = function () {
     var lines = ['Something our customers mention again and again.', 'A big part of why people in {city} keep coming back.'];
     var fromHighlights = highlights().slice(0, 2).map(function (h, i) {
@@ -928,6 +956,7 @@
 
   S.contact = function () {
     var services = (B.services && B.services.length ? B.services : (CAT.defaultServices || [])).map(function (s) { return s.title; }).filter(Boolean);
+    var fleet = vehicles();
     var rows = [];
     if (B.address) rows.push(['bi-geo-alt-fill', 'address', esc(B.address) + '<br><a href="' + esc(MAPS_LINK) + '" target="_blank" rel="noopener" class="link-arrow small">' + tr('viewOnMap') + ' <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>']);
     if (B.phone) rows.push(['bi-telephone-fill', 'phone', '<a href="' + esc(TEL) + '">' + esc(B.phone) + '</a>']);
@@ -948,6 +977,8 @@
       '<div class="col-sm-6"><label class="form-label" for="ef-phone">' + tr('yourPhone') + '</label><input class="form-control" id="ef-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required></div>' +
       (services.length ? '<div class="col-12"><label class="form-label" for="ef-service">' + tr('interestedIn') + '</label><select class="form-select" id="ef-service" name="service"><option value="" data-i18n="selectOption">' + esc(t('selectOption')) + '</option>' +
         services.map(function (s) { return '<option>' + esc(s) + '</option>'; }).join('') + '</select></div>' : '') +
+      (fleet.length ? '<div class="col-12"><label class="form-label" for="ef-vehicle">' + tr('vehicleType') + '</label><select class="form-select" id="ef-vehicle" name="vehicle"><option value="" data-i18n="selectOption">' + esc(t('selectOption')) + '</option>' +
+        fleet.map(function (v) { return '<option value="' + esc(v.name) + '">' + esc(v.name) + '</option>'; }).join('') + '</select></div>' : '') +
       '<div class="col-12"><label class="form-label" for="ef-msg">' + tr('yourMessage') + '</label><textarea class="form-control" id="ef-msg" name="message" rows="3"></textarea></div>' +
       '<div class="col-12"><div class="form-error text-danger small d-none" role="alert">' + tr('formError') + '</div>' +
       '<button class="btn btn-whatsapp btn-lg w-100" type="submit"><i class="bi bi-whatsapp" aria-hidden="true"></i> ' + tr('sendWhatsapp') + '</button>' +
@@ -961,7 +992,7 @@
    * Page chrome: navbar, footer, floating buttons, lightbox
    * ------------------------------------------------------------------- */
   function navItems(rendered) {
-    var map = [['about', 'nav_about'], ['services', CAT.services], ['gallery', 'nav_gallery'], ['reviews', 'nav_reviews'],
+    var map = [['about', 'nav_about'], ['services', CAT.services], ['fleet', 'nav_fleet'], ['gallery', 'nav_gallery'], ['reviews', 'nav_reviews'],
       ['hours', 'nav_hours'], ['faq', 'nav_faq'], ['contact', 'nav_contact']];
     return map.filter(function (m) { return rendered.indexOf(m[0]) > -1; });
   }
@@ -1164,6 +1195,9 @@
   }
 
   function bindForm() {
+    $(document).on('click', '.js-pick-vehicle', function () {
+      $('#ef-vehicle').val($(this).attr('data-vehicle'));
+    });
     $('#enquiryForm').on('submit', function (e) {
       e.preventDefault();
       var f = this, name = $.trim(f.name.value), phone = $.trim(f.phone.value);
@@ -1174,6 +1208,7 @@
       if (!ok) return;
       var lines = ['Hi ' + B.name + ',', 'Name: ' + name, 'Phone: ' + phone];
       if (f.service && f.service.value) lines.push('Interested in: ' + f.service.value);
+      if (f.vehicle && f.vehicle.value) lines.push('Vehicle: ' + f.vehicle.value);
       if ($.trim(f.message.value)) lines.push('Message: ' + $.trim(f.message.value));
       lines.push('(Sent from your website)');
       var url = waLink(lines.join('\n'));

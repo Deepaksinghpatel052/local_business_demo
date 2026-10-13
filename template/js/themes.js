@@ -43,6 +43,7 @@
     'Space Grotesk': '400;500;600;700',
     'Archivo': '400;500;600;700;800',
     'Saira': '400;500;600;700',
+    'Exo 2': '500;600;700;800',
     'Fraunces': '500;600;700',
     'Bodoni Moda': '400;500;600;700',
     'Bebas Neue': '400',
@@ -411,6 +412,37 @@
         { q: 'Which payment methods do you accept?', a: 'Cash, UPI and all major cards, after the job is done.' }
       ],
       cta: { title: 'Something needs fixing?', text: 'Send a photo of the problem on WhatsApp and book a visit.', button: 'bookVisit' }
+    },
+
+    /* Taxi / cab — cab yellow on a solid hero, black chequered stripes */
+    taxi: {
+      label: 'Taxi & Cabs',
+      palette: { primary: '#FFC20E', accent: '#15171C', background: '#FAFAF7', surface: '#FFFFFF', text: '#15171C' },
+      headingFont: 'Exo 2',
+      bodyFont: 'DM Sans',
+      buttonStyle: 'pill',
+      borderRadius: '16px',
+      alternatives: [
+        { name: 'CNG Green', primary: '#16A34A', accent: '#FACC15', background: '#F5FAF6', surface: '#FFFFFF', text: '#12201A' },
+        { name: 'Night Ride', primary: '#FFC20E', accent: '#38BDF8', background: '#0E0F12', surface: '#191B20', text: '#F4F4F2' }
+      ],
+      highlightIcon: 'bi-taxi-front',
+      taglineDefault: 'Local rides, airport drops and outstation trips from {city}, 24x7',
+      aboutDefault: '{name} is a trusted {category} in {city}. Clean AC cars, polite verified drivers and fixed, honest fares for local rides, railway and airport drops and outstation trips. Call or WhatsApp any time, day or night.',
+      whyChooseUs: [
+        { icon: 'bi-clock', title: 'Available 24x7', text: 'Early-morning trains, late-night flights: we pick up whenever you need.' },
+        { icon: 'bi-currency-rupee', title: 'Fixed, honest fares', text: 'Fare agreed before the trip. No surge pricing, no hidden charges.' },
+        { icon: 'bi-person-check', title: 'Verified drivers', text: 'Experienced, polite drivers who know the roads and the city.' },
+        { icon: 'bi-snow', title: 'Clean AC cars', text: 'Sedans and SUVs, cleaned and checked before every trip.' }
+      ],
+      faqs: [
+        { q: 'How do I book a cab?', a: 'Call us or send your pickup point, drop point, date and time on WhatsApp. We confirm the car, driver and fare right away.' },
+        { q: 'How is the outstation fare calculated?', a: 'Outstation trips are charged per kilometre, with a minimum daily distance, plus tolls, parking and a driver allowance. We tell you the full estimate before you book.' },
+        { q: 'Do you do one-way trips?', a: 'Yes, one-way drops are available on most routes. Ask us for the one-way fare to your city.' },
+        { q: 'Is it safe for women and families travelling alone?', a: 'Yes. Our drivers are verified, and we share the driver\'s name, phone number and car number before pickup.' },
+        { q: 'How can I pay?', a: 'Cash, UPI or bank transfer. For outstation trips a small advance confirms the booking.' }
+      ],
+      cta: { title: 'Need a ride?', text: 'Send your pickup, drop and time on WhatsApp and get your fare in minutes.', button: 'bookCab' }
     },
 
     /* General — neutral modern */
@@ -943,6 +975,24 @@
         { title: 'Painting & Repairs', desc: 'Touch-ups, wall repairs and small renovations.', icon: 'bi-paint-bucket' }
       ]
     },
+    taxi: {
+      preset: 'taxi', label: 'taxi service', schema: 'TaxiService', services: 'rides', style: 'cards', icon: 'bi-taxi-front',
+      hero: 'split', photos: 'taxi',
+      order: ['hero', 'services', 'fleet', 'highlights', 'why', 'testimonials', 'cta', 'faq', 'gallery', 'about', 'hours', 'contact'],
+      defaultVehicles: [
+        { name: 'Hatchback', models: 'Swift, WagonR or similar', seats: 4, bags: 2, icon: 'bi-car-front' },
+        { name: 'Sedan', models: 'Dzire, Etios, Aura or similar', seats: 4, bags: 3, icon: 'bi-car-front' },
+        { name: 'SUV', models: 'Ertiga, Kia Carens or similar', seats: 6, bags: 3, icon: 'bi-car-front-fill' },
+        { name: 'Innova Crysta', models: 'Premium 7-seater for families', seats: 7, bags: 4, icon: 'bi-car-front-fill' },
+        { name: 'Tempo Traveller', models: '12 to 17 seater for groups', seats: 12, bags: 8, icon: 'bi-bus-front' }
+      ],
+      defaultServices: [
+        { title: 'Local City Rides', desc: 'Point-to-point rides and hourly packages within the city.', icon: 'bi-taxi-front' },
+        { title: 'Airport & Railway Transfers', desc: 'On-time pickups and drops for every flight and train.', icon: 'bi-airplane' },
+        { title: 'Outstation Trips', desc: 'One-way and round trips to nearby cities with an experienced driver.', icon: 'bi-signpost-split' },
+        { title: 'Weddings & Events', desc: 'Decorated cars and multiple vehicles for functions.', icon: 'bi-balloon-heart' }
+      ]
+    },
     general: {
       preset: 'general', label: 'local business', schema: 'LocalBusiness', services: 'services', style: 'cards', icon: 'bi-shop',
       hero: 'full', photos: 'general',
@@ -961,6 +1011,9 @@
     [/music|\bdj\b|live band|karaoke/i, 'bi-music-note-beamed'],
     [/screening|sports|match/i, 'bi-tv'],
     [/visa|passport/i, 'bi-passport'],
+    [/outstation|one.?way|highway/i, 'bi-signpost-split'],
+    [/airport/i, 'bi-airplane'],
+    [/railway|\btrains?\b/i, 'bi-train-front'],
     [/flight|ticket|tour|holiday|trip/i, 'bi-airplane'],
     [/cab|taxi|tempo|bus\b/i, 'bi-car-front'],
     [/plumb|leak/i, 'bi-droplet'],
