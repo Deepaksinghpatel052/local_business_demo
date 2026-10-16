@@ -115,13 +115,16 @@ Open in Chrome or Edge:
 
 | What | URL |
 |---|---|
-| List of all demos | http://localhost:8080/ |
+| Devnixplus showcase (grid of all demos) | http://localhost:8080/ |
 | A demo, subdomain style (same as production) | `http://<slug>.localhost:8080/` e.g. http://seasons-salon.localhost:8080/ |
 | A demo, path style (works in any browser) | `http://localhost:8080/<slug>/` e.g. http://localhost:8080/seasons-salon/ |
 | With the pitch panel | http://seasons-salon.localhost:8080/?pitch=1 |
 
 - The `demos/` folder is mounted live: edit any `data.js` or image and just **refresh the browser**.
-  No rebuild is needed. New demos appear immediately.
+  No rebuild is needed.
+- The showcase page at `/` lives in `showcase/` (also mounted live). After adding or changing a demo,
+  refresh its card and thumbnail with `venv/Scripts/python tools/build_showcase.py`
+  (`--only <slug>` for one demo, `--no-shots` to skip screenshots).
 - Rebuild only after changing `Dockerfile` or `docker/nginx.conf`: `docker compose up -d --build`.
 - Stop: `docker compose down`. Logs: `docker compose logs -f`.
 - The container restarts automatically whenever Docker Desktop is running.
@@ -607,6 +610,7 @@ rsync -av demos/seasons-salon/ user@SERVER_IP:/var/www/demos/seasons-salon/
 | `python new_demo.py --update <slug>` | Copy the latest template code + category photos into one demo. `data.js` and `images/` are never touched; launched demos stay launched |
 | `python new_demo.py --update all` | Same for every demo |
 | `python new_demo.py --help` | Show help and the category list |
+| `venv/Scripts/python tools/build_showcase.py` | Rebuild the showcase page list + screenshot thumbnails (`--only <slug>`, `--no-shots`) |
 
 ### Docker
 
@@ -682,7 +686,9 @@ local_business_demo/
 │   │   ├── data.js              # the ONLY file you edit per business
 │   │   └── images/              # this business's photos
 │   └── sample-<category>/       # one sample per category (dummy data) to compare designs
+├── showcase/                    # Devnixplus showcase page served at / (index.html, demos.js, thumbs/)
 ├── tools/theme-preview.html     # logo → colours → `theme` for data.js
+├── tools/build_showcase.py      # refresh showcase/demos.js + thumbnails from demos/
 ├── deploy/nginx-wildcard.conf   # production Nginx config: every subdomain → its folder, SSL
 ├── docker/nginx.conf            # local Docker Nginx config (<slug>.localhost)
 ├── Dockerfile                   # Nginx image with all demos

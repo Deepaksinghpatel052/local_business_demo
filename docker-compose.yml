@@ -8,4 +8,5 @@ services:
       - "${DOCKER_PORT:-8080}:80"
     volumes:
       - ./demos:/usr/share/nginx/demos:ro   # live: edits to demos/ show on refresh
+      - ./showcase:/usr/share/nginx/showcase:ro
     restart: unless-stopped
