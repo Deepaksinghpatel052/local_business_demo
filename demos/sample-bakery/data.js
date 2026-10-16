@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Sugar & Crumb is a family bakery in Sector 17 baking fresh breads, cookies and cakes every single morning. We are best known for our custom birthday cakes, and almost everything on our shelves can be made eggless.",
   established: "2011",
   owner: "Simran Kaur",
-  phone: "+91 90000 10011",
-  whatsapp: "919000010011",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "SCO 45, Sector 17-C, Chandigarh 160017",
   city: "",
@@ -41,5 +41,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

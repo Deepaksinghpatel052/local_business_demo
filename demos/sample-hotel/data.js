@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Seabreeze Residency is a friendly 32-room hotel in Calangute, five minutes' walk from the beach. Clean, air-conditioned rooms, a pool, an all-day restaurant and helpful staff who can arrange scooters, cabs and tours.",
   established: "2012",
   owner: "",
-  phone: "+91 90000 10015",
-  whatsapp: "919000010015",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "Umta Vaddo, Calangute, Goa 403516",
   city: "",
@@ -40,5 +40,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

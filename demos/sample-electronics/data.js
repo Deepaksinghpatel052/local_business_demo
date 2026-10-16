@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Digital Point is a multi-brand electronics store in MP Nagar with the latest phones, laptops, TVs and home appliances. Genuine products with GST bill, no-cost EMI, exchange offers and an in-house repair desk.",
   established: "2008",
   owner: "",
-  phone: "+91 90000 10017",
-  whatsapp: "919000010017",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "Zone 2, MP Nagar, Bhopal, Madhya Pradesh 462011",
   city: "",
@@ -42,5 +42,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

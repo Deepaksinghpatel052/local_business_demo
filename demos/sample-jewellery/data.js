@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Shree Laxmi Jewellers has been Varanasi's trusted family jeweller for three generations. Every gold piece is BIS hallmarked and every diamond certified, with transparent making charges and a fair old-gold exchange.",
   established: "1985",
   owner: "",
-  phone: "+91 90000 10019",
-  whatsapp: "919000010019",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "D-47, Godowlia Chowk, Varanasi, Uttar Pradesh 221001",
   city: "",
@@ -40,5 +40,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

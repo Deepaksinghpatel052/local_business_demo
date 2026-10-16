@@ -12,8 +12,8 @@ window.BUSINESS = {
   about: "What started as a small mithai counter in Kamla Nagar is now a family restaurant loved across Agra. Our halwais still make every sweet by hand each morning in pure desi ghee, and our kitchen serves wholesome North Indian thalis, chaat and South Indian favourites, all 100% vegetarian.",
   established: "1998",
   owner: "Ramesh Sharma",
-  phone: "+91 98765 43210",
-  whatsapp: "919876543210",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "hello@sharmasweets.example",
   address: "Shop 12, Main Market, Kamla Nagar, Agra, UP 282005",
   mapQuery: "Kamla Nagar Main Market Agra",
@@ -97,5 +97,5 @@ window.BUSINESS = {
     borderRadius: "12px"
   },
   sections: [],
-  developer: { name: "Your Name", phone: "+91 90000 00000", whatsapp: "919000000000", portfolio: "https://mydomain.com" }
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

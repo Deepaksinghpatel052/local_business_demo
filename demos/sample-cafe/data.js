@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Brew Theory is a small specialty café on Hill Road. We roast single-origin Indian beans every week, bake our own croissants and banana bread, and keep a few quiet tables with plug points for people who work on the go.",
   established: "2020",
   owner: "",
-  phone: "+91 90000 10010",
-  whatsapp: "919000010010",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "Shop 3, Silver Arch, Hill Road, Bandra West, Mumbai, Maharashtra 400050",
   city: "",
@@ -61,5 +61,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

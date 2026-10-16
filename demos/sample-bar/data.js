@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "The Copper Tap is a neighbourhood bar on 100 Feet Road with six beers on tap, a cocktail list that changes with the seasons and live acoustic sets every weekend. Come for a quiet after-work pint or stay for the late-night crowd.",
   established: "2019",
   owner: "",
-  phone: "+91 90000 10004",
-  whatsapp: "919000010004",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "No. 742, 100 Feet Road, HAL 2nd Stage, Indiranagar, Bengaluru, Karnataka 560038",
   city: "",
@@ -69,5 +69,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

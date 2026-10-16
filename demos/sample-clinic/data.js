@@ -12,8 +12,8 @@ window.BUSINESS = {
   about: "Dr. Mehta's Family Clinic has looked after families in Navrangpura for over 15 years. We treat everyday illnesses, manage long-term conditions like diabetes and blood pressure, and offer preventive health check-ups, always with clear advice and no unnecessary tests.",
   established: "2009",
   owner: "Dr. Anil Mehta",
-  phone: "+91 97250 12345",
-  whatsapp: "919725012345",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "care@mehtaclinic.example",
   address: "2nd Floor, Shivam Complex, CG Road, Navrangpura, Ahmedabad, Gujarat 380009",
   city: "",
@@ -46,5 +46,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},                 // {} = default "medical" preset
   sections: [],
-  developer: { name: "Your Name", phone: "+91 90000 00000", whatsapp: "919000000000", portfolio: "https://mydomain.com" }
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

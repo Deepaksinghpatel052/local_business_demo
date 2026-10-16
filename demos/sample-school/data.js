@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Sunrise Public School is a CBSE-affiliated co-educational school in Gomti Nagar, Lucknow. Smart classrooms, well-equipped science and computer labs and a large playground give every child the space to learn, play and grow.",
   established: "2004",
   owner: "",
-  phone: "+91 90000 10002",
-  whatsapp: "919000010002",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "Sector 6, Vinay Khand, Gomti Nagar, Lucknow, Uttar Pradesh 226010",
   city: "",
@@ -48,5 +48,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

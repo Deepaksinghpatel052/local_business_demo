@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Rangoli is a designer boutique in Navrangpura with handpicked Banarasi and Patola sarees, festive suits, kurtis and Indo-western wear. Our in-house tailors handle blouses, alterations and custom outfits, so everything fits beautifully.",
   established: "2009",
   owner: "Hetal Shah",
-  phone: "+91 90000 10012",
-  whatsapp: "919000010012",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "12, Shivalik Plaza, Navrangpura, Ahmedabad, Gujarat 380009",
   city: "",
@@ -40,5 +40,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

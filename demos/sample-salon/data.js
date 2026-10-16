@@ -15,8 +15,8 @@ window.BUSINESS = {
   about: "Glow & Grace is a friendly unisex salon run by a team of senior stylists trained at leading academies. From a quick haircut to complete bridal makeovers, we use premium professional products and take the time to understand exactly the look you want.",
   established: "2016",
   owner: "Ananya Rao",
-  phone: "+91 99000 11223",
-  whatsapp: "919900011223",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "No. 45, 12th Main Road, HAL 2nd Stage, Indiranagar, Bengaluru, Karnataka 560038",
   mapQuery: "12th Main Road Indiranagar Bengaluru",
@@ -52,5 +52,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: "auto",
   sections: [],
-  developer: { name: "Your Name", phone: "+91 90000 00000", whatsapp: "919000000000", portfolio: "https://mydomain.com" }
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "CarePoint is a 120-bed multispeciality hospital in Dharampeth with a 24x7 emergency department, ICU, modular operation theatres, an in-house lab and pharmacy, and cashless treatment with leading insurers.",
   established: "2006",
   owner: "",
-  phone: "+91 90000 10014",
-  whatsapp: "919000010014",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "45, West High Court Road, Dharampeth, Nagpur, Maharashtra 440010",
   city: "",
@@ -43,5 +43,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

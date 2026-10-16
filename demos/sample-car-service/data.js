@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "AutoCare is a fully equipped car service centre in Vijay Nagar with computerised diagnostics, a paint booth and wheel alignment. Transparent job cards, genuine parts and live updates on WhatsApp.",
   established: "2013",
   owner: "",
-  phone: "+91 90000 10016",
-  whatsapp: "919000010016",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "Plot 7, Scheme 54, Vijay Nagar, Indore, Madhya Pradesh 452010",
   city: "",
@@ -40,5 +40,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

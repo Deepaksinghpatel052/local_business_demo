@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "FixIt Home Services sends skilled, verified technicians for all the small jobs around your home or office in Pune. Book a slot on WhatsApp, get a clear quote on the spot, and pay only when the job is done.",
   established: "2016",
   owner: "Sachin Patil",
-  phone: "+91 90000 10008",
-  whatsapp: "919000010008",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "Shop 5, Siddhi Apartments, Karve Road, Kothrud, Pune, Maharashtra 411038",
   city: "",
@@ -42,5 +42,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

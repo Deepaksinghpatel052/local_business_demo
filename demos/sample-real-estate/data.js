@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Prime Nest Realty helps families and investors buy, sell and rent property in West Hyderabad. Every listing is verified, and we take care of site visits, negotiation, home loans and registration so the whole process stays simple.",
   established: "2014",
   owner: "Srinivas Reddy",
-  phone: "+91 90000 10009",
-  whatsapp: "919000010009",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "Plot 88, DLF Road, Gachibowli, Hyderabad, Telangana 500032",
   city: "",
@@ -42,5 +42,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

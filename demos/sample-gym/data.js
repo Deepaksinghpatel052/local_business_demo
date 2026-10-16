@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Iron Core Fitness is a 6,000 sq ft gym in Andheri West with imported equipment, a dedicated CrossFit zone and certified trainers. Whether you are starting out or chasing a new PR, we build a plan around your goals.",
   established: "2017",
   owner: "Rohan Desai",
-  phone: "+91 90000 10007",
-  whatsapp: "919000010007",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "2nd Floor, Lokhandwala Complex, Andheri West, Mumbai, Maharashtra 400053",
   city: "",
@@ -39,5 +39,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Sharma Cabs is a family-run taxi service in Indore with a fleet of 25 AC sedans and SUVs. We handle airport and railway transfers, local hourly packages and outstation trips to Ujjain, Omkareshwar, Mandu and beyond, with fixed fares agreed upfront.",
   established: "2012",
   owner: "Rakesh Sharma",
-  phone: "+91 90000 10024",
-  whatsapp: "919000010024",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "Shop 7, Vijay Nagar Square, AB Road, Indore, Madhya Pradesh 452010",
   city: "",
@@ -48,5 +48,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

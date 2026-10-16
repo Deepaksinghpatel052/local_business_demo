@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "SmileCraft is a modern dental clinic in Anna Nagar with digital X-rays, rotary root canal equipment and a fully sterilised setup. We explain every treatment and its cost before we begin.",
   established: "2015",
   owner: "",
-  phone: "+91 90000 10013",
-  whatsapp: "919000010013",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "AE-12, 2nd Avenue, Anna Nagar, Chennai, Tamil Nadu 600040",
   city: "",
@@ -43,5 +43,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

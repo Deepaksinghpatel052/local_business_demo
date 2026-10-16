@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Apex Classes is a focused coaching institute in Kota run by IIT and AIIMS alumni. Batches of 30 or fewer, weekly tests and personal doubt sessions make sure no student is left behind.",
   established: "2012",
   owner: "R. K. Sharma",
-  phone: "+91 90000 10003",
-  whatsapp: "919000010003",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "Plot 14, Indra Vihar, Talwandi, Kota, Rajasthan 324005",
   city: "",
@@ -46,5 +46,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

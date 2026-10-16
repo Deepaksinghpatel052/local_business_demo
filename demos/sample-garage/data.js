@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Singh Auto Works is a family-run multi-brand car garage in Rajouri Garden. From a quick battery change to a full engine overhaul, our mechanics show you the problem, give you a fair estimate and fix it right the first time.",
   established: "1998",
   owner: "Harpreet Singh",
-  phone: "+91 90000 10005",
-  whatsapp: "919000010005",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "Shop 12, J Block Market, Rajouri Garden, New Delhi, Delhi 110027",
   city: "",
@@ -42,5 +42,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

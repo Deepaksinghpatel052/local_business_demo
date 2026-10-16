@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Patel Hardware has supplied homeowners and contractors in Adajan for over 30 years. Tools, sanitary ware, pipes, wires, fittings and computerised paint mixing, at contractor rates with same-day delivery to site.",
   established: "1992",
   owner: "Mukesh Patel",
-  phone: "+91 90000 10018",
-  whatsapp: "919000010018",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "Shop 4-6, Star Bazaar Road, Adajan, Surat, Gujarat 395009",
   city: "",
@@ -42,5 +42,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

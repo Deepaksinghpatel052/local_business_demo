@@ -12,7 +12,7 @@ All photos are from Unsplash (https://unsplash.com/license): free to use, no att
 - beauty/2.jpg: https://images.unsplash.com/photo-1522337360788-8b13dee7a37e
 - beauty/3.jpg: https://images.unsplash.com/photo-1570172619644-dfd03ed5d881
 - beauty/4.jpg: https://images.unsplash.com/photo-1544161515-4ab6ce6db874
-- fitness/hero.jpg: https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f
+- fitness/hero.jpg: https://images.unsplash.com/photo-1623874514711-0f321325f318
 - fitness/1.jpg: https://images.unsplash.com/photo-1517836357463-d25dfeac3438
 - fitness/2.jpg: https://images.unsplash.com/photo-1534438327276-14e5300c3a48
 - fitness/3.jpg: https://images.unsplash.com/photo-1540497077202-7c8a3999166f

@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Wanderlust Holidays is a Jaipur-based tour and travel agency planning trips across Rajasthan, India and abroad. We handle tickets, hotels, sightseeing and cabs, and stay on call throughout your trip.",
   established: "2010",
   owner: "Nikhil Jain",
-  phone: "+91 90000 10006",
-  whatsapp: "919000010006",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "Office 204, Ganpati Plaza, MI Road, Jaipur, Rajasthan 302001",
   city: "",
@@ -43,5 +43,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };

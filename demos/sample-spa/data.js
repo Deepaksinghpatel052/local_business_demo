@@ -11,8 +11,8 @@ window.BUSINESS = {
   about: "Tranquil Leaf is a calm, beautifully kept spa in Koramangala. Our certified therapists blend traditional Ayurvedic massage with Swedish, Thai and deep tissue techniques, using warm natural oils, private rooms and fresh linen for every guest.",
   established: "2018",
   owner: "Meera Nair",
-  phone: "+91 90000 10001",
-  whatsapp: "919000010001",
+  phone: "+91 91835 59191",
+  whatsapp: "919183559191",
   email: "",
   address: "No. 21, 5th Block, 80 Feet Road, Koramangala, Bengaluru, Karnataka 560095",
   city: "",
@@ -45,5 +45,5 @@ window.BUSINESS = {
   languages: ["en", "hi"],
   theme: {},
   sections: [],
-  developer: {"name": "Your Name", "phone": "+91 90000 00000", "whatsapp": "919000000000", "portfolio": "https://mydomain.com"}
+  developer: { name: "Devnixplus", phone: "+91 91835 59191", whatsapp: "919183559191", portfolio: "https://www.devnixplus.com" }
 };
