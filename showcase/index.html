@@ -244,14 +244,12 @@
       var state = { q: '', filter: 'all' };
       var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
 
-      // Local (Docker / localhost): /<slug>/   Opened as a file: ../demos/<slug>/   Live domain: https://<slug>.<domain>/
+      // Every demo opens as a path on this same site: /<slug>/   (opened as a file: ../demos/<slug>/)
       function demoUrl(slug) {
-        var host = location.hostname;
         if (location.protocol === 'file:') return '../demos/' + slug + '/index.html';
-        if (host === 'localhost' || host === '127.0.0.1' || /^\d+\.\d+\.\d+\.\d+$/.test(host)) return '/' + slug + '/';
-        return location.protocol + '//' + slug + '.' + host.replace(/^www\./, '') + '/';
+        return '/' + slug + '/';
       }
-      function prettyUrl(slug) { return demoUrl(slug).replace(/^https?:\/\//, '').replace(/^\//, location.host + '/'); }
+      function prettyUrl(slug) { return location.host + '/' + slug + '/'; }
 
       var clients = demos.filter(function (d) { return !d.sample; });
       var samples = demos.filter(function (d) { return d.sample; });
