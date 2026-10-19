@@ -13,6 +13,18 @@ window.DEMOS = [
     "thumb": "thumbs/primeride-taxi-gwalior.jpg"
   },
   {
+    "slug": "relief-physiotherapy-gwalior",
+    "name": "Relief Physiotherapy Clinic & Neuro Spine Care",
+    "category": "clinic",
+    "label": "Clinic",
+    "city": "Gwalior",
+    "tagline": "Physiotherapy and neuro spine care in Lashkar, Gwalior, rated 4.9★ by 234 patients",
+    "rating": 4.9,
+    "reviews": 234,
+    "sample": false,
+    "thumb": "thumbs/relief-physiotherapy-gwalior.jpg"
+  },
+  {
     "slug": "sample-bakery",
     "name": "Sugar & Crumb Bakery",
     "category": "bakery",

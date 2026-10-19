@@ -388,7 +388,8 @@ Tour Packages, Rides & Fares, Our Products, Properties*.
 | `testimonials` | 2-4 of their best Google reviews | `{ name, text, rating }`. Empty = section shows the rating summary only |
 | `faqs` | Q&A, common review questions | `{ q, a }`. Empty = category FAQs |
 | `social` | Links on the profile | `instagram`, `facebook`, `youtube` (also `twitter`, `linkedin`) |
-| `doctor` | (clinic, dentist, hospital) | `{ name, qualification, experience, photo, about, specialities: [] }`: "Meet the Doctor" card |
+| `doctor` | (clinic, dentist, hospital) | `{ name, title, qualification, experience, photo, about, specialities: [] }`: "Meet the Doctor" card. `name` and `title` also show in the hero |
+| `logoWidth` | | Optional. Show a wide logo (that already contains the name) at this width in px, e.g. `118`, instead of icon + business name |
 | `vehicles` | (taxi) Photos, reviews, ask the owner | `{ name, models, seats, bags, rate, image, icon, ac }`: "Choose Your Vehicle" cards and the form's "Vehicle type" dropdown. Empty = Hatchback, Sedan, SUV, Innova Crysta, Tempo Traveller |
 | `results` | (school, coaching) toppers, pass rates | `[{ value: "95%", label: "Board pass rate" }]` |
 | `languages` | | `["en", "hi"]` shows the हिंदी toggle. `["en"]` hides it |

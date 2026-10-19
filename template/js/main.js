@@ -493,7 +493,7 @@
       el.src = gradientSvg();
     }
   };
-  window.LBD.logoError = function (el) { $(el).replaceWith(textLogo()); };
+  window.LBD.logoError = function (el) { $(el).replaceWith(textLogo() + ($(el).attr('data-name') ? '<span class="brand-name">' + esc(B.name) + '</span>' : '')); };
 
   function img(u, alt, o) {
     o = o || {};
@@ -641,10 +641,16 @@
   }
   function brandMark() {
     var logo = srcOf(B.logo);
+    var name = '<span class="brand-name">' + esc(B.name) + '</span>';
+    // logoWidth (data.js): a wide logo that already shows the name, so the text name is left out
+    var wide = logo && parseInt(B.logoWidth, 10) > 0 ? parseInt(B.logoWidth, 10) : 0;
+    if (wide) {
+      return '<img class="brand-logo brand-logo-wide" src="' + esc(logo) + '" alt="' + esc(B.name) + '" style="width:' + wide + 'px" data-name="1" onerror="LBD.logoError(this)">';
+    }
     var mark = logo
       ? '<img class="brand-logo" src="' + esc(logo) + '" alt="' + esc(B.name + ' logo') + '" width="44" height="44" onerror="LBD.logoError(this)">'
       : textLogo();
-    return mark + '<span class="brand-name">' + esc(B.name) + '</span>';
+    return mark + name;
   }
   function btn(href, icon, key, cls, extra) {
     var ext = /^https?:/.test(href) ? ' target="_blank" rel="noopener"' : '';
@@ -671,6 +677,13 @@
    * ------------------------------------------------------------------- */
   var S = {};
 
+  // Clinics, dentists, hospitals: the doctor's name (and optional title) under the business name
+  function heroDoctor() {
+    var d = PRESET_KEY === 'medical' && B.doctor;
+    if (!d || !d.name) return '';
+    return '<p class="hero-doctor"><i class="bi bi-person-badge" aria-hidden="true"></i> <strong>' + esc(d.name) + '</strong>' +
+      (d.title ? '<span class="hero-doctor-title">' + esc(d.title) + '</span>' : '') + '</p>';
+  }
   S.hero = function () {
     var rating = B.rating ? (B.reviewCount
       ? tr('ratingFrom', { r: B.rating, n: Number(B.reviewCount).toLocaleString('en-IN') })
@@ -681,6 +694,7 @@
       '<div class="container hero-content">' +
       '<span class="hero-kicker"><i class="bi ' + CAT.icon + '" aria-hidden="true"></i> ' + esc(CAT_TITLE) + (CITY ? ' · ' + esc(CITY) : '') + '</span>' +
       '<h1 class="hero-title">' + esc(B.name) + '</h1>' +
+      heroDoctor() +
       '<p class="hero-tagline">' + esc(B.tagline || fill(PRESET.taglineDefault, TOKENS)) + '</p>' +
       '<div class="hero-meta">' +
       (rating ? '<a class="rating-badge" href="' + esc(MAPS_LINK) + '" target="_blank" rel="noopener">' +
