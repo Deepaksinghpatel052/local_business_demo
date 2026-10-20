@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Link expired{% endblock %}
+{% block main %}
+<div class="container py-5"><div class="auth-card mx-auto text-center">
+  <h1 class="h4">This download link has expired</h1>
+  <p class="text-muted">Download links work for 10 minutes. Get a fresh one from your dashboard (re-downloads are free).</p>
+  <a class="btn btn-brand" href="{% url 'dashboard' %}">Go to my websites</a>
+</div></div>
+{% endblock %}

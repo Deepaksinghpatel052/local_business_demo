@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load ui %}
+{% block title %}My account{% endblock %}
+{% block main %}
+<div class="container py-4 py-md-5">
+  <div class="row g-4 justify-content-center">
+    <div class="col-lg-6">
+      <div class="panel">
+        <h1 class="h4">My account</h1>
+        <dl class="row small mb-4">
+          <dt class="col-4">Email</dt><dd class="col-8">{{ user.email }}</dd>
+          <dt class="col-4">Mobile</dt><dd class="col-8">{{ user.mobile|mobile }} {% if user.mobile_verified %}<span class="badge text-bg-success">verified</span>{% endif %}</dd>
+          <dt class="col-4">Member since</dt><dd class="col-8">{{ user.date_joined|date:"d M Y" }}</dd>
+        </dl>
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {% for field in form %}{% include "includes/field.html" %}{% endfor %}
+          <button class="btn btn-brand" type="submit">Save</button>
+        </form>
+        <hr>
+        <p class="small mb-1">To change your mobile number, <a href="{% url 'onboarding' %}?change=1" onclick="return confirm('You will need to verify the new number with a code.')">verify a new number</a>.</p>
+        <p class="small mb-0"><a href="{% url 'account_change_password' %}">Change password</a> · <a href="{% url 'account_email' %}">Email settings</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

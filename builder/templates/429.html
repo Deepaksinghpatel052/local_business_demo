@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Please slow down{% endblock %}
+{% block main %}
+<div class="container py-5 text-center">
+  <h1 class="h3">Please wait a moment</h1>
+  <p class="text-muted">{{ message }}</p>
+  <a class="btn btn-brand" href="javascript:history.back()">Go back</a>
+</div>
+{% endblock %}

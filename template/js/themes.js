@@ -50,6 +50,9 @@
     'Yeseva One': '400',
     'Rozha One': '400',
     'Lato': '400;700',
+    'Baloo 2': '500;600;700;800',
+    'IBM Plex Sans': '400;500;600;700',
+    'Source Sans 3': '400;600;700',
     'Noto Sans Devanagari': '400;600;700'
   };
 
@@ -993,6 +996,79 @@
         { title: 'Weddings & Events', desc: 'Decorated cars and multiple vehicles for functions.', icon: 'bi-balloon-heart' }
       ]
     },
+    'pet-shop': {
+      preset: 'general', label: 'pet shop', schema: 'PetStore', services: 'petcare', style: 'cards', icon: 'bi-house-heart',
+      hero: 'split', photos: 'pets',
+      // pet parents look for what's in stock and grooming first, then trust (delivery, vet-approved), then happy pets
+      order: ['hero', 'highlights', 'services', 'why', 'gallery', 'testimonials', 'about', 'hours', 'cta', 'faq', 'contact'],
+      look: {
+        palette: { primary: '#E4572E', accent: '#17A398', background: '#FFF8F1', surface: '#FFFFFF', text: '#2B1E1A' },
+        headingFont: 'Baloo 2', bodyFont: 'Mulish', buttonStyle: 'pill', borderRadius: '20px',
+        alternatives: [
+          { name: 'Ocean Teal', primary: '#0F8B8D', accent: '#F4A259', background: '#F3FAF9', surface: '#FFFFFF', text: '#14302F' },
+          { name: 'Berry Purple', primary: '#7B3FA0', accent: '#F6B93B', background: '#FBF7FD', surface: '#FFFFFF', text: '#26172F' }
+        ],
+        highlightIcon: 'bi-house-heart',
+        taglineDefault: 'Food, toys, grooming and everything your pet loves in {city}',
+        aboutDefault: '{name} is a friendly {category} in {city}, run by pet lovers. We stock trusted food brands, treats, toys and accessories for dogs, cats, birds and fish, and offer gentle grooming. Not sure what suits your pet? Ask us, we are happy to help.',
+        whyChooseUs: [
+          { icon: 'bi-patch-check', title: 'Genuine brands', text: 'Original food and medicines, always fresh and within expiry.' },
+          { icon: 'bi-truck', title: 'Home delivery', text: 'Order on WhatsApp and we deliver food and supplies to your door.' },
+          { icon: 'bi-scissors', title: 'Gentle grooming', text: 'Bath, haircut and nail trim by patient, trained groomers.' },
+          { icon: 'bi-chat-heart', title: 'Honest advice', text: 'The right food and care tips for your pet\'s age and breed.' }
+        ],
+        faqs: [
+          { q: 'Do you deliver pet food at home?', a: 'Yes. Send your order on WhatsApp and we deliver across {city}, usually the same day.' },
+          { q: 'Do I need an appointment for grooming?', a: 'Please book a slot on WhatsApp so your pet does not have to wait.' },
+          { q: 'Which food brands do you stock?', a: 'Popular brands like Pedigree, Royal Canin, Drools, Whiskas and more. Ask us if you need something specific.' },
+          { q: 'Do you have products for cats, birds and fish?', a: 'Yes, we stock food, litter, cages, aquariums and accessories for cats, birds and fish too.' }
+        ],
+        cta: { title: 'Running low on pet food?', text: 'Send your order on WhatsApp and we will deliver it to your door.', button: 'orderPet' }
+      },
+      defaultServices: [
+        { title: 'Pet Food & Treats', desc: 'Dry food, wet food and treats from trusted brands.', icon: 'bi-basket' },
+        { title: 'Grooming', desc: 'Bath, haircut, nail trim and ear cleaning.', icon: 'bi-scissors' },
+        { title: 'Toys & Accessories', desc: 'Beds, collars, leashes, bowls and toys.', icon: 'bi-balloon-heart' },
+        { title: 'Birds & Aquarium', desc: 'Cages, aquariums, fish food and supplies.', icon: 'bi-water' }
+      ]
+    },
+    insurance: {
+      preset: 'general', label: 'insurance & investment advisor', schema: 'FinancialService', services: 'financial', style: 'cards', icon: 'bi-shield-check',
+      hero: 'split', photos: 'finance',
+      // people buy protection and investments from someone they trust: plans first, then why trust me, my story, reviews and answers
+      order: ['hero', 'highlights', 'services', 'why', 'about', 'testimonials', 'faq', 'cta', 'gallery', 'hours', 'contact'],
+      look: {
+        palette: { primary: '#1D3557', accent: '#2A9D8F', background: '#F5F8FA', surface: '#FFFFFF', text: '#14213D' },
+        headingFont: 'IBM Plex Sans', bodyFont: 'Source Sans 3', buttonStyle: 'rounded', borderRadius: '8px',
+        alternatives: [
+          { name: 'Growth Green', primary: '#1B6B4A', accent: '#E9A23B', background: '#F4F8F5', surface: '#FFFFFF', text: '#14261D' },
+          { name: 'Royal Blue', primary: '#2547A8', accent: '#F28C28', background: '#F5F7FC', surface: '#FFFFFF', text: '#151E38' }
+        ],
+        highlightIcon: 'bi-shield-check',
+        taglineDefault: 'Life, health and motor insurance plus mutual fund SIPs, with honest advice in {city}',
+        aboutDefault: '{name} helps families in {city} protect what matters and grow their savings. From term and health insurance to mutual fund SIPs for your child or retirement, you get plans compared side by side, explained in simple words, and help with every claim.',
+        whyChooseUs: [
+          { icon: 'bi-patch-check', title: 'Licensed and registered', text: 'IRDAI licensed agent and AMFI registered mutual fund distributor.' },
+          { icon: 'bi-list-check', title: 'Plans compared for you', text: 'Several companies side by side, so you pick what fits your family.' },
+          { icon: 'bi-file-earmark-check', title: 'Claim support', text: 'We stay with you through every claim, from papers to settlement.' },
+          { icon: 'bi-graph-up-arrow', title: 'Goal-based investing', text: 'SIPs planned around your goals: education, home or retirement.' }
+        ],
+        faqs: [
+          { q: 'Is the first consultation free?', a: 'Yes. Share your age, family and goals on WhatsApp and we suggest suitable plans at no cost.' },
+          { q: 'How much term insurance do I need?', a: 'A common rule is 10 to 15 times your yearly income, plus any loans. We work out the right amount with you.' },
+          { q: 'Can I start a SIP with a small amount?', a: 'Yes, many mutual funds allow SIPs from 500 rupees a month. You can increase it later.' },
+          { q: 'Will you help when I need to make a claim?', a: 'Yes. We help you with the documents and follow up with the company until the claim is settled.' }
+        ],
+        cta: { title: 'Not sure which plan is right for you?', text: 'Get free, no-obligation advice on WhatsApp in a few minutes.', button: 'freeAdvice' },
+        disclaimerDefault: 'Insurance is the subject matter of solicitation. For more details on benefits, exclusions, limitations and terms, read the sales brochure carefully before concluding a sale. Mutual fund investments are subject to market risks; read all scheme related documents carefully. Past performance is not an indicator of future returns.'
+      },
+      defaultServices: [
+        { title: 'Term Life Insurance', desc: 'High cover at low cost to protect your family.', icon: 'bi-shield-check' },
+        { title: 'Health Insurance', desc: 'Cashless hospital cover for you and your family.', icon: 'bi-heart-pulse' },
+        { title: 'Mutual Fund SIP', desc: 'Grow your savings every month for your goals.', icon: 'bi-graph-up-arrow' },
+        { title: 'Motor Insurance', desc: 'Car and two-wheeler insurance with quick renewals.', icon: 'bi-car-front' }
+      ]
+    },
     general: {
       preset: 'general', label: 'local business', schema: 'LocalBusiness', services: 'services', style: 'cards', icon: 'bi-shop',
       hero: 'full', photos: 'general',
@@ -1007,6 +1083,11 @@
 
   /* Keyword → icon map for highlight badges ("Free Parking" → bi-p-circle). */
   var HIGHLIGHT_ICONS = [
+    [/\birdai\b|\bamfi\b|\barn\b/i, 'bi-patch-check'],
+    [/claim/i, 'bi-file-earmark-check'],
+    [/insur|policy|policies/i, 'bi-shield-check'],
+    [/mutual fund|\bsip\b|invest|wealth/i, 'bi-graph-up-arrow'],
+    [/\btax\b/i, 'bi-receipt'],
     [/cocktail|beer|bar\b|drinks|brew/i, 'bi-cup-straw'],
     [/music|\bdj\b|live band|karaoke/i, 'bi-music-note-beamed'],
     [/screening|sports|match/i, 'bi-tv'],
@@ -1020,6 +1101,10 @@
     [/electric|wiring/i, 'bi-lightning'],
     [/carpent|furniture/i, 'bi-hammer'],
     [/towing|breakdown|roadside/i, 'bi-cone-striped'],
+    [/groom/i, 'bi-scissors'],
+    [/aquarium|\bfish/i, 'bi-water'],
+    [/\bvet\b|vaccin/i, 'bi-heart-pulse'],
+    [/\bpets?\b|\bdogs?\b|\bcats?\b|pupp|kitten/i, 'bi-house-heart'],
     [/veg|vegetarian/i, 'bi-flower3'],
     [/deliver/i, 'bi-truck'],
     [/park/i, 'bi-p-circle'],

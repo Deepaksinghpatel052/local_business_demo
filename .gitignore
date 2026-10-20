@@ -11,3 +11,8 @@ Thumbs.db
 
 # Secrets
 .env
+
+# Django site builder (builder/): local database, uploads, published sites, logs
+builder/db.sqlite3
+var/
+*.pyc

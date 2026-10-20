@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Refund Policy{% endblock %}
+{% block main %}
+<div class="container py-4 py-md-5 prose">
+  <h1 class="h2">Refund Policy</h1>
+  <p class="text-muted small">Last updated: {% now "d F Y" %}</p>
+  <p class="legal-note"><strong>Note:</strong> placeholder text; have it reviewed by a lawyer or CA.</p>
+  <h2>If we can't verify your business</h2>
+  <p>You get a <strong>full refund</strong> automatically, to the same payment method. Refunds usually reach you in 5-7 working days (Razorpay and bank timelines).</p>
+  <h2>Hosting</h2>
+  <p>Once your website is live, the first-year fee ({{ prices.hosting_new }}) covers setup work and is not refundable. Renewals ({{ prices.hosting_renewal }}/year) can be refunded within 7 days of payment if you ask us before the new hosting year starts.</p>
+  <h2>Download</h2>
+  <p>Downloads ({{ prices.download }}) can be refunded if the download never worked and our team could not fix it within 7 days.</p>
+  <h2>Websites removed for breaking the rules</h2>
+  <p>No refund when a website is suspended for deliberately breaking our <a href="{% url 'terms' %}">Terms</a> (for example a fake or impersonating business).</p>
+  <h2>How to ask</h2>
+  <p>Email {{ ps.support_email }} or WhatsApp us with your invoice number.</p>
+</div>
+{% endblock %}

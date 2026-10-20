@@ -1,0 +1,29 @@
+{% extends "adminpanel/base.html" %}
+{% block title %}Templates{% endblock %}
+{% block manage %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="h3 mb-0">Templates</h1>
+  <form method="post" data-confirm="Re-import every demos/sample-*/data.js? Existing templates are updated.">{% csrf_token %}<input type="hidden" name="action" value="import"><button class="btn btn-outline-secondary btn-sm" type="submit"><i class="bi bi-arrow-repeat"></i> Re-import from demos/sample-*</button></form>
+</div>
+<form method="post">
+  {% csrf_token %}<input type="hidden" name="action" value="save">
+  <div class="table-app table-responsive">
+    <table class="table">
+      <thead><tr><th>Active</th><th>Order</th><th>Design</th><th>Category</th><th>Sample</th><th>Projects</th></tr></thead>
+      <tbody>
+      {% for t in templates %}
+        <tr>
+          <td><input class="form-check-input" type="checkbox" name="active-{{ t.pk }}"{% if t.is_active %} checked{% endif %} aria-label="Active"></td>
+          <td style="width:90px"><input class="form-control form-control-sm" type="number" min="0" name="order-{{ t.pk }}" value="{{ t.sort_order }}" aria-label="Order"></td>
+          <td class="fw-semibold">{{ t.name }}<div class="small text-muted">{{ t.slug }}</div></td>
+          <td class="small">{{ t.category_info.title }}</td>
+          <td class="small"><a href="{{ t.live_sample_url }}" target="_blank" rel="noopener">{{ t.sample_name }}</a></td>
+          <td>{{ t.n }}</td>
+        </tr>
+      {% empty %}<tr><td colspan="6" class="text-center text-muted py-4">No templates. Click "Re-import".</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <button class="btn btn-brand mt-3" type="submit">Save</button>
+</form>
+{% endblock %}

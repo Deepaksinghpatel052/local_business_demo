@@ -63,7 +63,9 @@ CATEGORIES = {
     "handyman": ("trades", "Handyman Service"),
     "taxi": ("taxi", "Taxi Service"),
     "jewellery": ("luxury", "Jewellery Store"),
-    "real-estate": ("general", "Real Estate Agency"), "general": ("general", "Local Business"),
+    "real-estate": ("general", "Real Estate Agency"), "pet-shop": ("general", "Pet Shop"),
+    "insurance": ("general", "Insurance & Investment Advisor"),
+    "general": ("general", "Local Business"),
 }
 
 # category -> placeholder photo folder in template/placeholders/. Keep in sync with `photos` in themes.js
@@ -73,7 +75,8 @@ PHOTOS = {
     "clinic": "medical", "dentist": "dentist", "hospital": "hospital",
     "school": "education", "coaching": "coaching", "hotel": "hospitality", "travel": "travel",
     "car-service": "industrial", "garage": "garage", "electronics": "electronics", "hardware": "hardware",
-    "handyman": "trades", "taxi": "taxi", "jewellery": "luxury", "real-estate": "real-estate", "general": "general",
+    "handyman": "trades", "taxi": "taxi", "jewellery": "luxury", "real-estate": "real-estate", "pet-shop": "pets", "insurance": "finance",
+    "general": "general",
 }
 
 META_START, META_END = "<!-- META:START", "<!-- META:END -->"
@@ -167,7 +170,7 @@ def build_data_js(name, slug, category):
 window.BUSINESS = {{
   name: {js(name)},
   slug: {js(slug)},
-  category: {js(category)},   // restaurant | cafe | bakery | salon | spa | gym | clinic | dentist | hospital | school | coaching | hotel | car-service | garage | electronics | hardware | boutique | jewellery | real-estate | bar | travel | taxi | handyman | general
+  category: {js(category)},   // restaurant | cafe | bakery | salon | spa | gym | clinic | dentist | hospital | school | coaching | hotel | car-service | garage | electronics | hardware | boutique | jewellery | real-estate | bar | travel | taxi | handyman | pet-shop | insurance | general
   tagline: "{T}",
   about: "{T}",
   established: "{T}",        // year, e.g. "1998"

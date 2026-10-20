@@ -1,4 +1,6 @@
-# The host port comes from DOCKER_PORT in .env (Docker Compose reads .env automatically).
+# Host ports come from .env (Docker Compose reads .env automatically):
+#   DOCKER_PORT      static demos + showcase (Nginx)        default 8080
+#   APP_DOCKER_PORT  Django site builder (builder/)         default 8090
 services:
   demos:
     build: .
@@ -10,3 +12,32 @@ services:
       - ./demos:/usr/share/nginx/demos:ro   # live: edits to demos/ show on refresh
       - ./showcase:/usr/share/nginx/showcase:ro
     restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.app
+    image: local-business-builder
+    container_name: local-business-builder
+    ports:
+      - "${APP_DOCKER_PORT:-8090}:8000"
+    volumes:
+      - .:/app                              # live code: edits show after a refresh
+      - builder-data:/data                  # database, uploads, published sites
+    environment:
+      # these win over the values in .env (local Docker only: SQLite, simulator, MockSMS)
+      DEBUG: "True"
+      ALLOWED_HOSTS: "localhost,127.0.0.1"
+      APP_URL: "http://localhost:${APP_DOCKER_PORT:-8090}"
+      DEMO_URL_STYLE: "path"
+      DEMO_BASE_URL: "http://localhost:${APP_DOCKER_PORT:-8090}/sites"
+      DATABASE_URL: "sqlite:////data/db.sqlite3"
+      SITES_ROOT: "/data/sites"
+      MEDIA_ROOT: "/data/media"
+      LOG_DIR: "/data/logs"
+      SERVE_SITES: "True"
+      DEMO_PAYMENTS: "True"
+    restart: unless-stopped
+
+volumes:
+  builder-data:

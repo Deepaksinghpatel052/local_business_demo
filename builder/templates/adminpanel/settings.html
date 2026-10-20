@@ -1,0 +1,13 @@
+{% extends "adminpanel/base.html" %}
+{% block title %}Platform settings{% endblock %}
+{% block manage %}
+<h1 class="h3 mb-3">Platform settings</h1>
+<form class="panel" method="post" style="max-width:760px">
+  {% csrf_token %}
+  {% include "includes/form_errors.html" %}
+  <div class="row">
+    {% for field in form %}<div class="{% if field.name == 'sensitive_words' %}col-12{% else %}col-md-6{% endif %}">{% include "includes/field.html" %}</div>{% endfor %}
+  </div>
+  <button class="btn btn-brand" type="submit">Save settings</button>
+</form>
+{% endblock %}

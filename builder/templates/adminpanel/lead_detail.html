@@ -1,0 +1,70 @@
+{% extends "adminpanel/base.html" %}
+{% load ui %}
+{% block title %}{{ lead }}{% endblock %}
+{% block manage %}
+<a class="small" href="{% url 'manage_leads' %}"><i class="bi bi-arrow-left"></i> Leads</a>
+<div class="d-flex flex-wrap align-items-center gap-2 mt-2 mb-3">
+  <h1 class="h3 mb-0">{{ lead.name|default:lead.email }}</h1>
+  <span class="badge text-bg-light border">{{ lead.stage }}</span>
+  {% if not lead.contact_consent %}<span class="badge text-bg-danger">No contact consent</span>{% endif %}
+  {% if lead.mobile and lead.contact_consent %}
+    <a class="btn btn-sm btn-light ms-auto" href="{{ lead.call_link }}"><i class="bi bi-telephone"></i> Call</a>
+    <a class="btn btn-sm btn-wa" href="{{ lead.wa_link }}" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i> WhatsApp</a>
+  {% endif %}
+</div>
+<div class="row g-3">
+  <div class="col-lg-5">
+    <div class="panel mb-3">
+      <dl class="row small mb-0">
+        <dt class="col-4">Email</dt><dd class="col-8">{{ lead.email }}</dd>
+        <dt class="col-4">Mobile</dt><dd class="col-8">{{ lead.mobile_display }} {% if lead.mobile_verified %}<span class="badge text-bg-success">verified</span>{% endif %}</dd>
+        <dt class="col-4">WhatsApp</dt><dd class="col-8">{{ lead.whatsapp }}</dd>
+        <dt class="col-4">City</dt><dd class="col-8">{{ lead.city }}</dd>
+        <dt class="col-4">Signed up</dt><dd class="col-8">{{ lead.date_joined|date:"d M Y H:i" }} ({{ lead.signup_source|default:"-" }})</dd>
+        <dt class="col-4">Consent</dt><dd class="col-8">Contact: {{ lead.contact_consent|yesno:"yes,NO" }} · Marketing: {{ lead.marketing_consent|yesno:"yes,no" }}</dd>
+      </dl>
+    </div>
+    <div class="panel mb-3">
+      <h2 class="h6">Business (from signup)</h2>
+      <dl class="row small mb-0">
+        <dt class="col-4">Name</dt><dd class="col-8">{{ lead.business_name|default:"-" }}</dd>
+        <dt class="col-4">Type</dt><dd class="col-8">{{ lead.business_category_title|default:"-" }}</dd>
+        <dt class="col-4">Area</dt><dd class="col-8">{{ lead.business_area|default:"-" }}{% if lead.city %}, {{ lead.city }}{% endif %}</dd>
+        <dt class="col-4">Google Maps</dt><dd class="col-8">{% if lead.business_maps_link %}<a href="{{ lead.business_maps_link }}" target="_blank" rel="noopener noreferrer">Open listing</a>{% else %}-{% endif %}</dd>
+      </dl>
+    </div>
+    <div class="panel mb-3">
+      <h2 class="h6">Websites</h2>
+      {% for p in lead.lead_projects %}<div class="small border-bottom py-1"><a href="{% url 'manage_project' p.pk %}">{{ p.business_name }}</a> <span class="badge text-bg-{{ p.status|badge }}">{{ p.get_status_display }}</span> <span class="text-muted">{{ p.category_info.title }}</span></div>{% empty %}<p class="small text-muted mb-0">No website yet.</p>{% endfor %}
+    </div>
+    <div class="panel">
+      <h2 class="h6">Payments</h2>
+      {% for o in orders %}<div class="small border-bottom py-1">{{ o.created_at|date:"d M Y" }} · {{ o.get_type_display }} · {{ o.amount|paise }} <span class="badge text-bg-{{ o.status|badge }}">{{ o.get_status_display }}</span></div>{% empty %}<p class="small text-muted mb-0">No payments.</p>{% endfor %}
+    </div>
+  </div>
+  <div class="col-lg-7">
+    {% if perms_ui.edit_leads %}
+    <form class="panel mb-3" method="post">
+      {% csrf_token %}
+      <h2 class="h6">Add a note</h2>
+      {% for field in form %}{% include "includes/field.html" %}{% endfor %}
+      <button class="btn btn-brand btn-sm" type="submit">Save note</button>
+    </form>
+    {% endif %}
+    <div class="panel mb-3">
+      <h2 class="h6">Notes</h2>
+      {% for n in notes %}
+        <div class="border-bottom py-2 small">
+          <div class="text-muted">{{ n.created_at|date:"d M Y H:i" }} · {{ n.author }}{% if n.follow_up_date %} · follow up {{ n.follow_up_date|date:"d M" }}{% if n.done %} (done){% endif %}{% endif %}</div>
+          <div>{{ n.note|linebreaksbr }}</div>
+          {% if n.follow_up_date and not n.done and perms_ui.edit_leads %}<form method="post" action="{% url 'manage_note_done' n.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}"><button class="btn btn-sm btn-link px-0" type="submit">Mark follow-up done</button></form>{% endif %}
+        </div>
+      {% empty %}<p class="small text-muted mb-0">No notes yet.</p>{% endfor %}
+    </div>
+    <div class="panel">
+      <h2 class="h6">Activity</h2>
+      <ul class="list-unstyled small mb-0">{% for a in activities %}<li class="border-bottom py-1"><span class="text-muted">{{ a.created_at|date:"d M H:i" }}</span> · {{ a.get_event_display }}{% if a.project %} · {{ a.project.business_name }}{% endif %}{% if a.detail %} <span class="text-muted">({{ a.detail }})</span>{% endif %}</li>{% empty %}<li class="text-muted">No activity.</li>{% endfor %}</ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

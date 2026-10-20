@@ -1,0 +1,15 @@
+<article class="tpl-card">
+  <a class="tpl-shot" href="{{ t.live_sample_url }}" target="_blank" rel="noopener" aria-label="See the live {{ t.name }} sample">
+    {% if t.thumbnail %}<img src="{{ t.thumbnail.url }}" alt="{{ t.name }}: {{ t.sample_name }}" loading="lazy" width="640" height="400">
+    {% else %}<span class="tpl-fallback"><i class="bi {{ t.category_info.icon }}"></i></span>{% endif %}
+  </a>
+  <div class="tpl-body">
+    <h3>{{ t.name }}</h3>
+    <div class="tpl-meta"><i class="bi {{ t.category_info.icon }}"></i> {{ t.category_info.title }}{% if t.city_label %} · sample in {{ t.city_label }}{% endif %}</div>
+    {% if t.tagline %}<p class="small text-muted mb-1">{{ t.tagline|truncatechars:90 }}</p>{% endif %}
+    <div class="tpl-actions">
+      <a class="btn btn-brand btn-sm" href="{% url 'start' t.slug %}"><i class="bi bi-magic"></i> Use this design</a>
+      <a class="btn btn-outline-secondary btn-sm" href="{{ t.live_sample_url }}" target="_blank" rel="noopener">Live sample <i class="bi bi-box-arrow-up-right"></i></a>
+    </div>
+  </div>
+</article>

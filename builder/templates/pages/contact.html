@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Contact us{% endblock %}
+{% block main %}
+<div class="container py-4 py-md-5">
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <h1 class="h2">Contact us</h1>
+      <p class="text-muted">We usually reply within one working day.</p>
+      <ul class="list-unstyled">
+        <li class="mb-2"><i class="bi bi-whatsapp text-success"></i> <a href="{{ support_wa }}" target="_blank" rel="noopener">WhatsApp {{ ps.support_phone }}</a></li>
+        <li class="mb-2"><i class="bi bi-telephone"></i> <a href="tel:{{ ps.support_phone|cut:' ' }}">{{ ps.support_phone }}</a></li>
+        <li class="mb-2"><i class="bi bi-envelope"></i> <a href="mailto:{{ ps.support_email }}">{{ ps.support_email }}</a></li>
+        <li class="mb-2"><i class="bi bi-geo-alt"></i> Devnixplus, India</li>
+      </ul>
+    </div>
+    <div class="col-lg-7">
+      <form class="panel" method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}{% if field.name == "website" %}<div class="visually-hidden" aria-hidden="true">{{ field }}</div>{% else %}{% include "includes/field.html" %}{% endif %}{% endfor %}
+        <button class="btn btn-brand" type="submit">Send message</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

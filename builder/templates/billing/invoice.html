@@ -1,0 +1,46 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  body { font-family: Helvetica, Arial, sans-serif; font-size: 10.5pt; color: #1d1e2c; }
+  h1 { font-size: 20pt; margin: 0; color: #4436d6; }
+  .muted { color: #646779; }
+  table { width: 100%; border-collapse: collapse; }
+  .items th { background: #f0efff; text-align: left; padding: 6px; font-size: 9.5pt; }
+  .items td { padding: 6px; border-bottom: 1px solid #e6e7ef; }
+  .right { text-align: right; }
+  .total td { font-weight: bold; font-size: 12pt; border-top: 2px solid #1d1e2c; }
+  .stamp { color: #b42318; font-size: 14pt; font-weight: bold; }
+</style></head>
+<body>
+<table><tr>
+  <td>
+    <h1>{{ company.name }}</h1>
+    <div class="muted">{{ company.address }}<br>{{ company.email }} · {{ company.phone }}{% if gst %}<br>GSTIN: {{ company.gstin }}{% if company.state %} · State: {{ company.state }}{% endif %}{% endif %}</div>
+  </td>
+  <td class="right">
+    <div style="font-size:14pt;font-weight:bold">{% if gst %}TAX INVOICE{% else %}INVOICE{% endif %}</div>
+    <div>No. <strong>{{ order.invoice_number }}</strong></div>
+    <div>Date: {{ date|date:"d M Y" }}</div>
+    {% if refunded %}<div class="stamp">REFUNDED</div>{% endif %}
+  </td>
+</tr></table>
+<br>
+<table><tr><td>
+  <strong>Billed to</strong><br>
+  {{ user.name|default:user.email }}<br>
+  {{ user.email }}{% if user.mobile %} · +91 {{ user.mobile }}{% endif %}<br>
+  {% if user.city %}{{ user.city }}<br>{% endif %}
+  Business: {{ order.project.business_name }}
+</td></tr></table>
+<br>
+<table class="items">
+  <tr><th>Description</th><th class="right">Amount</th></tr>
+  <tr><td>{{ order.get_type_display }}: website {{ order.project.slug }}{% if order.type != "download" %} (12 months){% endif %}</td><td class="right">{{ base }}</td></tr>
+  {% if gst and order.gst_amount %}<tr><td>GST @ {{ gst_rate }}</td><td class="right">{{ gst_amount }}</td></tr>{% endif %}
+  <tr class="total"><td>Total paid</td><td class="right">{{ total }}</td></tr>
+</table>
+<br>
+<div class="muted">Payment ID: {{ order.razorpay_payment_id }} · Order: {{ order.razorpay_order_id }}{% if order.is_demo %} · DEMO PAYMENT (no money taken){% endif %}</div>
+<br><div class="muted" style="font-size:9pt">This is a computer-generated invoice and needs no signature.</div>
+</body></html>

@@ -1,0 +1,32 @@
+{% extends "adminpanel/base.html" %}
+{% load ui %}
+{% block title %}Payments{% endblock %}
+{% block manage %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3"><h1 class="h3 mb-0">Payments</h1><span class="small text-muted">Real payments: {{ totals.n|default:0 }} · {{ totals.s|default:0|paise }}</span></div>
+<form class="toolbar mb-3" method="get">
+  <input class="form-control" type="search" name="q" value="{{ f.q }}" placeholder="Order, payment, invoice, email, slug">
+  <select class="form-select w-auto" name="status"><option value="">Any status</option>{% for k, l in statuses %}<option value="{{ k }}"{% if f.status == k %} selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+  <select class="form-select w-auto" name="type"><option value="">Any type</option>{% for k, l in types %}<option value="{{ k }}"{% if f.type == k %} selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+  <button class="btn btn-brand" type="submit">Filter</button>
+</form>
+<div class="table-app table-responsive">
+  <table class="table">
+    <thead><tr><th>Date</th><th>Project</th><th>Type</th><th>Amount</th><th>Status</th><th>Razorpay</th><th>Invoice</th><th></th></tr></thead>
+    <tbody>
+    {% for o in page.object_list %}
+      <tr>
+        <td class="small text-nowrap">{{ o.created_at|date:"d M Y H:i" }}</td>
+        <td><a href="{% url 'manage_project' o.project_id %}">{{ o.project.business_name }}</a><div class="small text-muted">{{ o.user.email }}</div></td>
+        <td class="small">{{ o.get_type_display }}</td>
+        <td>{{ o.amount|paise }}{% if o.is_demo %} <span class="badge text-bg-warning">demo</span>{% endif %}</td>
+        <td><span class="badge text-bg-{{ o.status|badge }}">{{ o.get_status_display }}</span>{% if o.refund_status != "none" %}<div class="small text-muted">{{ o.get_refund_status_display }}</div>{% endif %}</td>
+        <td class="small text-muted">{{ o.razorpay_order_id }}<br>{{ o.razorpay_payment_id }}</td>
+        <td class="small">{% if o.invoice_number %}<a href="{% url 'invoice_pdf' o.pk %}" target="_blank">{{ o.invoice_number }}</a>{% else %}-{% endif %}</td>
+        <td>{% if perms_ui.refund and o.status == "paid" %}<form method="post" action="{% url 'manage_payment_refund' o.pk %}" data-confirm="Refund {{ o.amount|paise }} to {{ o.user.email }}?">{% csrf_token %}<button class="btn btn-sm btn-outline-danger" type="submit">Refund</button></form>{% endif %}</td>
+      </tr>
+    {% empty %}<tr><td colspan="8" class="text-center text-muted py-4">No payments.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "adminpanel/_pager.html" %}
+{% endblock %}

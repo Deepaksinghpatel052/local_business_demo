@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}How it works{% endblock %}
+{% block main %}
+<div class="container py-4 py-md-5 prose">
+  <h1 class="h2">How it works</h1>
+  <p class="text-muted">From sign-up to a live website in a few minutes, plus a quick check by our team.</p>
+  <ol class="list-group list-group-numbered mt-4">
+    <li class="list-group-item"><strong>Sign up</strong> with email or Google and verify your mobile number.</li>
+    <li class="list-group-item"><strong>Pick a design</strong> made for your kind of business (salon, clinic, restaurant, gym, coaching…).</li>
+    <li class="list-group-item"><strong>Enter your business name.</strong> We create the website with sample text and photos already filled in.</li>
+    <li class="list-group-item"><strong>Add your details</strong> in 8 short steps: basics, about, services, photos, hours, reviews, look and SEO. You see the website change as you type, and everything saves automatically.</li>
+    <li class="list-group-item"><strong>Preview</strong> your website at its own link (marked “Preview”, not shown on Google yet).</li>
+    <li class="list-group-item"><strong>Go live:</strong> choose hosting ({{ prices.hosting_new }} first year) or a download ({{ prices.download }}), pay with UPI/card, and share your Google Maps link.</li>
+    <li class="list-group-item"><strong>We verify your business</strong> and call you within 24 hours. Then your website goes live (or the download unlocks). Not verified? Full refund.</li>
+    <li class="list-group-item"><strong>Keep it fresh:</strong> edit any time from your phone. Hosted websites update instantly.</li>
+  </ol>
+  <a class="btn btn-brand btn-lg mt-4" href="{% if user.is_authenticated %}{% url 'templates' %}{% else %}{% url 'account_signup' %}{% endif %}">Create my website free</a>
+</div>
+{% endblock %}

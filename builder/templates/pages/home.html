@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Create your business website free in 5 minutes{% endblock %}
+{% block main %}
+<section class="hero-app">
+  <div class="container">
+    <span class="eyebrow"><i class="bi bi-stars"></i> For shops, clinics, salons, gyms, coaching and more</span>
+    <h1 class="mt-3 mb-3">Create your business website <span>free in 5 minutes</span></h1>
+    <p class="lead mb-4">Pick a design made for your kind of business, add your details from your phone, and see your website instantly. Call and WhatsApp buttons, Google Maps, opening hours and Hindi included.</p>
+    <div class="d-flex flex-wrap gap-2 mb-4">
+      <a class="btn btn-brand btn-lg px-4" href="{% if user.is_authenticated %}{% url 'templates' %}{% else %}{% url 'account_signup' %}{% endif %}"><i class="bi bi-magic"></i> Create my website free</a>
+      <a class="btn btn-outline-light btn-lg px-4" href="#designs">See designs</a>
+    </div>
+    <ul class="hero-points">
+      <li><i class="bi bi-check-circle-fill"></i> Design is free</li>
+      <li><i class="bi bi-check-circle-fill"></i> Go live from {{ prices.hosting_new }} / first year</li>
+      <li><i class="bi bi-check-circle-fill"></i> Or download it for {{ prices.download }}</li>
+    </ul>
+  </div>
+</section>
+
+<section class="container" style="margin-top:-44px;position:relative">
+  <div class="row g-3">
+    <div class="col-md-4"><div class="panel h-100"><h2 class="h5"><i class="bi bi-1-circle-fill text-primary"></i> Pick a design</h2><p class="small text-muted mb-0">{{ design_count }} designs for {{ design_category_count }} types of business, each with its own colours, photos and layout.</p></div></div>
+    <div class="col-md-4"><div class="panel h-100"><h2 class="h5"><i class="bi bi-2-circle-fill text-primary"></i> Add your details</h2><p class="small text-muted mb-0">Name, phone, address, services and photos. Most of it is already filled in.</p></div></div>
+    <div class="col-md-4"><div class="panel h-100"><h2 class="h5"><i class="bi bi-3-circle-fill text-primary"></i> Preview and go live</h2><p class="small text-muted mb-0">See it live as you type. Go live after a quick check by our team.</p></div></div>
+  </div>
+</section>
+
+<section class="container mt-5" id="designs">
+  <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+    <div>
+      <h2 class="h3 mb-1">Choose a design <span class="badge rounded-pill text-bg-light border fs-6 align-middle">{{ design_count }} designs</span></h2>
+      <p class="text-muted mb-0">Each design follows how that business wins customers. Open the live sample to try it.</p>
+    </div>
+    <a class="btn btn-outline-brand" href="{% url 'templates' %}">Search &amp; filter designs</a>
+  </div>
+  <div class="tpl-grid">
+    {% for t in templates %}{% include "includes/template_card.html" %}{% empty %}<p class="text-muted">Designs are being added. Please check back soon.</p>{% endfor %}
+  </div>
+</section>
+
+<section class="container mt-5">
+  <div class="panel d-flex flex-wrap align-items-center justify-content-between gap-3" style="background:var(--ink-2);color:#fff;border:0">
+    <div>
+      <h2 class="h4 mb-1">Not sure where to start?</h2>
+      <p class="mb-0" style="color:#b8bad0">Message us on WhatsApp and we will help you set it up.</p>
+    </div>
+    <a class="btn btn-wa btn-lg" href="{{ support_wa }}" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i> WhatsApp us</a>
+  </div>
+</section>
+{% endblock %}

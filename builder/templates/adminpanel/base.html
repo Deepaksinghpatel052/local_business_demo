@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block robots %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block footer %}{% endblock %}
+{% block support_fab %}{% endblock %}
+{% block main %}
+{% with u=request.resolver_match.url_name %}
+<div class="manage-layout">
+  <nav class="manage-side" aria-label="Team panel">
+    <a href="{% url 'manage' %}" class="{% if u == 'manage' %}active{% endif %}"><i class="bi bi-speedometer2"></i> Overview</a>
+    {% if perms_ui.view_leads %}<a href="{% url 'manage_leads' %}" class="{% if 'lead' in u %}active{% endif %}"><i class="bi bi-people"></i> Leads{% if counts.followups %}<span class="count">{{ counts.followups }}</span>{% endif %}</a>{% endif %}
+    {% if perms_ui.view_verification %}<a href="{% url 'manage_verification' %}" class="{% if 'verification' in u %}active{% endif %}"><i class="bi bi-shield-check"></i> Verification{% if counts.verification %}<span class="count">{{ counts.verification }}</span>{% endif %}</a>{% endif %}
+    <a href="{% url 'manage_projects' %}" class="{% if 'project' in u %}active{% endif %}"><i class="bi bi-window-stack"></i> Projects</a>
+    {% if perms_ui.view_payments %}<a href="{% url 'manage_payments' %}" class="{% if 'payment' in u %}active{% endif %}"><i class="bi bi-credit-card"></i> Payments</a>{% endif %}
+    {% if perms_ui.manage_templates %}<a href="{% url 'manage_templates' %}" class="{% if u == 'manage_templates' %}active{% endif %}"><i class="bi bi-grid-3x3-gap"></i> Templates</a>{% endif %}
+    {% if perms_ui.view_abuse %}<a href="{% url 'manage_abuse' %}" class="{% if u == 'manage_abuse' %}active{% endif %}"><i class="bi bi-flag"></i> Abuse reports{% if counts.abuse %}<span class="count">{{ counts.abuse }}</span>{% endif %}</a>{% endif %}
+    {% if perms_ui.edit_settings %}<a href="{% url 'manage_settings' %}" class="{% if u == 'manage_settings' %}active{% endif %}"><i class="bi bi-sliders"></i> Settings</a>{% endif %}
+    {% if perms_ui.view_audit %}<a href="{% url 'manage_audit' %}" class="{% if u == 'manage_audit' %}active{% endif %}"><i class="bi bi-journal-text"></i> Audit log</a>{% endif %}
+  </nav>
+  <div class="manage-main">{% block manage %}{% endblock %}</div>
+</div>
+{% endwith %}
+{% endblock %}

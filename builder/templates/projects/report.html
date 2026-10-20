@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Report a website{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block main %}
+<div class="container py-5"><div class="auth-card mx-auto">
+  <h1 class="h4">Report this website</h1>
+  <p class="text-muted small">Website: <strong>{% if project %}{{ project.business_name }} ({{ project.public_url }}){% else %}{{ slug }}{% endif %}</strong>. Tell us if it is fake, misleading, impersonates someone, or breaks the law. Our team reviews every report.</p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for field in form %}{% if field.name == "website" %}<div class="visually-hidden" aria-hidden="true">{{ field }}</div>{% else %}{% include "includes/field.html" %}{% endif %}{% endfor %}
+    <button class="btn btn-brand w-100" type="submit">Send report</button>
+  </form>
+</div></div>
+{% endblock %}

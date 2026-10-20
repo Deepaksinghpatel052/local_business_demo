@@ -11,7 +11,7 @@ Google Maps, live "Open now / Closed now" hours, services or menu, gallery, Goog
 reviews, FAQs, an enquiry form that opens WhatsApp, a Hindi toggle and SEO tags.
 
 **Every category has its own design.** A spa, a garage and a coaching centre do not look alike:
-each of the 24 categories has its own colours, fonts, photos, layout, wording and section order,
+each of the 26 categories has its own colours, fonts, photos, layout, wording and section order,
 based on how that kind of business sells.
 
 **How it is built**
@@ -20,6 +20,11 @@ based on how that kind of business sells.
 - No backend, no database, no build step, no `.env`. Each demo is one self-contained folder.
 - `new_demo.py` creates and manages demos. It needs only Python 3.8+ (standard library, nothing to install).
 - Docker (optional) serves all demos locally, each on its own subdomain, just like production.
+
+**New: self-service website builder** (`builder/`, Django). Business owners sign up, pick one of these
+designs, fill in their details with a live preview, and go live (hosting) or download the site, after a
+manual check by the Devnixplus team. It reuses this same template to render every site. See
+[section 17](#17-self-service-website-builder-django) and `docs/`.
 
 ---
 
@@ -41,6 +46,7 @@ based on how that kind of business sells.
 14. [Troubleshooting](#14-troubleshooting)
 15. [Folder structure](#15-folder-structure)
 16. [Developer notes: changing the template](#16-developer-notes-changing-the-template)
+17. [Self-service website builder (Django)](#17-self-service-website-builder-django)
 
 ---
 
@@ -210,7 +216,7 @@ images/                          <- put this business's photos here
 
 - The **slug** (`seasons-salon`) becomes the subdomain. To choose your own:
   `python new_demo.py "Seasons Salon" salon --slug seasons-btm`
-- The category must be one of the [24 categories](#6-categories). Run `python new_demo.py --help`
+- The category must be one of the [26 categories](#6-categories). Run `python new_demo.py --help`
   to see the list.
 
 ### Step 3: Fill in data.js
@@ -354,11 +360,13 @@ Every category has its own design and a sample demo to look at
 | `handyman` | Plumbers, electricians, carpenters, home repairs | split | Book a Visit | `sample-handyman` |
 | `jewellery` | Jewellers | centred | Enquire Now | `sample-jewellery` |
 | `real-estate` | Property dealers, real estate agents | split | Book a Site Visit | `sample-real-estate` |
+| `pet-shop` | Pet shops, pet food & grooming | split | Order for my pet | `sample-pet-shop`, `sample-pet-shop-studio` |
+| `insurance` | Insurance agents, mutual fund distributors, financial advisors | split | Get Free Advice | `sample-insurance` |
 | `general` | Anything else | full photo | WhatsApp Us | (no sample) |
 
 The services heading also changes by category: *Our Menu, Our Services, Massages & Therapies,
 Our Collections, Membership Plans, Treatments, Departments, Our Programs, Courses, Rooms & Stays,
-Tour Packages, Rides & Fares, Our Products, Properties*.
+Tour Packages, Rides & Fares, Our Products, Properties, Products & Pet Care, Policies & Investments*.
 
 ---
 
@@ -380,7 +388,7 @@ Tour Packages, Rides & Fares, Our Products, Properties*.
 | `hours` | Hours table | `"9:00-22:00"`, `"10:00-14:00, 17:00-21:00"`, `"18:00-02:00"`, `"closed"`, `"24h"`. Always India time |
 | `rating`, `reviewCount` | Stars and number of reviews | Hero badge, counters, review summary, SEO data |
 | `highlights` | "About" tab (Parking, AC, Pure veg…) | Icons are picked automatically from the words |
-| `services` | Services/Products tab, price list photos | `{ title, desc, price, image, icon }`. Gyms: add `features: [...]` and `popular: true` for plan cards |
+| `services` | Services/Products tab, price list photos | `{ title, desc, price, image, icon, link, linkLabel }`. `link` (https) adds a button, e.g. an advisor's referral link. Gyms: add `features: [...]` and `popular: true` for plan cards |
 | `menuCategories` | Menu photos (restaurant, café, bakery, bar) | Tabbed menu: `{ name, icon, items: [{ title, desc, price, veg, tag }] }` |
 | `heroImage` | Best cover photo | Path or https URL. Empty = category photo |
 | `logo` | Profile picture | Empty = a text logo from the initials |
@@ -389,6 +397,8 @@ Tour Packages, Rides & Fares, Our Products, Properties*.
 | `faqs` | Q&A, common review questions | `{ q, a }`. Empty = category FAQs |
 | `social` | Links on the profile | `instagram`, `facebook`, `youtube` (also `twitter`, `linkedin`) |
 | `doctor` | (clinic, dentist, hospital) | `{ name, title, qualification, experience, photo, about, specialities: [] }`: "Meet the Doctor" card. `name` and `title` also show in the hero |
+| `disclaimer` | | Optional small text in the footer (e.g. insurance / mutual fund risk text). Empty = the category's own, if any |
+| `heroStyle` | | Optional. `"full"`, `"split"` or `"center"`: another banner layout than the category's own |
 | `logoWidth` | | Optional. Show a wide logo (that already contains the name) at this width in px, e.g. `118`, instead of icon + business name |
 | `vehicles` | (taxi) Photos, reviews, ask the owner | `{ name, models, seats, bags, rate, image, icon, ac }`: "Choose Your Vehicle" cards and the form's "Vehicle type" dropdown. Empty = Hatchback, Sedan, SUV, Innova Crysta, Tempo Traveller |
 | `results` | (school, coaching) toppers, pass rates | `[{ value: "95%", label: "Board pass rate" }]` |
@@ -717,3 +727,98 @@ local_business_demo/
   5. Create a sample: `python new_demo.py "Sample X" <key> --slug sample-<key>` and fill its `data.js`.
 - **New Google Fonts** must be added to `FONT_WEIGHTS` in `themes.js` (only weights the font really has).
 - Placeholder photos are from [Unsplash](https://unsplash.com/license) (free to use).
+
+---
+
+## 17. Self-service website builder (Django)
+
+A Django app (`builder/`) on `app.devnixplus.com` where a business owner signs up, picks a design,
+creates a website in about 5 minutes, previews it and then either **hosts it with Devnixplus**
+(first year + yearly renewal) or **downloads it** for their own server. Every business is checked by
+the team before it goes live or can be downloaded. All registrations become leads in the team panel.
+
+- The existing renderer (`template/` + `data.js`) draws every site; Django only manages data,
+  users, payments and publishing. Nginx keeps serving all sites as static files.
+- Platform sites contain only `index.html`, `data.js` and `images/`; CSS, JS and stock photos come from
+  the shared, versioned folder `/_shared/v1/`. Hand-made demos in `demos/` stay self-contained and unchanged.
+- Docs: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (what's where, models, URLs),
+  [`docs/USER_FLOW.md`](docs/USER_FLOW.md) (flow diagram), [`docs/ADMIN_GUIDE.md`](docs/ADMIN_GUIDE.md) (team),
+  [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) (server).
+
+### Local setup
+
+Python 3.11+ (developed on 3.14). Install packages **only in the venv**:
+
+```bash
+python -m venv venv                                   # once
+venv/Scripts/python -m pip install -r requirements.txt   # Windows  (macOS/Linux: venv/bin/python …)
+copy .env.example .env                                # or: cp .env.example .env  (keep your DOCKER_PORT/SERVE_PORT)
+cd builder
+../venv/Scripts/python manage.py migrate
+../venv/Scripts/python manage.py setup_roles          # Admin, Sales, Verifier groups
+../venv/Scripts/python manage.py import_templates     # demos/sample-*/data.js -> 23 designs
+../venv/Scripts/python manage.py seed_demo            # demo logins (DEBUG only)
+../venv/Scripts/python manage.py runserver            # http://127.0.0.1:8000/
+```
+
+`.env`: the defaults in `.env.example` run everything locally with SQLite, emails printed in the console,
+the **MockSMS** OTP shown on screen, WhatsApp messages only logged, and the **Demo Payment Simulator**.
+Comments must be on their own line (`KEY=value  # note` would put the note in the value).
+`SERVE_PORT` (for `new_demo.py --serve`) should not be 8000 while `runserver` uses 8000.
+
+In development Django also serves the sites like Nginx would (`SERVE_SITES`, on when `DEBUG=True`):
+previews at `http://127.0.0.1:8000/sites/<slug>/`, the existing demos at `/sites/<demo>/`, shared assets at `/_shared/`.
+
+### Demo logins (`manage.py seed_demo`, password `Demo@12345`)
+
+| Login | Role |
+|---|---|
+| `admin@demo.local` | Admin (also `/django-admin/`) |
+| `sales@demo.local` | Sales |
+| `verifier@demo.local` | Verifier |
+| `owner@demo.local` | Business owner |
+
+### Try the whole flow
+
+1. `http://127.0.0.1:8000/` → **Use this design** on any card (or sign up and use **New website**).
+2. Sign up, enter the 6-digit code shown on screen, name your business → **Start creating**.
+3. Edit in 8 steps with the live preview on the right (on a phone: the **Preview** button). It autosaves.
+4. **Go live** → pick a plan → the **Demo Payment Simulator** → *Simulate successful payment* → send the
+   verification form (any Google Maps link such as `https://maps.app.goo.gl/test`).
+5. Log in as `verifier@demo.local` → **Team panel → Verification → Review → Approve → Go live**
+   (hosting) or, for a download, the owner's **Download** button unlocks.
+
+Real Razorpay test mode: put `rzp_test_…` keys and the webhook secret in `.env` and set `DEMO_PAYMENTS=False`.
+Google login: set `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` (redirect URI `<APP_URL>/accounts/google/login/callback/`).
+
+### Commands
+
+| Command (from `builder/`) | What it does |
+|---|---|
+| `manage.py import_templates` | Create/update a design for every `demos/sample-*/data.js` (thumbnail from `showcase/thumbs/`) |
+| `manage.py sync_shared [--force]` | Copy `template/css`, `js`, `placeholders` to `SITES_ROOT/_shared/<SHARED_VERSION>/` |
+| `manage.py republish_all` | Rewrite every published site (after a template change / new `SHARED_VERSION`) |
+| `manage.py send_reminders` | Daily: renewal reminders (30/7/1/0 days) and go-live reminders (1/3/7 days) |
+| `manage.py expire_hosting` | Daily: expire hosting after the grace period (15 days) |
+| `manage.py expire_previews` | Daily: unpublish previews unused for 60 days (data kept) |
+| `manage.py setup_roles` / `seed_demo` | Team groups / local demo logins |
+| `manage.py test` | Run the test suite |
+
+### Cron (server)
+
+```cron
+0 9 * * *   cd /srv/local_business_demo/builder && ../venv/bin/python manage.py send_reminders
+0 1 * * *   cd /srv/local_business_demo/builder && ../venv/bin/python manage.py expire_hosting
+30 1 * * *  cd /srv/local_business_demo/builder && ../venv/bin/python manage.py expire_previews
+30 2 * * *  /srv/local_business_demo/deploy/backup.sh
+```
+
+The full file with logging is `deploy/crontab.txt`; the server setup is in `docs/DEPLOYMENT.md`.
+
+### After changing the template
+
+Hand-made demos: `python new_demo.py --update all` as before. Platform sites: set a new `SHARED_VERSION`
+(e.g. `v2`) in `.env`, then `manage.py sync_shared` and `manage.py republish_all`.
+The changes to `template/js/main.js` for the platform are opt-in through `window.LBD_CONFIG`,
+so demos without it behave exactly as before.
+

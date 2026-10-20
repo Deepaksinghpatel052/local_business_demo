@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load ui %}
+{% block title %}My websites{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block main %}
+<div class="container py-4 py-md-5">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+    <div>
+      <h1 class="h3 mb-0">My websites</h1>
+      <p class="text-muted mb-0">Namaste {{ user.first_name }}! Edit, preview and take your website live from here.</p>
+    </div>
+    {% if can_create %}
+      <button class="btn btn-brand" type="button" data-bs-toggle="modal" data-bs-target="#createModal"><i class="bi bi-plus-lg"></i> New website</button>
+    {% else %}
+      <span class="small text-muted">You have reached the limit of {{ ps.max_projects_per_user }} websites.</span>
+    {% endif %}
+  </div>
+
+  {% if not projects %}
+    <div class="panel empty-state">
+      <i class="bi bi-window-stack display-5 text-primary"></i>
+      <h2 class="h4 mt-3">Create your first website</h2>
+      <p class="text-muted">Pick a design, enter your business name, and we prepare the website for you.</p>
+      <div class="d-flex justify-content-center gap-2 flex-wrap">
+        <button class="btn btn-brand btn-lg" type="button" data-bs-toggle="modal" data-bs-target="#createModal">Start now</button>
+        <a class="btn btn-outline-brand btn-lg" href="{% url 'templates' %}">See designs</a>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row g-4">
+    {% for p in projects %}
+    <div class="col-md-6 col-xl-4">
+      <article class="proj-card" id="project-{{ p.pk }}">
+        <div class="proj-thumb">
+          <span class="proj-mark" aria-hidden="true"><i class="bi {{ p.category_info.icon }}"></i></span>
+          <span class="badge text-bg-{{ p.status|badge }}">{{ p.get_status_display }}</span>
+        </div>
+        <div class="proj-body">
+          <div>
+            <h3>{{ p.business_name }}</h3>
+            <div class="small text-muted">{{ p.category_info.title }}{% if p.plan != "none" %} · {{ p.get_plan_display }}{% endif %}</div>
+          </div>
+          <a class="proj-url" href="{% url 'open_preview' p.pk %}" target="_blank" rel="noopener"><i class="bi bi-link-45deg"></i> {{ p.public_url }}</a>
+          <div>
+            <div class="d-flex justify-content-between small"><span>Details filled</span><span>{{ p.progress }}%</span></div>
+            <div class="progress progress-thin" role="progressbar" aria-label="Details filled" aria-valuenow="{{ p.progress }}" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" style="width: {{ p.progress }}%"></div></div>
+          </div>
+
+          {% if p.status == "draft" %}
+            <div class="proj-note"><i class="bi bi-pencil"></i> Add your phone number and address to finish the basics.</div>
+          {% elif p.status == "preview" %}
+            <div class="proj-note"><i class="bi bi-eye"></i> Looks good? Take it live whenever you are ready.</div>
+          {% elif p.status == "pending_payment" %}
+            <div class="proj-note"><i class="bi bi-credit-card"></i> Payment not completed yet.</div>
+          {% elif p.status == "pending_verification" %}
+            {% if p.needs_verification_form %}
+              <div class="proj-note"><i class="bi bi-shield-check"></i> Payment received. One last step: <a href="{% url 'verify' p.pk %}">verify your business</a>.</div>
+            {% else %}
+              <div class="proj-note"><i class="bi bi-hourglass-split"></i> Our team will verify your business and call you within 24 hours.</div>
+            {% endif %}
+          {% elif p.status == "approved" %}
+            <div class="proj-note"><i class="bi bi-patch-check"></i> Verified! Our team is making your website live.</div>
+          {% elif p.status == "live" %}
+            <div class="proj-note"><i class="bi bi-broadcast"></i> Live. Your edits are published instantly.{% if p.hosting_expires_at %} Hosting until {{ p.hosting_expires_at|date:"d M Y" }}.{% endif %}</div>
+          {% elif p.status == "download_ready" %}
+            <div class="proj-note"><i class="bi bi-download"></i> Ready to download. A downloaded copy does not update by itself: after editing, download again (free).</div>
+          {% elif p.status == "expired" %}
+            <div class="proj-note text-danger"><i class="bi bi-exclamation-triangle"></i> Hosting expired, the website is offline. Renew to bring it back instantly.</div>
+          {% elif p.status == "suspended" %}
+            <div class="proj-note text-danger"><i class="bi bi-slash-circle"></i> Suspended{% if p.status_note %}: {{ p.status_note }}{% endif %}. Please contact support.</div>
+          {% elif p.status == "rejected" %}
+            <div class="proj-note text-danger"><i class="bi bi-x-circle"></i> We could not verify this business{% if p.status_note %}: {{ p.status_note }}{% endif %}. Your payment has been refunded.</div>
+          {% endif %}
+
+          {% if p.status != "suspended" %}
+          <div class="proj-actions">
+            <a class="btn btn-outline-secondary" href="{% url 'open_preview' p.pk %}" target="_blank" rel="noopener"><i class="bi bi-eye"></i> Preview</a>
+            <a class="btn btn-outline-secondary" href="{% url 'editor' p.pk %}"><i class="bi bi-pencil-square"></i> {% if p.progress < 100 %}Add data{% else %}Edit{% endif %}</a>
+            <a class="btn btn-outline-secondary" href="{% url 'editor' p.pk %}?step=look"><i class="bi bi-palette"></i> Customize</a>
+            {% if p.can_go_live %}
+              <a class="btn btn-brand" href="{% url 'go_live' p.pk %}"><i class="bi bi-rocket-takeoff"></i> Go live</a>
+            {% elif p.needs_verification_form %}
+              <a class="btn btn-brand" href="{% url 'verify' p.pk %}"><i class="bi bi-shield-check"></i> Verify</a>
+            {% elif p.can_download %}
+              <form method="post" action="{% url 'request_download' p.pk %}">{% csrf_token %}<button class="btn btn-brand w-100" type="submit"><i class="bi bi-download"></i> Download</button></form>
+            {% elif p.can_renew %}
+              <form method="post" action="{% url 'checkout' p.pk 'hosting_renewal' %}">{% csrf_token %}<button class="btn btn-brand w-100" type="submit" title="Renew for {{ prices.hosting_renewal }}/year"><i class="bi bi-arrow-repeat"></i> Renew</button></form>
+            {% else %}
+              <a class="btn btn-wa" href="{{ support_wa }}" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i> Help</a>
+            {% endif %}
+          </div>
+          {% endif %}
+          {% if p.status in "draft,preview,pending_payment" and not p.orders.all %}
+            <form method="post" action="{% url 'delete_project' p.pk %}" class="text-end" data-confirm="Delete {{ p.business_name }}? This cannot be undone.">
+              {% csrf_token %}<button class="btn btn-link btn-sm text-danger p-0" type="submit">Delete</button>
+            </form>
+          {% endif %}
+        </div>
+      </article>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="row g-4 mt-2">
+    <div class="col-lg-7">
+      <div class="panel h-100">
+        <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="h5 mb-0">Recent payments</h2><a class="small" href="{% url 'payments' %}">All payments &amp; invoices</a></div>
+        {% for o in orders %}
+          <div class="d-flex justify-content-between border-bottom py-2 small"><span>{{ o.get_type_display }} · {{ o.project.business_name }}</span><span>{{ o.amount|paise }} <span class="badge text-bg-{{ o.status|badge }}">{{ o.get_status_display }}</span></span></div>
+        {% empty %}<p class="small text-muted mb-0">No payments yet. Designing your website is free.</p>{% endfor %}
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="panel h-100">
+        <h2 class="h5">Need help?</h2>
+        <p class="small text-muted">Our team can fill in your details, add photos, or connect your own domain.</p>
+        <a class="btn btn-wa" href="{{ support_wa }}" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i> WhatsApp support</a>
+        <a class="btn btn-link" href="{% url 'profile' %}">My account</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% include "projects/_create_modal.html" %}
+{% endblock %}

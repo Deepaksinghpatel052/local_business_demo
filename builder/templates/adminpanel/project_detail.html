@@ -1,0 +1,127 @@
+{% extends "adminpanel/base.html" %}
+{% load ui %}
+{% block title %}{{ p.business_name }}{% endblock %}
+{% block manage %}
+<a class="small" href="{% url 'manage_projects' %}"><i class="bi bi-arrow-left"></i> Projects</a>
+<div class="d-flex flex-wrap align-items-center gap-2 mt-2 mb-3">
+  <h1 class="h3 mb-0">{{ p.business_name }}</h1>
+  <span class="badge text-bg-{{ p.status|badge }}">{{ p.get_status_display }}</span>
+  <span class="badge text-bg-light border">{{ p.get_plan_display }}</span>
+  {% if p.flagged %}<span class="badge text-bg-danger">{{ p.flag_reason }}</span>{% endif %}
+  <a class="btn btn-sm btn-outline-secondary ms-auto" href="{{ p.public_url }}" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Open site</a>
+</div>
+
+<div class="row g-3">
+  <div class="col-xl-7">
+    <div class="panel p-0 overflow-hidden mb-3">
+      <div class="ratio ratio-16x9"><iframe src="{{ p.site_url }}" title="Site preview" loading="lazy" sandbox="allow-scripts"></iframe></div>
+    </div>
+
+    {% if p.status == "pending_verification" and perms_ui.decide_verification %}
+    <div class="panel mb-3 border-warning">
+      <h2 class="h5"><i class="bi bi-shield-check"></i> Verification decision</h2>
+      {% with vr=verifications|first %}
+        {% if vr and vr.decision == "pending" %}
+          <dl class="row small">
+            <dt class="col-4">Google Maps</dt><dd class="col-8"><a href="{{ vr.maps_link }}" target="_blank" rel="noopener noreferrer">{{ vr.maps_link|truncatechars:60 }}</a></dd>
+            <dt class="col-4">GST / Udyam</dt><dd class="col-8">{{ vr.gst_or_udyam|default:"-" }}</dd>
+            <dt class="col-4">Owner notes</dt><dd class="col-8">{{ vr.owner_notes|default:"-"|linebreaksbr }}</dd>
+            <dt class="col-4">Proof</dt><dd class="col-8">{% if vr.shop_photo %}<a href="{% url 'manage_verification_file' vr.pk 'shop_photo' %}" target="_blank">Shop photo</a>{% endif %} {% if vr.visiting_card %}<a href="{% url 'manage_verification_file' vr.pk 'visiting_card' %}" target="_blank">Visiting card</a>{% endif %}{% if not vr.shop_photo and not vr.visiting_card %}-{% endif %}</dd>
+          </dl>
+          <div class="d-flex flex-wrap gap-2 align-items-start">
+            <form method="post" action="{% url 'manage_verification_decide' p.pk %}" data-confirm="Approve {{ p.business_name }}?">{% csrf_token %}<input type="hidden" name="decision" value="approve"><button class="btn btn-success" type="submit"><i class="bi bi-check2"></i> Approve</button></form>
+            <form method="post" action="{% url 'manage_verification_decide' p.pk %}" class="flex-grow-1" data-confirm="Reject and refund every payment for this project?">
+              {% csrf_token %}<input type="hidden" name="decision" value="reject">
+              <div class="input-group"><input class="form-control" name="reason" required maxlength="300" placeholder="Reason (shown to the owner)"><button class="btn btn-outline-danger" type="submit">Reject + refund</button></div>
+            </form>
+          </div>
+        {% else %}
+          <p class="small text-muted mb-2">The owner hasn't sent the verification form yet. Call them: <a href="tel:+91{{ p.owner.mobile }}">{{ p.owner.mobile|mobile }}</a>.</p>
+          <form method="post" action="{% url 'manage_verification_decide' p.pk %}" data-confirm="Reject and refund every payment for this project?">
+            {% csrf_token %}<input type="hidden" name="decision" value="reject">
+            <div class="input-group"><input class="form-control" name="reason" required maxlength="300" placeholder="Reason (shown to the owner)"><button class="btn btn-outline-danger" type="submit">Reject + refund</button></div>
+          </form>
+        {% endif %}
+      {% endwith %}
+    </div>
+    {% endif %}
+
+    <div class="panel mb-3">
+      <h2 class="h5">Actions</h2>
+      <div class="d-flex flex-wrap gap-2">
+        {% if perms_ui.go_live and p.status == "approved" or perms_ui.go_live and p.status == "expired" %}
+          <form method="post" action="{% url 'manage_project_go_live' p.pk %}" data-confirm="Publish {{ p.business_name }} live now?">{% csrf_token %}<button class="btn btn-success" type="submit"><i class="bi bi-rocket-takeoff"></i> Go live</button></form>
+        {% endif %}
+        <form method="post" action="{% url 'manage_project_republish' p.pk %}">{% csrf_token %}<button class="btn btn-outline-secondary" type="submit"><i class="bi bi-arrow-clockwise"></i> Republish</button></form>
+        {% if perms_ui.suspend %}
+          {% if p.status == "suspended" %}
+            <form method="post" action="{% url 'manage_project_suspend' p.pk %}">{% csrf_token %}<input type="hidden" name="action" value="reactivate"><button class="btn btn-outline-success" type="submit">Reactivate</button></form>
+          {% else %}
+            <form method="post" action="{% url 'manage_project_suspend' p.pk %}" class="d-flex gap-1" data-confirm="Suspend this website? It will show a 'temporarily unavailable' page.">{% csrf_token %}<input class="form-control form-control-sm" name="reason" placeholder="Reason" maxlength="300"><button class="btn btn-outline-danger btn-sm text-nowrap" type="submit">Suspend</button></form>
+          {% endif %}
+        {% endif %}
+      </div>
+      <dl class="row small mt-3 mb-0">
+        <dt class="col-4">Owner</dt><dd class="col-8"><a href="{% url 'manage_lead' p.owner.pk %}">{{ p.owner }}</a> · {{ p.owner.mobile|mobile }} · {{ p.owner.email }}</dd>
+        <dt class="col-4">Preview URL</dt><dd class="col-8"><a href="{{ p.site_url }}" target="_blank" rel="noopener">{{ p.site_url }}</a> ({{ p.published_mode|default:"not published" }})</dd>
+        <dt class="col-4">Template</dt><dd class="col-8">{{ p.template|default:"-" }}</dd>
+        <dt class="col-4">Hosting until</dt><dd class="col-8">{{ p.hosting_expires_at|date:"d M Y"|default:"-" }}</dd>
+        <dt class="col-4">Created</dt><dd class="col-8">{{ p.created_at|date:"d M Y H:i" }} · edited {{ p.last_edited_at|timesince }} ago</dd>
+        {% if p.status_note %}<dt class="col-4">Note</dt><dd class="col-8">{{ p.status_note }}</dd>{% endif %}
+      </dl>
+    </div>
+
+    <div class="panel mb-3">
+      <h2 class="h5">Custom domain</h2>
+      <form method="post" class="row g-2 align-items-end">
+        {% csrf_token %}
+        <div class="col-md-5">{% include "includes/field.html" with field=domain_form.custom_domain %}</div>
+        <div class="col-md-7 d-flex flex-wrap gap-3 pb-3">
+          {% include "includes/field.html" with field=domain_form.dns_pointed %}
+          {% include "includes/field.html" with field=domain_form.ssl_issued %}
+          {% include "includes/field.html" with field=domain_form.domain_checked %}
+        </div>
+        {% if perms_ui.edit_domain %}<div class="col-12"><button class="btn btn-brand btn-sm" type="submit">Save domain checklist</button></div>{% endif %}
+      </form>
+      {% if nginx_block %}
+        <div class="d-flex justify-content-between align-items-center mt-3"><h3 class="h6 mb-0">Nginx server block</h3><button type="button" class="btn btn-sm btn-light" data-copy="#nginxBlock">Copy</button></div>
+        <pre class="code-block mt-2" id="nginxBlock">{{ nginx_block }}</pre>
+        <div class="d-flex justify-content-between align-items-center mt-3"><h3 class="h6 mb-0">Commands</h3><button type="button" class="btn btn-sm btn-light" data-copy="#installCmd">Copy</button></div>
+        <pre class="code-block mt-2" id="installCmd">{{ install }}</pre>
+        <p class="small text-muted mb-0">After the certificate works, tick "SSL certificate issued": the live site then uses https://{{ p.custom_domain }}/ in its SEO tags.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-xl-5">
+    <div class="panel mb-3">
+      <h2 class="h6">Payments</h2>
+      {% for o in orders %}<div class="small border-bottom py-1">{{ o.created_at|date:"d M Y" }} · {{ o.get_type_display }} · {{ o.amount|paise }} <span class="badge text-bg-{{ o.status|badge }}">{{ o.get_status_display }}</span>{% if o.refund_status != "none" %} <span class="text-muted">{{ o.get_refund_status_display }}</span>{% endif %}{% if o.is_demo %} <span class="badge text-bg-warning">demo</span>{% endif %}</div>{% empty %}<p class="small text-muted mb-0">No payments.</p>{% endfor %}
+    </div>
+    <div class="panel mb-3">
+      <h2 class="h6">Versions (last 30)</h2>
+      <ul class="list-unstyled small mb-0">
+        {% for v in versions %}
+          <li class="d-flex align-items-center gap-2 border-bottom py-1">
+            <span>{{ v.updated_at|date:"d M H:i" }} · {{ v.created_by|default:"system" }}{% if v.note %} · <em>{{ v.note }}</em>{% endif %}</span>
+            {% if perms_ui.restore_version and not forloop.first %}<form method="post" action="{% url 'manage_project_restore' p.pk v.pk %}" class="ms-auto" data-confirm="Restore this version and publish it?">{% csrf_token %}<button class="btn btn-sm btn-light" type="submit">Restore</button></form>{% elif forloop.first %}<span class="ms-auto badge text-bg-light border">current</span>{% endif %}
+          </li>
+        {% empty %}<li class="text-muted">No versions.</li>{% endfor %}
+      </ul>
+    </div>
+    <div class="panel mb-3">
+      <h2 class="h6">Downloads</h2>
+      {% for d in downloads %}<div class="small">{{ d.created_at|date:"d M Y H:i" }} · {{ d.ip }} · {{ d.file_size|filesizeformat }}</div>{% empty %}<p class="small text-muted mb-0">None.</p>{% endfor %}
+    </div>
+    {% if reports %}<div class="panel mb-3 border-danger"><h2 class="h6">Abuse reports</h2>{% for r in reports %}<div class="small border-bottom py-1">{{ r.created_at|date:"d M" }} · {{ r.reporter_email }} · {{ r.reason|truncatechars:120 }} <span class="badge text-bg-light border">{{ r.get_status_display }}</span></div>{% endfor %}</div>{% endif %}
+    <div class="panel mb-3">
+      <h2 class="h6">Team actions</h2>
+      {% for a in audit_log %}<div class="small border-bottom py-1">{{ a.created_at|date:"d M H:i" }} · {{ a.actor }} · {{ a.action }}</div>{% empty %}<p class="small text-muted mb-0">None.</p>{% endfor %}
+    </div>
+    <div class="panel">
+      <h2 class="h6">Owner activity</h2>
+      {% for a in activities %}<div class="small border-bottom py-1">{{ a.created_at|date:"d M H:i" }} · {{ a.get_event_display }}{% if a.detail %} <span class="text-muted">({{ a.detail }})</span>{% endif %}</div>{% empty %}<p class="small text-muted mb-0">None.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
