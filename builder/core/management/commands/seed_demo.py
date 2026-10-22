@@ -10,7 +10,6 @@ from django.core.management.base import BaseCommand, CommandError
 
 from accounts.models import User
 
-PASSWORD = "Demo@12345"
 TEAM = [
     ("admin@demo.local", "Asha Admin", "Admin"),
     ("sales@demo.local", "Sunil Sales", "Sales"),
@@ -29,16 +28,16 @@ class Command(BaseCommand):
             u, _ = User.objects.get_or_create(email=email, defaults={"name": name})
             u.name, u.is_staff, u.onboarded, u.contact_consent = name, True, True, True
             u.is_superuser = role == "Admin"
-            u.set_password(PASSWORD)
+            u.set_password(settings.DEMO_LOGIN_PASSWORD)
             u.save()
             u.groups.set([Group.objects.get(name=role)])
         owner, _ = User.objects.get_or_create(email="owner@demo.local", defaults={"name": "Ravi Sharma"})
         owner.name, owner.mobile, owner.whatsapp, owner.city = "Ravi Sharma", "9876543210", "919876543210", "Gwalior"
         owner.business_name, owner.business_category, owner.business_area = "Sharma Sweets", "bakery", "Lashkar"
         owner.contact_consent = owner.onboarded = owner.mobile_verified = True
-        owner.set_password(PASSWORD)
+        owner.set_password(settings.DEMO_LOGIN_PASSWORD)
         owner.save()
-        self.stdout.write(self.style.SUCCESS("Demo logins (password %s):" % PASSWORD))
+        self.stdout.write(self.style.SUCCESS("Demo logins (password %s):" % settings.DEMO_LOGIN_PASSWORD))
         for email, _, role in TEAM:
             self.stdout.write("  %-22s %s" % (email, role))
         self.stdout.write("  %-22s %s" % ("owner@demo.local", "Business owner"))

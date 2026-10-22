@@ -247,6 +247,7 @@
   </footer>
 
   <script src="demos.js"></script>
+  <script src="config.js"></script>
   <script>
     (function () {
       var demos = window.DEMOS || [];
@@ -260,9 +261,9 @@
       }
       function prettyUrl(slug) { return location.host + '/' + slug + '/'; }
 
-      // The self-service builder ("Use this design"): app.devnixplus.com, or the local Django dev server
-      var APP_URL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || location.protocol === 'file:'
-        ? 'http://127.0.0.1:8000' : 'https://app.devnixplus.com';
+      // The self-service builder ("Use this design"): APP_URL from .env, written to config.js by
+      // "manage.py write_showcase_config" (Docker does it on every start)
+      var APP_URL = (window.DEVNIX_APP_URL || 'https://app.devnixplus.com').replace(/\/+$/, '');
       [].forEach.call(document.querySelectorAll('.js-app'), function (a) { a.href = APP_URL + a.getAttribute('data-path'); });
 
       var clients = demos.filter(function (d) { return !d.sample; });

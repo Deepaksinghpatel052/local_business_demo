@@ -1,13 +1,16 @@
-# Host ports come from .env (Docker Compose reads .env automatically):
-#   DOCKER_PORT      static demos + showcase (Nginx)        default 8080
-#   APP_DOCKER_PORT  Django site builder (builder/)         default 8090
+# Every value comes from .env (Docker Compose reads it automatically): nothing is set here.
+#   DOCKER_PORT          static demos + showcase (Nginx)
+#   APP_DOCKER_PORT      Django site builder (builder/); the builder also reads all of .env itself
+#   DOCKER_DATABASE_URL, DOCKER_SITES_ROOT, DOCKER_MEDIA_ROOT, DOCKER_LOG_DIR
+#                        where the builder keeps its data inside the container (volume builder-data)
+# After changing .env:  docker compose up -d
 services:
   demos:
     build: .
     image: local-business-demos
     container_name: local-business-demos
     ports:
-      - "${DOCKER_PORT:-8080}:80"
+      - "${DOCKER_PORT:?Set DOCKER_PORT in .env}:80"
     volumes:
       - ./demos:/usr/share/nginx/demos:ro   # live: edits to demos/ show on refresh
       - ./showcase:/usr/share/nginx/showcase:ro
@@ -20,23 +23,16 @@ services:
     image: local-business-builder
     container_name: local-business-builder
     ports:
-      - "${APP_DOCKER_PORT:-8090}:8000"
+      - "${APP_DOCKER_PORT:?Set APP_DOCKER_PORT in .env}:8000"
     volumes:
-      - .:/app                              # live code: edits show after a refresh
+      - .:/app                              # live code + .env: edits show after a refresh / restart
       - builder-data:/data                  # database, uploads, published sites
     environment:
-      # these win over the values in .env (local Docker only: SQLite, simulator, MockSMS)
-      DEBUG: "True"
-      ALLOWED_HOSTS: "localhost,127.0.0.1"
-      APP_URL: "http://localhost:${APP_DOCKER_PORT:-8090}"
-      DEMO_URL_STYLE: "path"
-      DEMO_BASE_URL: "http://localhost:${APP_DOCKER_PORT:-8090}/sites"
-      DATABASE_URL: "sqlite:////data/db.sqlite3"
-      SITES_ROOT: "/data/sites"
-      MEDIA_ROOT: "/data/media"
-      LOG_DIR: "/data/logs"
-      SERVE_SITES: "True"
-      DEMO_PAYMENTS: "True"
+      # Container folders differ from the ones on your PC, so .env keeps them under DOCKER_* names
+      DATABASE_URL: "${DOCKER_DATABASE_URL:?Set DOCKER_DATABASE_URL in .env}"
+      SITES_ROOT: "${DOCKER_SITES_ROOT:?Set DOCKER_SITES_ROOT in .env}"
+      MEDIA_ROOT: "${DOCKER_MEDIA_ROOT:?Set DOCKER_MEDIA_ROOT in .env}"
+      LOG_DIR: "${DOCKER_LOG_DIR:?Set DOCKER_LOG_DIR in .env}"
     restart: unless-stopped
 
 volumes:

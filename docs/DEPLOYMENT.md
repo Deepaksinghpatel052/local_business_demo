@@ -56,7 +56,8 @@ venv/bin/pip install -r requirements-server.txt
 cp .env.example .env && nano .env
 ```
 
-Production values in `.env` (comments must be on their own lines):
+Every setting lives in `.env` (see `.env.example` for the full list with notes). Production values
+(comments must be on their own lines; the `DOCKER_*` keys are only for local Docker):
 
 ```ini
 DEBUG=False
@@ -66,6 +67,7 @@ CSRF_TRUSTED_ORIGINS=https://app.devnixplus.com
 DATABASE_URL=postgres://devnix:CHANGE-ME@127.0.0.1:5432/devnix
 CACHE_URL=filecache:///var/tmp/devnix-cache
 SECURE_COOKIES=True
+SECURE_SSL_REDIRECT=False
 SECURE_HSTS_SECONDS=31536000
 APP_URL=https://app.devnixplus.com
 DEMO_URL_STYLE=path
@@ -101,9 +103,11 @@ cd builder
 exit
 ```
 
-Copy the sample demos and the showcase to the web folders (the "Live sample" links point there):
+Copy the sample demos and the showcase to the web folders (the "Live sample" links point there).
+`write_showcase_config` first points the showcase "Use this design" buttons at `APP_URL` from `.env`:
 
 ```bash
+sudo -u devnix -H bash -c 'cd /srv/local_business_demo/builder && ../venv/bin/python manage.py write_showcase_config'
 sudo -u devnix rsync -a /srv/local_business_demo/demos/ /var/www/demos/
 sudo -u devnix rsync -a /srv/local_business_demo/showcase/ /var/www/showcase/
 ```

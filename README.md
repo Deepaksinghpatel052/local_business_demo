@@ -664,7 +664,7 @@ git push                        # upload to GitHub
 | Problem | Fix |
 |---|---|
 | `docker: failed to connect to the docker API` | Docker Desktop is not running. Start it, wait until it says "running", then retry. |
-| Port 8080 already in use (Docker) | Set e.g. `DOCKER_PORT=8090` in `.env`, run `docker compose up -d`, open http://localhost:8090/. |
+| Port 8080 already in use (Docker) | Set e.g. `DOCKER_PORT=9090` in `.env`, run `docker compose up -d`, open http://localhost:9090/. |
 | `port 8000 is already in use` (`--serve`) | Set another `SERVE_PORT` in `.env`, or stop the program using it. |
 | `http://<slug>.localhost:8080` does not open | Use Chrome or Edge, or the path style `http://localhost:8080/<slug>/`. Check the folder name equals the slug. |
 | `python` not found (Windows) | Use `py` instead, or reinstall Python with "Add to PATH" ticked. |
@@ -752,24 +752,33 @@ Python 3.11+ (developed on 3.14). Install packages **only in the venv**:
 ```bash
 python -m venv venv                                   # once
 venv/Scripts/python -m pip install -r requirements.txt   # Windows  (macOS/Linux: venv/bin/python …)
-copy .env.example .env                                # or: cp .env.example .env  (keep your DOCKER_PORT/SERVE_PORT)
+copy .env.example .env                                # or: cp .env.example .env  (then set your own SECRET_KEY)
 cd builder
 ../venv/Scripts/python manage.py migrate
 ../venv/Scripts/python manage.py setup_roles          # Admin, Sales, Verifier groups
-../venv/Scripts/python manage.py import_templates     # demos/sample-*/data.js -> 23 designs
+../venv/Scripts/python manage.py import_templates     # demos/sample-*/data.js -> 26 designs
 ../venv/Scripts/python manage.py seed_demo            # demo logins (DEBUG only)
-../venv/Scripts/python manage.py runserver            # http://127.0.0.1:8000/
+../venv/Scripts/python manage.py write_showcase_config  # showcase "Use this design" -> APP_URL
+../venv/Scripts/python manage.py runserver 8090       # http://localhost:8090/ (the APP_URL in .env)
 ```
 
-`.env`: the defaults in `.env.example` run everything locally with SQLite, emails printed in the console,
+`.env` holds **every** setting: ports, URLs, folders, database, keys and secrets, email, Razorpay,
+SMS/WhatsApp, invoice details and the demo login password. Nothing is set in `docker-compose.yml` or in
+the code, so change a value in `.env` and restart (`docker compose up -d`, or restart `runserver`).
+The values in `.env.example` run everything locally with SQLite, emails printed in the console,
 the **MockSMS** OTP shown on screen, WhatsApp messages only logged, and the **Demo Payment Simulator**.
 Comments must be on their own line (`KEY=value  # note` would put the note in the value).
-`SERVE_PORT` (for `new_demo.py --serve`) should not be 8000 while `runserver` uses 8000.
+Keep `APP_URL` in step with the port the builder runs on (`APP_DOCKER_PORT` in Docker).
+
+**Docker instead:** `docker compose up -d` starts the builder on `APP_DOCKER_PORT` (http://localhost:8090/)
+next to the demos on `DOCKER_PORT`. Inside the container the database, uploads and published sites live in
+the `builder-data` volume (`DOCKER_DATABASE_URL`, `DOCKER_SITES_ROOT`, `DOCKER_MEDIA_ROOT`, `DOCKER_LOG_DIR`).
+After editing `.env`: `docker compose up -d` (new ports) or `docker restart local-business-builder`.
 
 In development Django also serves the sites like Nginx would (`SERVE_SITES`, on when `DEBUG=True`):
-previews at `http://127.0.0.1:8000/sites/<slug>/`, the existing demos at `/sites/<demo>/`, shared assets at `/_shared/`.
+previews at `http://localhost:8090/sites/<slug>/`, the existing demos at `/sites/<demo>/`, shared assets at `/_shared/`.
 
-### Demo logins (`manage.py seed_demo`, password `Demo@12345`)
+### Demo logins (`manage.py seed_demo`, password = `DEMO_LOGIN_PASSWORD` in `.env`, default `Demo@12345`)
 
 | Login | Role |
 |---|---|
@@ -780,7 +789,7 @@ previews at `http://127.0.0.1:8000/sites/<slug>/`, the existing demos at `/sites
 
 ### Try the whole flow
 
-1. `http://127.0.0.1:8000/` → **Use this design** on any card (or sign up and use **New website**).
+1. `http://localhost:8090/` → **Use this design** on any card (or sign up and use **New website**).
 2. Sign up, enter the 6-digit code shown on screen, name your business → **Start creating**.
 3. Edit in 8 steps with the live preview on the right (on a phone: the **Preview** button). It autosaves.
 4. **Go live** → pick a plan → the **Demo Payment Simulator** → *Simulate successful payment* → send the
@@ -797,6 +806,7 @@ Google login: set `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` (redirect URI `<AP
 |---|---|
 | `manage.py import_templates` | Create/update a design for every `demos/sample-*/data.js` (thumbnail from `showcase/thumbs/`) |
 | `manage.py sync_shared [--force]` | Copy `template/css`, `js`, `placeholders` to `SITES_ROOT/_shared/<SHARED_VERSION>/` |
+| `manage.py write_showcase_config` | Write `showcase/config.js` so the showcase "Use this design" buttons open `APP_URL` (Docker runs it on start) |
 | `manage.py republish_all` | Rewrite every published site (after a template change / new `SHARED_VERSION`) |
 | `manage.py send_reminders` | Daily: renewal reminders (30/7/1/0 days) and go-live reminders (1/3/7 days) |
 | `manage.py expire_hosting` | Daily: expire hosting after the grace period (15 days) |

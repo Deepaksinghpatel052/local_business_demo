@@ -14,6 +14,13 @@ REPO_DIR = BASE_DIR.parent                                  # local_business_dem
 env = environ.Env()
 environ.Env.read_env(REPO_DIR / ".env")
 
+
+def env_path(key, default):
+    """A folder from .env; empty = default, relative paths start at the repository root."""
+    path = Path(env(key, default="") or default)
+    return path if path.is_absolute() else REPO_DIR / path
+
+
 DEBUG = env.bool("DEBUG", default=False)
 SECRET_KEY = env("SECRET_KEY", default="dev-only-insecure-key-change-me" if DEBUG else environ.Env.NOTSET)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
@@ -73,7 +80,7 @@ TEMPLATES = [
     },
 ]
 
-DATABASES = {"default": env.db("DATABASE_URL", default="sqlite:///%s" % (BASE_DIR / "db.sqlite3"))}
+DATABASES = {"default": env.db_url_config(env("DATABASE_URL", default="") or "sqlite:///%s" % (BASE_DIR / "db.sqlite3"))}
 DATABASES["default"]["ATOMIC_REQUESTS"] = False
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -96,11 +103,11 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = Path(env("STATIC_ROOT", default=str(REPO_DIR / "var" / "static")))
+STATIC_ROOT = env_path("STATIC_ROOT", "var/static")
 MEDIA_URL = "/media/"
-MEDIA_ROOT = Path(env("MEDIA_ROOT", default=str(REPO_DIR / "var" / "media")))
+MEDIA_ROOT = env_path("MEDIA_ROOT", "var/media")
 
-CACHES = {"default": env.cache("CACHE_URL", default="locmemcache://")}
+CACHES = {"default": env.cache_url_config(env("CACHE_URL", default="") or "locmemcache://")}
 
 # --- allauth: email + password, and "Continue with Google" ----------------
 SITE_ID = 1
@@ -151,12 +158,12 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 # --- Where the sites live and how they are addressed -----------------------
 APP_URL = env("APP_URL", default="http://127.0.0.1:8000").rstrip("/")
 DEMO_URL_STYLE = env("DEMO_URL_STYLE", default="path")            # "path" | "subdomain"
-DEMO_BASE_URL = env("DEMO_BASE_URL", default=APP_URL + "/sites").rstrip("/")   # path style: <base>/<slug>/
+DEMO_BASE_URL = (env("DEMO_BASE_URL", default="") or APP_URL + "/sites").rstrip("/")   # path style: <base>/<slug>/
 DEMO_DOMAIN = env("DEMO_DOMAIN", default="demo.devnixplus.com")  # subdomain style: <slug>.<domain>
 DEMO_SCHEME = env("DEMO_SCHEME", default="https")
-SITES_ROOT = Path(env("SITES_ROOT", default=str(REPO_DIR / "var" / "sites")))   # prod: /var/www/demos
+SITES_ROOT = env_path("SITES_ROOT", "var/sites")   # prod: /var/www/demos
 SHARED_VERSION = env("SHARED_VERSION", default="v1")
-SERVE_SITES = env.bool("SERVE_SITES", default=DEBUG)               # Django serves SITES_ROOT + /_shared/ (dev only)
+SERVE_SITES = env.bool("SERVE_SITES", default=DEBUG) if env("SERVE_SITES", default="") else DEBUG               # Django serves SITES_ROOT + /_shared/ (dev only)
 TEMPLATE_DIR = REPO_DIR / "template"                               # the existing renderer
 DEMOS_DIR = REPO_DIR / "demos"                                     # existing demos + sample-* templates
 RESERVED_SLUGS = {"app", "www", "api", "admin", "_shared", "static", "media", "manage", "sites", "mail", "demo"}
@@ -165,7 +172,10 @@ RESERVED_SLUGS = {"app", "www", "api", "admin", "_shared", "static", "media", "m
 RAZORPAY_KEY_ID = env("RAZORPAY_KEY_ID", default="")
 RAZORPAY_KEY_SECRET = env("RAZORPAY_KEY_SECRET", default="")
 RAZORPAY_WEBHOOK_SECRET = env("RAZORPAY_WEBHOOK_SECRET", default="")
-DEMO_PAYMENTS = env.bool("DEMO_PAYMENTS", default=not RAZORPAY_KEY_ID)
+DEMO_PAYMENTS = env.bool("DEMO_PAYMENTS") if env("DEMO_PAYMENTS", default="") else not RAZORPAY_KEY_ID
+
+# Password for the local demo logins created by "manage.py seed_demo" (DEBUG only)
+DEMO_LOGIN_PASSWORD = env("DEMO_LOGIN_PASSWORD", default="Demo@12345")
 
 # --- Invoices ---------------------------------------------------------------
 GST_ENABLED = env.bool("GST_ENABLED", default=False)
@@ -194,7 +204,7 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 6 * 1024 * 1024
 # --- Security (production) ------------------------------------------------------
 SESSION_COOKIE_SECURE = env.bool("SECURE_COOKIES", default=not DEBUG)
 CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE
-SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=0 if DEBUG else 31536000)
+SECURE_HSTS_SECONDS = int(env("SECURE_HSTS_SECONDS", default="") or (0 if DEBUG else 31536000))
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False      # customer sites on *.demo… must not inherit app policies by accident
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=False)
@@ -203,7 +213,7 @@ SECURE_REFERRER_POLICY = "same-origin"
 X_FRAME_OPTIONS = "SAMEORIGIN"              # the editor shows its live preview in a same-origin iframe
 
 # --- Logging --------------------------------------------------------------------
-LOG_DIR = Path(env("LOG_DIR", default=str(REPO_DIR / "var" / "logs")))
+LOG_DIR = env_path("LOG_DIR", "var/logs")
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 LOGGING = {
     "version": 1,
