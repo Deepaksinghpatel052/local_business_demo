@@ -22,9 +22,9 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/CUSTOMER_DOMAIN/privkey.pem;
     if ($host = www.CUSTOMER_DOMAIN) { return 301 https://CUSTOMER_DOMAIN$request_uri; }
 
-    root /var/www/demos/SLUG;
+    root /srv/local_business_demo/media/sites/SLUG;            # NGINX_SITES_ROOT/SLUG
     index index.html;
-    location /_shared/ { alias /var/www/demos/_shared/; expires 30d; }
+    location /_shared/ { alias /srv/local_business_demo/media/sites/_shared/; expires 30d; }
     location ~ /\. { deny all; }
     location = /data.js { expires -1; }
     location ~* \.(?:jpg|jpeg|png|webp|gif|svg|ico|css|js|woff2?)$ { expires 7d; }

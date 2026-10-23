@@ -1,17 +1,17 @@
-# Cron jobs for the site builder (Django reads /srv/local_business_demo/.env by itself).
-# Install for the devnix user:  sudo crontab -u devnix /srv/local_business_demo/deploy/crontab.txt
+# Cron jobs for the site builder. The commands run inside the Docker container (docker compose),
+# which reads /srv/local_business_demo/.env. Install for a user that may run docker (in the docker group):
+#   crontab /srv/local_business_demo/deploy/crontab.txt
 # Times are server time; set the server to India time once: sudo timedatectl set-timezone Asia/Kolkata
 SHELL=/bin/bash
 APP=/srv/local_business_demo
-PY=/srv/local_business_demo/venv/bin/python
 
 # 09:00 renewal and go-live reminders (email + WhatsApp)
-0 9 * * *   cd $APP/builder && $PY manage.py send_reminders >> /var/log/devnix/cron.log 2>&1
+0 9 * * *   cd $APP && docker compose exec -T -w /app/builder app python manage.py send_reminders >> var/logs/cron.log 2>&1
 # 01:00 expire hosting after the grace period (site shows "temporarily unavailable")
-0 1 * * *   cd $APP/builder && $PY manage.py expire_hosting >> /var/log/devnix/cron.log 2>&1
+0 1 * * *   cd $APP && docker compose exec -T -w /app/builder app python manage.py expire_hosting >> var/logs/cron.log 2>&1
 # 01:30 unpublish previews unused for 60 days (data is kept)
-30 1 * * *  cd $APP/builder && $PY manage.py expire_previews >> /var/log/devnix/cron.log 2>&1
-# 02:30 backups (database, photos, sites), 14 days kept
-30 2 * * *  $APP/deploy/backup.sh >> /var/log/devnix/backup.log 2>&1
+30 1 * * *  cd $APP && docker compose exec -T -w /app/builder app python manage.py expire_previews >> var/logs/cron.log 2>&1
+# 02:30 backups (database + MEDIA_DIR), 14 days kept
+30 2 * * *  $APP/deploy/backup.sh >> $APP/var/logs/backup.log 2>&1
 # Sundays 03:00 clear expired login sessions
-0 3 * * 0   cd $APP/builder && $PY manage.py clearsessions >> /var/log/devnix/cron.log 2>&1
+0 3 * * 0   cd $APP && docker compose exec -T -w /app/builder app python manage.py clearsessions >> var/logs/cron.log 2>&1

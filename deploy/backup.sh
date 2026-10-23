@@ -1,27 +1,31 @@
 #!/usr/bin/env bash
-# Daily backup of the PostgreSQL database, uploaded photos and every published site.
-# Keeps 14 days. Run from cron as the devnix user (see deploy/crontab.txt):
-#   30 2 * * * /srv/local_business_demo/deploy/backup.sh >> /var/log/devnix/backup.log 2>&1
-# Copy /var/backups/devnix off the server too (rclone/rsync to another machine or bucket).
+# Daily backup of the PostgreSQL database and every client file (MEDIA_DIR: uploads + published sites).
+# Keeps 14 days. Reads DATABASE_URL and MEDIA_DIR from the project's .env. Run from cron (deploy/crontab.txt):
+#   30 2 * * * /srv/local_business_demo/deploy/backup.sh >> /srv/local_business_demo/var/logs/backup.log 2>&1
+# Needs the PostgreSQL client on the server (sudo apt install postgresql-client).
+# Copy BACKUP_DIR off the server too (rclone/rsync to another machine or bucket).
 set -euo pipefail
 
+APP=${APP:-/srv/local_business_demo}
 BACKUP_DIR=${BACKUP_DIR:-/var/backups/devnix}
-DB_NAME=${DB_NAME:-devnix}
-SITES=${SITES:-/var/www/demos}
-MEDIA=${MEDIA:-/var/www/devnix-media}
 KEEP_DAYS=${KEEP_DAYS:-14}
 STAMP=$(date +%Y-%m-%d_%H%M)
+
+env_value() { grep -E "^$1=" "$APP/.env" | tail -1 | cut -d= -f2-; }
+DATABASE_URL=$(env_value DATABASE_URL)
+MEDIA_DIR=$(env_value MEDIA_DIR)
+case "$MEDIA_DIR" in /*) ;; *) MEDIA_DIR="$APP/${MEDIA_DIR#./}" ;; esac
 
 mkdir -p "$BACKUP_DIR"
 umask 077
 
-pg_dump --format=custom --no-owner "$DB_NAME" > "$BACKUP_DIR/db_$STAMP.dump"
-tar --exclude='.tmp-*' --exclude='.old-*' -czf "$BACKUP_DIR/sites_$STAMP.tar.gz" -C "$(dirname "$SITES")" "$(basename "$SITES")"
-tar -czf "$BACKUP_DIR/media_$STAMP.tar.gz" -C "$(dirname "$MEDIA")" "$(basename "$MEDIA")"
+pg_dump --format=custom --no-owner --dbname="$DATABASE_URL" > "$BACKUP_DIR/db_$STAMP.dump"
+tar --exclude='.tmp-*' --exclude='.old-*' -czf "$BACKUP_DIR/media_$STAMP.tar.gz" -C "$MEDIA_DIR" .
 
 find "$BACKUP_DIR" -type f -mtime +"$KEEP_DAYS" -delete
 echo "$(date -Is) backup ok: $(du -sh "$BACKUP_DIR" | cut -f1) in $BACKUP_DIR"
 
 # Restore:
-#   pg_restore --clean --no-owner -d devnix /var/backups/devnix/db_<stamp>.dump
-#   tar -xzf sites_<stamp>.tar.gz -C /var/www   &&   tar -xzf media_<stamp>.tar.gz -C /var/www
+#   pg_restore --clean --no-owner --dbname="<DATABASE_URL>" /var/backups/devnix/db_<stamp>.dump
+#   tar -xzf /var/backups/devnix/media_<stamp>.tar.gz -C <MEDIA_DIR>
+#   docker compose restart

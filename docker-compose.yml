@@ -1,39 +1,30 @@
-# Every value comes from .env (Docker Compose reads it automatically): nothing is set here.
-#   DOCKER_PORT          static demos + showcase (Nginx)
-#   APP_DOCKER_PORT      Django site builder (builder/); the builder also reads all of .env itself
-#   DOCKER_DATABASE_URL, DOCKER_SITES_ROOT, DOCKER_MEDIA_ROOT, DOCKER_LOG_DIR
-#                        where the builder keeps its data inside the container (volume builder-data)
-# After changing .env:  docker compose up -d
+# The Django site builder (builder/) in one container. No Nginx here: the server's own Nginx
+# serves the files and proxies to this container (deploy/nginx-app.conf, deploy/nginx-demos.conf).
+#
+# Every value comes from .env (Docker Compose reads it automatically, and the container gets it too):
+#   APP_DOCKER_PORT  the builder on http://127.0.0.1:<APP_DOCKER_PORT>/ (only this computer; Nginx proxies to it)
+#   MEDIA_DIR        the folder on this computer that holds every client file; mounted at /app/media:
+#                      <MEDIA_DIR>/uploads/  photos owners upload      <MEDIA_DIR>/sites/  published websites
+#                    Restarting, rebuilding or removing the container never touches it.
+#   DEBUG            True: Django dev server + demo logins.  False: Gunicorn (GUNICORN_WORKERS)
+#
+# Start / apply .env changes:  docker compose up -d        Rebuild (new packages):  docker compose up -d --build
 services:
-  demos:
-    build: .
-    image: local-business-demos
-    container_name: local-business-demos
-    ports:
-      - "${DOCKER_PORT:?Set DOCKER_PORT in .env}:80"
-    volumes:
-      - ./demos:/usr/share/nginx/demos:ro   # live: edits to demos/ show on refresh
-      - ./showcase:/usr/share/nginx/showcase:ro
-    restart: unless-stopped
-
   app:
     build:
       context: .
       dockerfile: docker/Dockerfile.app
     image: local-business-builder
     container_name: local-business-builder
+    env_file: .env
     ports:
-      - "${APP_DOCKER_PORT:?Set APP_DOCKER_PORT in .env}:8000"
+      - "127.0.0.1:${APP_DOCKER_PORT:?Set APP_DOCKER_PORT in .env}:8000"
     volumes:
-      - .:/app                              # live code + .env: edits show after a refresh / restart
-      - builder-data:/data                  # database, uploads, published sites
+      - .:/app                                                  # code, .env, showcase/, var/ (static, logs)
+      - ${MEDIA_DIR:?Set MEDIA_DIR in .env}:/app/media          # client files, kept outside the container
     environment:
-      # Container folders differ from the ones on your PC, so .env keeps them under DOCKER_* names
-      DATABASE_URL: "${DOCKER_DATABASE_URL:?Set DOCKER_DATABASE_URL in .env}"
-      SITES_ROOT: "${DOCKER_SITES_ROOT:?Set DOCKER_SITES_ROOT in .env}"
-      MEDIA_ROOT: "${DOCKER_MEDIA_ROOT:?Set DOCKER_MEDIA_ROOT in .env}"
-      LOG_DIR: "${DOCKER_LOG_DIR:?Set DOCKER_LOG_DIR in .env}"
+      # Inside the container the client files are always under /app/media (= MEDIA_DIR on this computer)
+      MEDIA_ROOT: /app/media/uploads
+      SITES_ROOT: /app/media/sites
+    command: ["sh", "-c", "sed 's/\r$//' /app/docker/app-start.sh | sh"]
     restart: unless-stopped
-
-volumes:
-  builder-data:

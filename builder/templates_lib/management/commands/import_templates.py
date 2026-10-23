@@ -2,6 +2,7 @@
 Create/update a Template for every demos/sample-*/data.js.
 
     python manage.py import_templates
+    python manage.py import_templates --if-empty     only when no design exists yet (server start)
 """
 import shutil
 
@@ -16,7 +17,14 @@ from templates_lib.models import Template
 class Command(BaseCommand):
     help = "Import demos/sample-*/data.js as starting templates"
 
+    def add_arguments(self, parser):
+        parser.add_argument("--if-empty", action="store_true",
+                            help="do nothing when designs already exist (keeps the team's on/off and order)")
+
     def handle(self, *args, **opts):
+        if opts["if_empty"] and Template.objects.exists():
+            self.stdout.write("Templates: already imported, skipped (--if-empty)")
+            return
         order = list(categories())
         thumbs_src = settings.REPO_DIR / "showcase" / "thumbs"
         thumbs_dst = settings.MEDIA_ROOT / "templates"

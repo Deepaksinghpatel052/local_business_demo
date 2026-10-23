@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, re_path
 
@@ -22,12 +21,14 @@ urlpatterns = [
     path("", include("pages.urls")),
 ]
 
-if settings.SERVE_SITES:
+if settings.SERVE_FILES:
     urlpatterns += [
         re_path(r"^sites/(?P<path>.*)$", core_views.serve_site),
         re_path(r"^_shared/(?P<path>.*)$", core_views.serve_shared),
+        re_path(r"^media/(?P<path>.*)$", core_views.serve_media),
     ]
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    if not settings.DEBUG:      # with DEBUG=True runserver already serves /static/
+        urlpatterns.append(re_path(r"^static/(?P<path>.*)$", core_views.serve_static))
 
 handler404 = "pages.errors.not_found"
 handler500 = "pages.errors.server_error"

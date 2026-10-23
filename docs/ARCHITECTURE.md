@@ -12,7 +12,7 @@
 | `demos/` | 3 business demos (`seasons-salon`, `primeride-taxi-gwalior`, `relief-physiotherapy-gwalior`) + 23 `sample-*` category samples. Each folder is self-contained (own `css/ js/ placeholders/`). | `import_templates` turns every `sample-*` into a Template. All demo folder names are reserved slugs. The folders are left untouched and keep working. |
 | `showcase/` | Static gallery at `/` of the demo host (`demos.js` + `thumbs/`, built by `tools/build_showcase.py`). | Kept static. Sample cards got a **Use this design** button (→ `app…/start/<category>/`) and the hero a "Create your business website free in 5 minutes" button. |
 | `new_demo.py` | Create / list / zip / launch / update hand-made demos (stdlib only). | Unchanged; still the tool for hand-made pitches. |
-| How demos are served | `deploy/nginx-wildcard.conf` = **subdomain** style (`<slug>.mydomain.com`); the latest commit and `docker/nginx.conf` open them as **paths** (`/<slug>/`). | `DEMO_URL_STYLE = "path"` (default) or `"subdomain"`, plus `DEMO_BASE_URL` / `DEMO_DOMAIN`. |
+| How demos are served | `deploy/nginx-wildcard.conf` = **subdomain** style (`<slug>.mydomain.com`); `deploy/nginx-demos.conf` opens them as **paths** (`/<slug>/`) from `media/sites/`, falling back to `demos/`. | `DEMO_URL_STYLE = "path"` (default) or `"subdomain"`, plus `DEMO_BASE_URL` / `DEMO_DOMAIN`. |
 
 ## 2. Folder structure
 
@@ -36,9 +36,11 @@ local_business_demo/
 │   ├── pages/                home, pricing, how it works, FAQ, legal pages, contact
 │   ├── templates/            Django templates (Bootstrap 5)
 │   └── static/               app.css, app.js, editor.css, editor.js, editor-bridge.js
-├── deploy/                   Nginx (app, demos, customer domain, ACME default), systemd, cron, backup.sh
+├── deploy/                   Nginx for the server (app, demos, customer domain, ACME default), cron, backup.sh
+├── docker/                   Dockerfile.app + app-start.sh (the builder container; no Nginx in Docker)
+├── media/                    (git-ignored) client files = MEDIA_DIR: uploads/ (photos), sites/ (published)
 ├── docs/                     this file, DEPLOYMENT.md, ADMIN_GUIDE.md, USER_FLOW.md
-├── var/                      (git-ignored) local sites/, media/, logs/, static/
+├── var/                      (git-ignored) static/ (collectstatic), logs/, backups/
 ├── requirements.txt          everything for local dev (venv)
 └── requirements-server.txt   server (no Playwright)
 ```
@@ -77,7 +79,7 @@ local_business_demo/
 | `/pricing/ /how-it-works/ /faq/ /terms/ /privacy/ /refund-policy/ /contact/` | Public pages |
 | `/manage/…` | Team panel (overview, leads, verification, projects, payments, templates, abuse, settings, audit) |
 | `/django-admin/` | Django's technical admin |
-| `/sites/<slug>/`, `/_shared/…` | Dev only (`SERVE_SITES`): Django stands in for Nginx |
+| `/sites/<slug>/`, `/_shared/…`, `/media/…`, `/static/…` | Only with `SERVE_FILES=True` (a computer without Nginx): Django stands in for Nginx |
 
 ## 5. Publishing
 

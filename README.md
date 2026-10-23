@@ -19,7 +19,7 @@ based on how that kind of business sells.
 - Static only: HTML, CSS, Bootstrap 5, jQuery, Bootstrap Icons, AOS and ColorThief, loaded from CDNs.
 - No backend, no database, no build step, no `.env`. Each demo is one self-contained folder.
 - `new_demo.py` creates and manages demos. It needs only Python 3.8+ (standard library, nothing to install).
-- Docker (optional) serves all demos locally, each on its own subdomain, just like production.
+- Docker (optional) runs the site builder, which also shows every demo at `http://localhost:9002/sites/<slug>/`.
 
 **New: self-service website builder** (`builder/`, Django). Business owners sign up, pick one of these
 designs, fill in their details with a live preview, and go live (hosting) or download the site, after a
@@ -56,7 +56,7 @@ manual check by the Devnixplus team. It reuses this same template to render ever
 |---|---|---|
 | **Python 3.8+** | `new_demo.py` (create, zip, launch demos) | `python --version` |
 | **Git** | getting the code and saving changes | `git --version` |
-| **Docker Desktop** *(optional)* | previewing all demos at `http://<slug>.localhost:8080/` | `docker --version` |
+| **Docker Desktop** *(optional)* | the site builder, which also shows all demos at `http://localhost:9002/sites/<slug>/` | `docker --version` |
 | A modern browser | previewing | Chrome or Edge recommended |
 
 On Windows, if `python` is not found, try `py` instead (for example `py new_demo.py --list`).
@@ -92,51 +92,39 @@ There are three ways to view the demos. Pick one.
 All local ports live in the **`.env`** file in the project root:
 
 ```ini
-DOCKER_PORT=8080    # Docker: http://localhost:8080/ and http://<slug>.localhost:8080/
-SERVE_PORT=8000     # Python preview: python new_demo.py --serve <slug>
+APP_DOCKER_PORT=9002   # Docker: the site builder (also shows every demo) at http://localhost:9002/
+SERVE_PORT=8000        # Python preview: python new_demo.py --serve <slug>
 ```
 
 To run on a different port, change the number there and nowhere else:
 
 | To change | Edit in `.env` | Then |
 |---|---|---|
-| Docker port | `DOCKER_PORT=9090` | `docker compose up -d` → http://localhost:9090/ |
+| Docker port | `APP_DOCKER_PORT=9090` and `APP_URL=http://localhost:9090` | `docker compose up -d` → http://localhost:9090/ |
 | Python preview port | `SERVE_PORT=5500` | `python new_demo.py --serve <slug>` → http://localhost:5500/ |
 
-Docker Compose reads `.env` automatically, and `new_demo.py` reads the same file. If `.env` is
-missing, the defaults 8080 and 8000 are used. A one-off override also works:
-`DOCKER_PORT=9090 docker compose up -d` (macOS/Linux/Git Bash).
+Docker Compose reads `.env` automatically, and `new_demo.py` reads the same file.
 
-The URLs below use the default port 8080. Replace it with your `DOCKER_PORT` if you changed it.
+### Option A: Docker (all demos at once, through the site builder)
 
-### Option A: Docker (recommended, all demos at once)
-
-Make sure **Docker Desktop is running**, then from the project folder:
+There is no Nginx in Docker (the server has its own). The site builder container serves the demos itself
+while `SERVE_FILES=True`. Make sure **Docker Desktop is running**, then from the project folder:
 
 ```bash
 docker compose up -d --build
 ```
 
-Open in Chrome or Edge:
-
 | What | URL |
 |---|---|
-| Devnixplus showcase (grid of all demos) | http://localhost:8080/ |
-| A demo, subdomain style (same as production) | `http://<slug>.localhost:8080/` e.g. http://seasons-salon.localhost:8080/ |
-| A demo, path style (works in any browser) | `http://localhost:8080/<slug>/` e.g. http://localhost:8080/seasons-salon/ |
-| With the pitch panel | http://seasons-salon.localhost:8080/?pitch=1 |
+| A demo | `http://localhost:9002/sites/<slug>/` e.g. http://localhost:9002/sites/seasons-salon/ |
+| With the pitch panel | http://localhost:9002/sites/seasons-salon/?pitch=1 |
+| The site builder | http://localhost:9002/ |
 
-- The `demos/` folder is mounted live: edit any `data.js` or image and just **refresh the browser**.
-  No rebuild is needed.
-- The showcase page at `/` lives in `showcase/` (also mounted live). After adding or changing a demo,
-  refresh its card and thumbnail with `venv/Scripts/python tools/build_showcase.py`
-  (`--only <slug>` for one demo, `--no-shots` to skip screenshots).
-- Rebuild only after changing `Dockerfile` or `docker/nginx.conf`: `docker compose up -d --build`.
+- The project folder is mounted live: edit any `data.js` or image and just **refresh the browser**.
+- The showcase page (`showcase/`) is served by the server's Nginx at `/` of the demo domain
+  (`deploy/nginx-demos.conf`). After adding or changing a demo, refresh its card and thumbnail with
+  `venv/Scripts/python tools/build_showcase.py` (`--only <slug>` for one demo, `--no-shots` to skip screenshots).
 - Stop: `docker compose down`. Logs: `docker compose logs -f`.
-- The container restarts automatically whenever Docker Desktop is running.
-
-Docker files: `Dockerfile` (Nginx image), `docker-compose.yml` (port from `.env`, live mount),
-`docker/nginx.conf` (maps `<slug>.localhost` to `demos/<slug>/`).
 
 ### Option B: Python (one demo, no Docker)
 
@@ -275,7 +263,7 @@ See [Images](#8-images) for sizes.
 
 ### Step 5: Preview
 
-- **Docker running?** Just open http://seasons-salon.localhost:8080/ (refresh after every edit).
+- **Docker running?** Just open http://localhost:9002/sites/seasons-salon/ (refresh after every edit).
 - Or: `python new_demo.py --serve seasons-salon` and open http://localhost:8000 (your `SERVE_PORT`).
 
 Check the [checklist](#13-checklist-before-you-send-a-demo): phone width, Call/WhatsApp buttons,
@@ -333,7 +321,7 @@ git push
 
 Use the **key** in `new_demo.py "Name" <key>` and in `data.js`.
 Every category has its own design and a sample demo to look at
-(Docker: `http://sample-<key>.localhost:8080/`).
+(Docker: `http://localhost:9002/sites/sample-<key>/`).
 
 | Key | Use for | Hero layout | Main button | Sample demo |
 |---|---|---|---|---|
@@ -627,12 +615,12 @@ rsync -av demos/seasons-salon/ user@SERVER_IP:/var/www/demos/seasons-salon/
 
 | Command | What it does |
 |---|---|
-| `docker compose up -d --build` | Build and start (http://localhost:<DOCKER_PORT>, default 8080) |
-| `docker compose up -d` | Apply a changed `DOCKER_PORT` from `.env` |
-| `docker compose down` | Stop and remove the container |
+| `docker compose up -d --build` | Build and start the site builder (http://localhost:<APP_DOCKER_PORT>, default 9002) |
+| `docker compose up -d` | Apply changes in `.env` (ports, `MEDIA_DIR`, keys…) |
+| `docker compose down` | Stop and remove the container (client files in `MEDIA_DIR` stay) |
 | `docker compose restart` | Restart |
-| `docker compose logs -f` | Follow the Nginx logs |
-| `docker ps` | Check the `local-business-demos` container is running |
+| `docker compose logs -f` | Follow the logs |
+| `docker ps` | Check the `local-business-builder` container is running |
 
 ### Git
 
@@ -664,9 +652,9 @@ git push                        # upload to GitHub
 | Problem | Fix |
 |---|---|
 | `docker: failed to connect to the docker API` | Docker Desktop is not running. Start it, wait until it says "running", then retry. |
-| Port 8080 already in use (Docker) | Set e.g. `DOCKER_PORT=9090` in `.env`, run `docker compose up -d`, open http://localhost:9090/. |
+| Port 9002 already in use (Docker) | Set e.g. `APP_DOCKER_PORT=9090` and `APP_URL=http://localhost:9090` in `.env`, run `docker compose up -d`, open http://localhost:9090/. |
 | `port 8000 is already in use` (`--serve`) | Set another `SERVE_PORT` in `.env`, or stop the program using it. |
-| `http://<slug>.localhost:8080` does not open | Use Chrome or Edge, or the path style `http://localhost:8080/<slug>/`. Check the folder name equals the slug. |
+| `http://localhost:9002/sites/<slug>/` gives 404 | Check the folder name equals the slug and `SERVE_FILES=True` in `.env`. |
 | `python` not found (Windows) | Use `py` instead, or reinstall Python with "Add to PATH" ticked. |
 | `unknown category 'xyz'` | Use one of the [category keys](#6-categories) exactly, e.g. `real-estate`, `car-service`. |
 | `theme: "auto"` shows the category colours | You opened the file directly. Use Docker, `python -m http.server` or the live site. Check `logo` is set and loads. |
@@ -701,10 +689,10 @@ local_business_demo/
 ├── tools/theme-preview.html     # logo → colours → `theme` for data.js
 ├── tools/build_showcase.py      # refresh showcase/demos.js + thumbnails from demos/
 ├── deploy/nginx-wildcard.conf   # production Nginx config: every subdomain → its folder, SSL
-├── docker/nginx.conf            # local Docker Nginx config (<slug>.localhost)
-├── Dockerfile                   # Nginx image with all demos
-├── docker-compose.yml           # runs it on DOCKER_PORT, demos/ mounted live
-├── .env                         # local ports: DOCKER_PORT, SERVE_PORT (one place)
+├── docker/                      # Dockerfile.app + app-start.sh for the site builder container
+├── docker-compose.yml           # the site builder; every value from .env, MEDIA_DIR mounted
+├── media/                       # client files: uploads/ + published sites/ (MEDIA_DIR, not committed)
+├── .env                         # every setting: ports, URLs, folders, keys (not committed)
 ├── dist/                        # ZIPs made by --zip (not committed)
 ├── new_demo.py                  # create / list / zip / launch / update demos
 └── README.md
@@ -759,7 +747,7 @@ cd builder
 ../venv/Scripts/python manage.py import_templates     # demos/sample-*/data.js -> 26 designs
 ../venv/Scripts/python manage.py seed_demo            # demo logins (DEBUG only)
 ../venv/Scripts/python manage.py write_showcase_config  # showcase "Use this design" -> APP_URL
-../venv/Scripts/python manage.py runserver 8090       # http://localhost:8090/ (the APP_URL in .env)
+../venv/Scripts/python manage.py runserver 9002       # http://localhost:9002/ (the APP_URL in .env)
 ```
 
 `.env` holds **every** setting: ports, URLs, folders, database, keys and secrets, email, Razorpay,
@@ -770,13 +758,25 @@ the **MockSMS** OTP shown on screen, WhatsApp messages only logged, and the **De
 Comments must be on their own line (`KEY=value  # note` would put the note in the value).
 Keep `APP_URL` in step with the port the builder runs on (`APP_DOCKER_PORT` in Docker).
 
-**Docker instead:** `docker compose up -d` starts the builder on `APP_DOCKER_PORT` (http://localhost:8090/)
-next to the demos on `DOCKER_PORT`. Inside the container the database, uploads and published sites live in
-the `builder-data` volume (`DOCKER_DATABASE_URL`, `DOCKER_SITES_ROOT`, `DOCKER_MEDIA_ROOT`, `DOCKER_LOG_DIR`).
-After editing `.env`: `docker compose up -d` (new ports) or `docker restart local-business-builder`.
+**Docker instead:** `docker compose up -d` starts the builder on `127.0.0.1:APP_DOCKER_PORT` (http://localhost:9002/).
+There is no Nginx in Docker: on the server, its own Nginx proxies to the container (see `docs/DEPLOYMENT.md`).
+With `DEBUG=True` the container runs the Django dev server and the demo logins; with `DEBUG=False`, Gunicorn.
+After editing `.env`: `docker compose up -d`.
 
-In development Django also serves the sites like Nginx would (`SERVE_SITES`, on when `DEBUG=True`):
-previews at `http://localhost:8090/sites/<slug>/`, the existing demos at `/sites/<demo>/`, shared assets at `/_shared/`.
+**Client files are never inside the container.** Everything owners upload and every published website
+lives in `MEDIA_DIR` (default: the project's `media/` folder), mounted into the container at `/app/media`:
+
+```
+media/uploads/        photos owners upload (MEDIA_ROOT, URL /media/; uploads/verification/ is never public)
+media/sites/<slug>/   published websites, media/sites/_shared/ the shared template files (SITES_ROOT)
+```
+
+They are plain folders, so the server's Nginx serves them directly, and restarting, rebuilding or removing
+the container never touches them. Back up `MEDIA_DIR` together with the database (`deploy/backup.sh`).
+
+`SERVE_FILES=True` lets Django serve them itself on a computer without Nginx: previews at
+`http://localhost:9002/sites/<slug>/`, the existing demos at `/sites/<demo>/`, shared assets at `/_shared/`,
+photos at `/media/` and, with `DEBUG=False`, `/static/`. Set `SERVE_FILES=False` on the server.
 
 ### Demo logins (`manage.py seed_demo`, password = `DEMO_LOGIN_PASSWORD` in `.env`, default `Demo@12345`)
 
@@ -789,7 +789,7 @@ previews at `http://localhost:8090/sites/<slug>/`, the existing demos at `/sites
 
 ### Try the whole flow
 
-1. `http://localhost:8090/` → **Use this design** on any card (or sign up and use **New website**).
+1. `http://localhost:9002/` → **Use this design** on any card (or sign up and use **New website**).
 2. Sign up, enter the 6-digit code shown on screen, name your business → **Start creating**.
 3. Edit in 8 steps with the live preview on the right (on a phone: the **Preview** button). It autosaves.
 4. **Go live** → pick a plan → the **Demo Payment Simulator** → *Simulate successful payment* → send the

@@ -16,7 +16,7 @@ def clean_domain(value):
 
 def server_block(project):
     d = project.custom_domain
-    root = settings.SITES_ROOT if str(settings.SITES_ROOT).startswith("/") else "/var/www/demos"
+    root = str(settings.NGINX_SITES_ROOT).rstrip("/")
     return """# /etc/nginx/sites-available/{d}.conf   ({name}, project #{pk})
 server {{
     listen 80;

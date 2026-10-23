@@ -105,7 +105,9 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = env_path("STATIC_ROOT", "var/static")
 MEDIA_URL = "/media/"
-MEDIA_ROOT = env_path("MEDIA_ROOT", "var/media")
+# Client files live in the project's media/ folder (mounted into Docker), never inside a container:
+#   media/uploads/  photos owners upload (MEDIA_ROOT)    media/sites/  published websites (SITES_ROOT)
+MEDIA_ROOT = env_path("MEDIA_ROOT", "media/uploads")
 
 CACHES = {"default": env.cache_url_config(env("CACHE_URL", default="") or "locmemcache://")}
 
@@ -161,9 +163,12 @@ DEMO_URL_STYLE = env("DEMO_URL_STYLE", default="path")            # "path" | "su
 DEMO_BASE_URL = (env("DEMO_BASE_URL", default="") or APP_URL + "/sites").rstrip("/")   # path style: <base>/<slug>/
 DEMO_DOMAIN = env("DEMO_DOMAIN", default="demo.devnixplus.com")  # subdomain style: <slug>.<domain>
 DEMO_SCHEME = env("DEMO_SCHEME", default="https")
-SITES_ROOT = env_path("SITES_ROOT", "var/sites")   # prod: /var/www/demos
+SITES_ROOT = env_path("SITES_ROOT", "media/sites")
 SHARED_VERSION = env("SHARED_VERSION", default="v1")
-SERVE_SITES = env.bool("SERVE_SITES", default=DEBUG) if env("SERVE_SITES", default="") else DEBUG               # Django serves SITES_ROOT + /_shared/ (dev only)
+# The sites folder as the server's Nginx sees it (used in the generated customer-domain blocks)
+NGINX_SITES_ROOT = env("NGINX_SITES_ROOT", default="") or str(SITES_ROOT)
+# Django serves /sites/, /_shared/, /media/ and /static/ itself: for a computer without Nginx
+SERVE_FILES = env.bool("SERVE_FILES") if env("SERVE_FILES", default="") else DEBUG
 TEMPLATE_DIR = REPO_DIR / "template"                               # the existing renderer
 DEMOS_DIR = REPO_DIR / "demos"                                     # existing demos + sample-* templates
 RESERVED_SLUGS = {"app", "www", "api", "admin", "_shared", "static", "media", "manage", "sites", "mail", "demo"}
