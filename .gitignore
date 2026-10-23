@@ -11,3 +11,15 @@ Thumbs.db
 
 # Secrets
 .env
+
+# Django site builder (builder/): local database, uploads, published sites, logs
+builder/db.sqlite3
+var/
+*.pyc
+# Generated from APP_URL in .env (manage.py write_showcase_config)
+showcase/config.js
+
+# Client files: uploads and published sites (MEDIA_DIR). Back them up, never commit them.
+media/
+# Server settings file (copy of .env for the server; holds secrets)
+.env.server

@@ -20,6 +20,14 @@
   var COLORTHIEF_URL = 'https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.4.0/color-thief.umd.js';
   /* ===================================================================== */
 
+  /* Sites published by the Devnixplus platform set window.LBD_CONFIG in index.html:
+     { demoMode, mode: 'preview'|'live'|'editor'|'download', assetBase: '/_shared/v1/',
+       themeSwitcher, reportUrl }. Hand-made demos don't, and keep the settings above. */
+  var CFG = window.LBD_CONFIG || {};
+  if (typeof CFG.demoMode === 'boolean') DEMO_MODE = CFG.demoMode;
+  if (typeof CFG.themeSwitcher === 'boolean') SHOW_THEME_SWITCHER = CFG.themeSwitcher;
+  var ASSET_BASE = CFG.assetBase || '';    // where css/, js/ and placeholders/ live
+
   var PRESETS = window.THEME_PRESETS || {};
   var CATEGORIES = window.THEME_CATEGORIES || {};
   var FONT_WEIGHTS = window.FONT_WEIGHTS || {};
@@ -43,7 +51,7 @@
       freeTrial: 'Book Free Trial', bookAppointment: 'Book Appointment', bookDemo: 'Book Free Demo Class',
       getQuote: 'Get a Quote', enquireNow: 'Enquire Now', checkAvailability: 'Check Availability',
       reserveTable: 'Reserve a Table', planTrip: 'Plan My Trip', bookVisit: 'Book a Visit', bookCab: 'Book a Cab',
-      admissionEnquiry: 'Admission Enquiry', siteVisit: 'Book a Site Visit', bookMassage: 'Book a Massage', orderCake: 'Order a Cake', checkPrice: 'Check Price',
+      admissionEnquiry: 'Admission Enquiry', siteVisit: 'Book a Site Visit', bookMassage: 'Book a Massage', orderCake: 'Order a Cake', checkPrice: 'Check Price', orderPet: 'Order for my pet', freeAdvice: 'Get Free Advice', openLink: 'Apply online',
       getDirections: 'Get Directions', sendWhatsapp: 'Send on WhatsApp', enquire: 'Enquire',
       kick_about: 'Our story', kick_services: 'What we offer', kick_why: 'Our promise', kick_gallery: 'Take a look',
       kick_reviews: 'Testimonials', kick_hours: 'Visit us', kick_faq: 'Good to know', kick_contact: 'Get in touch',
@@ -53,7 +61,7 @@
       menu: 'Our Menu', services: 'Our Services', treatments: 'Treatments', collections: 'Our Collections',
       plans: 'Membership Plans', departments: 'Departments', programs: 'Our Programs', courses: 'Courses',
       rooms: 'Rooms & Stays', products: 'Our Products', properties: 'Properties', specials: 'House specials',
-      packages: 'Tour Packages', therapies: 'Massages & Therapies', rides: 'Rides & Fares',
+      packages: 'Tour Packages', therapies: 'Massages & Therapies', rides: 'Rides & Fares', petcare: 'Products & Pet Care', financial: 'Policies & Investments',
       fleetTitle: 'Choose Your Vehicle', seats: '{n} seats', bags: '{n} bags', acCar: 'AC', bookThisCar: 'Book this car', vehicleType: 'Vehicle type',
       whyTitle: 'Why Choose Us', doctorTitle: 'Meet the Doctor', resultsTitle: 'Our Results', galleryTitle: 'Gallery',
       reviewsTitle: 'What Our Customers Say', hoursTitle: 'Opening Hours', faqTitle: 'Frequently Asked Questions',
@@ -71,6 +79,7 @@
       viewOnMap: 'Open in Google Maps', backToTop: 'Back to top',
       ribbon: 'This is a demo website concept prepared for {name} by {dev}. Like it? Let\'s make it yours.',
       ribbonBtn: 'Let\'s talk', dismiss: 'Dismiss',
+      previewRibbon: 'Preview: this website is not live yet.', reportSite: 'Report this website',
       pitchTitle: 'What you get with this website', pitchCta: 'Get this website',
       pitch1: 'Mobile-friendly design that looks great on every phone',
       pitch2: 'WhatsApp and Google Maps built right in',
@@ -87,7 +96,7 @@
       freeTrial: 'फ्री ट्रायल बुक करें', bookAppointment: 'अपॉइंटमेंट बुक करें', bookDemo: 'फ्री डेमो क्लास बुक करें',
       getQuote: 'कोटेशन पाएँ', enquireNow: 'अभी पूछें', checkAvailability: 'उपलब्धता जानें',
       reserveTable: 'टेबल बुक करें', planTrip: 'मेरी यात्रा प्लान करें', bookVisit: 'विज़िट बुक करें', bookCab: 'कैब बुक करें',
-      admissionEnquiry: 'एडमिशन की जानकारी', siteVisit: 'साइट विज़िट बुक करें', bookMassage: 'मसाज बुक करें', orderCake: 'केक ऑर्डर करें', checkPrice: 'कीमत जानें',
+      admissionEnquiry: 'एडमिशन की जानकारी', siteVisit: 'साइट विज़िट बुक करें', bookMassage: 'मसाज बुक करें', orderCake: 'केक ऑर्डर करें', checkPrice: 'कीमत जानें', orderPet: 'मेरे पेट के लिए ऑर्डर करें', freeAdvice: 'मुफ़्त सलाह लें', openLink: 'ऑनलाइन आवेदन करें',
       getDirections: 'रास्ता देखें', sendWhatsapp: 'व्हाट्सऐप पर भेजें', enquire: 'पूछें',
       kick_about: 'हमारी कहानी', kick_services: 'हम क्या देते हैं', kick_why: 'हमारा वादा', kick_gallery: 'एक झलक',
       kick_reviews: 'ग्राहकों की राय', kick_hours: 'हमसे मिलें', kick_faq: 'जानने योग्य बातें', kick_contact: 'संपर्क में रहें',
@@ -97,7 +106,7 @@
       menu: 'हमारा मेन्यू', services: 'हमारी सेवाएँ', treatments: 'ट्रीटमेंट', collections: 'हमारा कलेक्शन',
       plans: 'मेंबरशिप प्लान', departments: 'विभाग', programs: 'हमारे प्रोग्राम', courses: 'कोर्स',
       rooms: 'कमरे', products: 'हमारे प्रोडक्ट', properties: 'प्रॉपर्टी', specials: 'खास पेशकश',
-      packages: 'टूर पैकेज', therapies: 'मसाज और थेरेपी', rides: 'सवारी और किराया',
+      packages: 'टूर पैकेज', therapies: 'मसाज और थेरेपी', rides: 'सवारी और किराया', petcare: 'प्रोडक्ट और पेट केयर', financial: 'पॉलिसी और निवेश',
       fleetTitle: 'अपनी गाड़ी चुनें', seats: '{n} सीट', bags: '{n} बैग', acCar: 'एसी', bookThisCar: 'यह गाड़ी बुक करें', vehicleType: 'गाड़ी का प्रकार',
       whyTitle: 'हमें क्यों चुनें', doctorTitle: 'डॉक्टर से मिलें', resultsTitle: 'हमारे परिणाम', galleryTitle: 'गैलरी',
       reviewsTitle: 'हमारे ग्राहक क्या कहते हैं', hoursTitle: 'खुलने का समय', faqTitle: 'अक्सर पूछे जाने वाले सवाल',
@@ -115,6 +124,7 @@
       viewOnMap: 'गूगल मैप में खोलें', backToTop: 'ऊपर जाएँ',
       ribbon: 'यह {name} के लिए {dev} द्वारा बनाई गई एक डेमो वेबसाइट है। पसंद आई? इसे अपना बनाइए।',
       ribbonBtn: 'बात करें', dismiss: 'बंद करें',
+      previewRibbon: 'प्रीव्यू: यह वेबसाइट अभी लाइव नहीं है।', reportSite: 'इस वेबसाइट की शिकायत करें',
       pitchTitle: 'इस वेबसाइट के साथ आपको क्या मिलेगा', pitchCta: 'यह वेबसाइट पाएँ',
       pitch1: 'मोबाइल-फ्रेंडली डिज़ाइन, हर फ़ोन पर शानदार',
       pitch2: 'व्हाट्सऐप और गूगल मैप्स जुड़े हुए',
@@ -248,8 +258,9 @@
   var CAT = CATEGORIES[CAT_KEY] || { preset: 'general', label: 'local business', schema: 'LocalBusiness', services: 'services', style: 'cards', icon: 'bi-shop', defaultServices: [] };
   var PRESET_KEY = PRESETS[CAT.preset] ? CAT.preset : 'general';
   var PRESET = $.extend({}, PRESETS[PRESET_KEY], CAT.look || {});   // the category's own look wins over its family
-  var PH = 'placeholders/' + (CAT.photos || PRESET_KEY) + '/';
-  var HERO_STYLE = CAT.hero || 'full';
+  var PH = ASSET_BASE + 'placeholders/' + (CAT.photos || PRESET_KEY) + '/';
+  // data.js may pick another banner layout than the category's own (several designs per category)
+  var HERO_STYLE = ['full', 'center', 'split'].indexOf(B.heroStyle) > -1 ? B.heroStyle : (CAT.hero || 'full');
   var CAT_ORDER = CAT.order ? CAT.order.concat(DEFAULT_ORDER.filter(function (k) { return CAT.order.indexOf(k) < 0; })) : DEFAULT_ORDER;
   var DEV = $.extend({}, DEFAULT_DEVELOPER, B.developer || {});
   Object.keys(DEV).forEach(function (k) { if (isPlaceholder(DEV[k])) DEV[k] = DEFAULT_DEVELOPER[k] || ''; });
@@ -309,6 +320,8 @@
     bookMassage: 'Hi {name}, I would like to book a massage.',
     orderCake: 'Hi {name}, I would like to order a cake.',
     checkPrice: 'Hi {name}, I would like to know today\'s prices and offers.',
+    orderPet: 'Hi {name}, I would like to order food/supplies for my pet. Pet: , Brand: ',
+    freeAdvice: 'Hi {name}, I would like free advice on insurance / investments. My age: , Goal: ',
     whatsappUs: 'Hi {name}, I found your website and would like to know more.'
   };
   function ctaLink(key) { return waLink(fill(CTA_MESSAGES[key] || CTA_MESSAGES.whatsappUs, TOKENS)); }
@@ -610,7 +623,7 @@
   /* ---------------------------------------------------------------------
    * Markup helpers
    * ------------------------------------------------------------------- */
-  var USE_AOS = !!window.AOS && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var USE_AOS = !!window.AOS && CFG.mode !== 'editor' && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   var NARROW = window.innerWidth < 992;
   function aos(effect, delay) {
     if (!USE_AOS) return '';
@@ -754,8 +767,15 @@
         '<div class="service-foot">' + (s.price ? '<span class="price">' + esc(s.price) + '</span>' : '<span></span>') +
         (WA ? '<a class="service-link" href="' + esc(waLink('Hi ' + B.name + ', I am interested in ' + s.title + '.')) + '" target="_blank" rel="noopener" aria-label="Enquire about ' + esc(s.title) + ' on WhatsApp">' +
           tr('enquire') + ' <i class="bi bi-arrow-right" aria-hidden="true"></i></a>' : '') +
-        '</div></div></article></div>';
+        '</div>' + serviceLinkBtn(s) + '</div></article></div>';
     }).join('') + '</div>';
+  }
+  /* Optional per-service link (data.js: services[].link + linkLabel), e.g. an advisor's own referral
+     link to buy a policy or start a SIP. Only https links; marked sponsored for search engines. */
+  function serviceLinkBtn(s) {
+    if (!s.link || !/^https:\/\//i.test(s.link)) return '';
+    return '<a class="btn btn-primary btn-sm w-100 service-cta" href="' + esc(s.link) + '" target="_blank" rel="noopener sponsored nofollow">' +
+      (s.linkLabel ? esc(s.linkLabel) : tr('openLink')) + ' <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>';
   }
   function planCards(list) {
     return '<div class="row g-4 justify-content-center">' + list.map(function (p, i) {
@@ -1042,9 +1062,13 @@
       (social.length ? '<h3 class="footer-title mt-3">' + tr('followUs') + '</h3><div class="social">' + social.map(function (s) {
         return '<a href="' + esc(B.social[s[0]]) + '" target="_blank" rel="noopener" aria-label="' + esc(B.name + ' on ' + s[2]) + '"><i class="bi ' + s[1] + '" aria-hidden="true"></i></a>';
       }).join('') + '</div>' : '') + '</div></div>' +
+      (disclaimer() ? '<p class="footer-disclaimer">' + esc(disclaimer()) + '</p>' : '') +
       '<div class="footer-bottom"><span>© ' + new Date().getFullYear() + ' ' + esc(B.name) + '. ' + tr('rights') + '</span>' +
-      '<span>' + tr('websiteBy') + ' ' + devLink + '</span></div></div>';
+      '<span>' + tr('websiteBy') + ' ' + devLink +
+      (CFG.reportUrl ? ' · <a class="report-link" href="' + esc(CFG.reportUrl) + '" target="_blank" rel="noopener nofollow">' + tr('reportSite') + '</a>' : '') +
+      '</span></div></div>';
   }
+  function disclaimer() { return fill(B.disclaimer || PRESET.disclaimerDefault || '', TOKENS); }
   function renderFloating() {
     return (WA ? '<a class="fab fab-whatsapp" href="' + esc(waLink(fill(CTA_MESSAGES.whatsappUs, TOKENS))) + '" target="_blank" rel="noopener" aria-label="Chat with ' + esc(B.name) + ' on WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a>' : '') +
       (TEL ? '<a class="fab fab-call d-md-none" href="' + esc(TEL) + '" aria-label="Call ' + esc(B.name) + '"><i class="bi bi-telephone-fill" aria-hidden="true"></i></a>' : '') +
@@ -1067,6 +1091,11 @@
     return DEV_WA ? 'https://wa.me/' + DEV_WA + '?text=' + encodeURIComponent('Hi, I saw the demo website for ' + B.name) : '';
   }
   function renderRibbon() {
+    if (CFG.mode === 'editor') return '';
+    if (CFG.mode === 'preview') {   // owner's own preview on the platform: no sales pitch, not dismissible
+      return '<div class="demo-ribbon preview-ribbon" role="region" aria-label="Preview notice"><div class="container">' +
+        '<i class="bi bi-eye" aria-hidden="true"></i><span>' + tr('previewRibbon') + '</span></div></div>';
+    }
     if (store('session', 'lbd-ribbon-closed') === '1') return '';
     var link = devWaLink();
     return '<div class="demo-ribbon" role="region" aria-label="Demo notice"><div class="container">' +
@@ -1110,8 +1139,9 @@
     $m.attr('content', val);
   }
   function applySeo() {
-    var title = B.name + ' | ' + CAT_TITLE + IN_CITY;
-    var desc = (B.tagline || fill(PRESET.taglineDefault, TOKENS)) + '. ' + (B.address ? B.address + '. ' : '') + (B.phone ? 'Call ' + B.phone + '.' : '');
+    var seo = B.seo || {};   // optional custom title/description (platform editor)
+    var title = seo.title || B.name + ' | ' + CAT_TITLE + IN_CITY;
+    var desc = seo.description || (B.tagline || fill(PRESET.taglineDefault, TOKENS)) + '. ' + (B.address ? B.address + '. ' : '') + (B.phone ? 'Call ' + B.phone + '.' : '');
     desc = desc.replace(/\.\./g, '.').slice(0, 160);
     var page = /^https?:/.test(location.protocol) ? location.origin + location.pathname : '';
     var heroAbs = absUrl(srcOf(B.heroImage) || PH + 'hero.jpg');

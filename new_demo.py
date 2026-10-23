@@ -13,7 +13,7 @@ Usage
   python new_demo.py --list                         list demos
   python new_demo.py --serve <slug>                 preview one demo at http://localhost:<SERVE_PORT>/
 
-Ports live in .env (DOCKER_PORT for Docker, SERVE_PORT for --serve).
+The --serve port lives in .env (SERVE_PORT).
 
 Categories: see CATEGORIES below (same list as template/js/themes.js).
 """
@@ -63,7 +63,9 @@ CATEGORIES = {
     "handyman": ("trades", "Handyman Service"),
     "taxi": ("taxi", "Taxi Service"),
     "jewellery": ("luxury", "Jewellery Store"),
-    "real-estate": ("general", "Real Estate Agency"), "general": ("general", "Local Business"),
+    "real-estate": ("general", "Real Estate Agency"), "pet-shop": ("general", "Pet Shop"),
+    "insurance": ("general", "Insurance & Investment Advisor"),
+    "general": ("general", "Local Business"),
 }
 
 # category -> placeholder photo folder in template/placeholders/. Keep in sync with `photos` in themes.js
@@ -73,7 +75,8 @@ PHOTOS = {
     "clinic": "medical", "dentist": "dentist", "hospital": "hospital",
     "school": "education", "coaching": "coaching", "hotel": "hospitality", "travel": "travel",
     "car-service": "industrial", "garage": "garage", "electronics": "electronics", "hardware": "hardware",
-    "handyman": "trades", "taxi": "taxi", "jewellery": "luxury", "real-estate": "real-estate", "general": "general",
+    "handyman": "trades", "taxi": "taxi", "jewellery": "luxury", "real-estate": "real-estate", "pet-shop": "pets", "insurance": "finance",
+    "general": "general",
 }
 
 META_START, META_END = "<!-- META:START", "<!-- META:END -->"
@@ -92,7 +95,7 @@ def read_env():
             if line and not line.startswith("#") and "=" in line:
                 k, v = line.split("=", 1)
                 env[k.strip()] = v.strip().strip("\"'")
-    env.update({k: v for k, v in os.environ.items() if k in ("DOCKER_PORT", "SERVE_PORT")})
+    env.update({k: v for k, v in os.environ.items() if k == "SERVE_PORT"})
     return env
 
 
@@ -167,7 +170,7 @@ def build_data_js(name, slug, category):
 window.BUSINESS = {{
   name: {js(name)},
   slug: {js(slug)},
-  category: {js(category)},   // restaurant | cafe | bakery | salon | spa | gym | clinic | dentist | hospital | school | coaching | hotel | car-service | garage | electronics | hardware | boutique | jewellery | real-estate | bar | travel | taxi | handyman | general
+  category: {js(category)},   // restaurant | cafe | bakery | salon | spa | gym | clinic | dentist | hospital | school | coaching | hotel | car-service | garage | electronics | hardware | boutique | jewellery | real-estate | bar | travel | taxi | handyman | pet-shop | insurance | general
   tagline: "{T}",
   about: "{T}",
   established: "{T}",        // year, e.g. "1998"
@@ -306,11 +309,10 @@ Next steps
   2. Add photos to  demos/{s}/images/  (compress first at squoosh.app or tinypng.com)
   3. Preview:  open demos/{s}/index.html in a browser
      or:       python new_demo.py --serve {s}   ->  http://localhost:{sp}/
-     Docker:   http://{s}.localhost:{dp}/
   4. Deploy:   scp -r demos/{s} user@server:/var/www/demos/
      or ZIP:   python new_demo.py --zip {s}
   5. Send:     https://{s}.{d}/   (add ?pitch=1 to show the pitch panel)
-""".format(s=slug, d=BASE_DOMAIN, sp=port("SERVE_PORT", 8000), dp=port("DOCKER_PORT", 8080)))
+""".format(s=slug, d=BASE_DOMAIN, sp=port("SERVE_PORT", 8000)))
 
 
 def cmd_zip(slug):

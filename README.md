@@ -11,7 +11,7 @@ Google Maps, live "Open now / Closed now" hours, services or menu, gallery, Goog
 reviews, FAQs, an enquiry form that opens WhatsApp, a Hindi toggle and SEO tags.
 
 **Every category has its own design.** A spa, a garage and a coaching centre do not look alike:
-each of the 24 categories has its own colours, fonts, photos, layout, wording and section order,
+each of the 26 categories has its own colours, fonts, photos, layout, wording and section order,
 based on how that kind of business sells.
 
 **How it is built**
@@ -19,7 +19,12 @@ based on how that kind of business sells.
 - Static only: HTML, CSS, Bootstrap 5, jQuery, Bootstrap Icons, AOS and ColorThief, loaded from CDNs.
 - No backend, no database, no build step, no `.env`. Each demo is one self-contained folder.
 - `new_demo.py` creates and manages demos. It needs only Python 3.8+ (standard library, nothing to install).
-- Docker (optional) serves all demos locally, each on its own subdomain, just like production.
+- Docker (optional) runs the site builder, which also shows every demo at `http://localhost:9002/sites/<slug>/`.
+
+**New: self-service website builder** (`builder/`, Django). Business owners sign up, pick one of these
+designs, fill in their details with a live preview, and go live (hosting) or download the site, after a
+manual check by the Devnixplus team. It reuses this same template to render every site. See
+[section 17](#17-self-service-website-builder-django) and `docs/`.
 
 ---
 
@@ -41,6 +46,7 @@ based on how that kind of business sells.
 14. [Troubleshooting](#14-troubleshooting)
 15. [Folder structure](#15-folder-structure)
 16. [Developer notes: changing the template](#16-developer-notes-changing-the-template)
+17. [Self-service website builder (Django)](#17-self-service-website-builder-django)
 
 ---
 
@@ -50,7 +56,7 @@ based on how that kind of business sells.
 |---|---|---|
 | **Python 3.8+** | `new_demo.py` (create, zip, launch demos) | `python --version` |
 | **Git** | getting the code and saving changes | `git --version` |
-| **Docker Desktop** *(optional)* | previewing all demos at `http://<slug>.localhost:8080/` | `docker --version` |
+| **Docker Desktop** *(optional)* | the site builder, which also shows all demos at `http://localhost:9002/sites/<slug>/` | `docker --version` |
 | A modern browser | previewing | Chrome or Edge recommended |
 
 On Windows, if `python` is not found, try `py` instead (for example `py new_demo.py --list`).
@@ -86,51 +92,39 @@ There are three ways to view the demos. Pick one.
 All local ports live in the **`.env`** file in the project root:
 
 ```ini
-DOCKER_PORT=8080    # Docker: http://localhost:8080/ and http://<slug>.localhost:8080/
-SERVE_PORT=8000     # Python preview: python new_demo.py --serve <slug>
+APP_DOCKER_PORT=9002   # Docker: the site builder (also shows every demo) at http://localhost:9002/
+SERVE_PORT=8000        # Python preview: python new_demo.py --serve <slug>
 ```
 
 To run on a different port, change the number there and nowhere else:
 
 | To change | Edit in `.env` | Then |
 |---|---|---|
-| Docker port | `DOCKER_PORT=9090` | `docker compose up -d` → http://localhost:9090/ |
+| Docker port | `APP_DOCKER_PORT=9090` and `APP_URL=http://localhost:9090` | `docker compose up -d` → http://localhost:9090/ |
 | Python preview port | `SERVE_PORT=5500` | `python new_demo.py --serve <slug>` → http://localhost:5500/ |
 
-Docker Compose reads `.env` automatically, and `new_demo.py` reads the same file. If `.env` is
-missing, the defaults 8080 and 8000 are used. A one-off override also works:
-`DOCKER_PORT=9090 docker compose up -d` (macOS/Linux/Git Bash).
+Docker Compose reads `.env` automatically, and `new_demo.py` reads the same file.
 
-The URLs below use the default port 8080. Replace it with your `DOCKER_PORT` if you changed it.
+### Option A: Docker (all demos at once, through the site builder)
 
-### Option A: Docker (recommended, all demos at once)
-
-Make sure **Docker Desktop is running**, then from the project folder:
+There is no Nginx in Docker (the server has its own). The site builder container serves the demos itself
+while `SERVE_FILES=True`. Make sure **Docker Desktop is running**, then from the project folder:
 
 ```bash
 docker compose up -d --build
 ```
 
-Open in Chrome or Edge:
-
 | What | URL |
 |---|---|
-| Devnixplus showcase (grid of all demos) | http://localhost:8080/ |
-| A demo, subdomain style (same as production) | `http://<slug>.localhost:8080/` e.g. http://seasons-salon.localhost:8080/ |
-| A demo, path style (works in any browser) | `http://localhost:8080/<slug>/` e.g. http://localhost:8080/seasons-salon/ |
-| With the pitch panel | http://seasons-salon.localhost:8080/?pitch=1 |
+| A demo | `http://localhost:9002/sites/<slug>/` e.g. http://localhost:9002/sites/seasons-salon/ |
+| With the pitch panel | http://localhost:9002/sites/seasons-salon/?pitch=1 |
+| The site builder | http://localhost:9002/ |
 
-- The `demos/` folder is mounted live: edit any `data.js` or image and just **refresh the browser**.
-  No rebuild is needed.
-- The showcase page at `/` lives in `showcase/` (also mounted live). After adding or changing a demo,
-  refresh its card and thumbnail with `venv/Scripts/python tools/build_showcase.py`
-  (`--only <slug>` for one demo, `--no-shots` to skip screenshots).
-- Rebuild only after changing `Dockerfile` or `docker/nginx.conf`: `docker compose up -d --build`.
+- The project folder is mounted live: edit any `data.js` or image and just **refresh the browser**.
+- The showcase page (`showcase/`) is served by the server's Nginx at `/` of the demo domain
+  (`deploy/nginx-demos.conf`). After adding or changing a demo, refresh its card and thumbnail with
+  `venv/Scripts/python tools/build_showcase.py` (`--only <slug>` for one demo, `--no-shots` to skip screenshots).
 - Stop: `docker compose down`. Logs: `docker compose logs -f`.
-- The container restarts automatically whenever Docker Desktop is running.
-
-Docker files: `Dockerfile` (Nginx image), `docker-compose.yml` (port from `.env`, live mount),
-`docker/nginx.conf` (maps `<slug>.localhost` to `demos/<slug>/`).
 
 ### Option B: Python (one demo, no Docker)
 
@@ -210,7 +204,7 @@ images/                          <- put this business's photos here
 
 - The **slug** (`seasons-salon`) becomes the subdomain. To choose your own:
   `python new_demo.py "Seasons Salon" salon --slug seasons-btm`
-- The category must be one of the [24 categories](#6-categories). Run `python new_demo.py --help`
+- The category must be one of the [26 categories](#6-categories). Run `python new_demo.py --help`
   to see the list.
 
 ### Step 3: Fill in data.js
@@ -269,7 +263,7 @@ See [Images](#8-images) for sizes.
 
 ### Step 5: Preview
 
-- **Docker running?** Just open http://seasons-salon.localhost:8080/ (refresh after every edit).
+- **Docker running?** Just open http://localhost:9002/sites/seasons-salon/ (refresh after every edit).
 - Or: `python new_demo.py --serve seasons-salon` and open http://localhost:8000 (your `SERVE_PORT`).
 
 Check the [checklist](#13-checklist-before-you-send-a-demo): phone width, Call/WhatsApp buttons,
@@ -327,7 +321,7 @@ git push
 
 Use the **key** in `new_demo.py "Name" <key>` and in `data.js`.
 Every category has its own design and a sample demo to look at
-(Docker: `http://sample-<key>.localhost:8080/`).
+(Docker: `http://localhost:9002/sites/sample-<key>/`).
 
 | Key | Use for | Hero layout | Main button | Sample demo |
 |---|---|---|---|---|
@@ -354,11 +348,13 @@ Every category has its own design and a sample demo to look at
 | `handyman` | Plumbers, electricians, carpenters, home repairs | split | Book a Visit | `sample-handyman` |
 | `jewellery` | Jewellers | centred | Enquire Now | `sample-jewellery` |
 | `real-estate` | Property dealers, real estate agents | split | Book a Site Visit | `sample-real-estate` |
+| `pet-shop` | Pet shops, pet food & grooming | split | Order for my pet | `sample-pet-shop`, `sample-pet-shop-studio` |
+| `insurance` | Insurance agents, mutual fund distributors, financial advisors | split | Get Free Advice | `sample-insurance` |
 | `general` | Anything else | full photo | WhatsApp Us | (no sample) |
 
 The services heading also changes by category: *Our Menu, Our Services, Massages & Therapies,
 Our Collections, Membership Plans, Treatments, Departments, Our Programs, Courses, Rooms & Stays,
-Tour Packages, Rides & Fares, Our Products, Properties*.
+Tour Packages, Rides & Fares, Our Products, Properties, Products & Pet Care, Policies & Investments*.
 
 ---
 
@@ -380,7 +376,7 @@ Tour Packages, Rides & Fares, Our Products, Properties*.
 | `hours` | Hours table | `"9:00-22:00"`, `"10:00-14:00, 17:00-21:00"`, `"18:00-02:00"`, `"closed"`, `"24h"`. Always India time |
 | `rating`, `reviewCount` | Stars and number of reviews | Hero badge, counters, review summary, SEO data |
 | `highlights` | "About" tab (Parking, AC, Pure veg…) | Icons are picked automatically from the words |
-| `services` | Services/Products tab, price list photos | `{ title, desc, price, image, icon }`. Gyms: add `features: [...]` and `popular: true` for plan cards |
+| `services` | Services/Products tab, price list photos | `{ title, desc, price, image, icon, link, linkLabel }`. `link` (https) adds a button, e.g. an advisor's referral link. Gyms: add `features: [...]` and `popular: true` for plan cards |
 | `menuCategories` | Menu photos (restaurant, café, bakery, bar) | Tabbed menu: `{ name, icon, items: [{ title, desc, price, veg, tag }] }` |
 | `heroImage` | Best cover photo | Path or https URL. Empty = category photo |
 | `logo` | Profile picture | Empty = a text logo from the initials |
@@ -389,6 +385,8 @@ Tour Packages, Rides & Fares, Our Products, Properties*.
 | `faqs` | Q&A, common review questions | `{ q, a }`. Empty = category FAQs |
 | `social` | Links on the profile | `instagram`, `facebook`, `youtube` (also `twitter`, `linkedin`) |
 | `doctor` | (clinic, dentist, hospital) | `{ name, title, qualification, experience, photo, about, specialities: [] }`: "Meet the Doctor" card. `name` and `title` also show in the hero |
+| `disclaimer` | | Optional small text in the footer (e.g. insurance / mutual fund risk text). Empty = the category's own, if any |
+| `heroStyle` | | Optional. `"full"`, `"split"` or `"center"`: another banner layout than the category's own |
 | `logoWidth` | | Optional. Show a wide logo (that already contains the name) at this width in px, e.g. `118`, instead of icon + business name |
 | `vehicles` | (taxi) Photos, reviews, ask the owner | `{ name, models, seats, bags, rate, image, icon, ac }`: "Choose Your Vehicle" cards and the form's "Vehicle type" dropdown. Empty = Hatchback, Sedan, SUV, Innova Crysta, Tempo Traveller |
 | `results` | (school, coaching) toppers, pass rates | `[{ value: "95%", label: "Board pass rate" }]` |
@@ -617,12 +615,12 @@ rsync -av demos/seasons-salon/ user@SERVER_IP:/var/www/demos/seasons-salon/
 
 | Command | What it does |
 |---|---|
-| `docker compose up -d --build` | Build and start (http://localhost:<DOCKER_PORT>, default 8080) |
-| `docker compose up -d` | Apply a changed `DOCKER_PORT` from `.env` |
-| `docker compose down` | Stop and remove the container |
+| `docker compose up -d --build` | Build and start the site builder (http://localhost:<APP_DOCKER_PORT>, default 9002) |
+| `docker compose up -d` | Apply changes in `.env` (ports, `MEDIA_DIR`, keys…) |
+| `docker compose down` | Stop and remove the container (client files in `MEDIA_DIR` stay) |
 | `docker compose restart` | Restart |
-| `docker compose logs -f` | Follow the Nginx logs |
-| `docker ps` | Check the `local-business-demos` container is running |
+| `docker compose logs -f` | Follow the logs |
+| `docker ps` | Check the `local-business-builder` container is running |
 
 ### Git
 
@@ -654,9 +652,9 @@ git push                        # upload to GitHub
 | Problem | Fix |
 |---|---|
 | `docker: failed to connect to the docker API` | Docker Desktop is not running. Start it, wait until it says "running", then retry. |
-| Port 8080 already in use (Docker) | Set e.g. `DOCKER_PORT=8090` in `.env`, run `docker compose up -d`, open http://localhost:8090/. |
+| Port 9002 already in use (Docker) | Set e.g. `APP_DOCKER_PORT=9090` and `APP_URL=http://localhost:9090` in `.env`, run `docker compose up -d`, open http://localhost:9090/. |
 | `port 8000 is already in use` (`--serve`) | Set another `SERVE_PORT` in `.env`, or stop the program using it. |
-| `http://<slug>.localhost:8080` does not open | Use Chrome or Edge, or the path style `http://localhost:8080/<slug>/`. Check the folder name equals the slug. |
+| `http://localhost:9002/sites/<slug>/` gives 404 | Check the folder name equals the slug and `SERVE_FILES=True` in `.env`. |
 | `python` not found (Windows) | Use `py` instead, or reinstall Python with "Add to PATH" ticked. |
 | `unknown category 'xyz'` | Use one of the [category keys](#6-categories) exactly, e.g. `real-estate`, `car-service`. |
 | `theme: "auto"` shows the category colours | You opened the file directly. Use Docker, `python -m http.server` or the live site. Check `logo` is set and loads. |
@@ -691,10 +689,10 @@ local_business_demo/
 ├── tools/theme-preview.html     # logo → colours → `theme` for data.js
 ├── tools/build_showcase.py      # refresh showcase/demos.js + thumbnails from demos/
 ├── deploy/nginx-wildcard.conf   # production Nginx config: every subdomain → its folder, SSL
-├── docker/nginx.conf            # local Docker Nginx config (<slug>.localhost)
-├── Dockerfile                   # Nginx image with all demos
-├── docker-compose.yml           # runs it on DOCKER_PORT, demos/ mounted live
-├── .env                         # local ports: DOCKER_PORT, SERVE_PORT (one place)
+├── docker/                      # Dockerfile.app + app-start.sh for the site builder container
+├── docker-compose.yml           # the site builder; every value from .env, MEDIA_DIR mounted
+├── media/                       # client files: uploads/ + published sites/ (MEDIA_DIR, not committed)
+├── .env                         # every setting: ports, URLs, folders, keys (not committed)
 ├── dist/                        # ZIPs made by --zip (not committed)
 ├── new_demo.py                  # create / list / zip / launch / update demos
 └── README.md
@@ -717,3 +715,121 @@ local_business_demo/
   5. Create a sample: `python new_demo.py "Sample X" <key> --slug sample-<key>` and fill its `data.js`.
 - **New Google Fonts** must be added to `FONT_WEIGHTS` in `themes.js` (only weights the font really has).
 - Placeholder photos are from [Unsplash](https://unsplash.com/license) (free to use).
+
+---
+
+## 17. Self-service website builder (Django)
+
+A Django app (`builder/`) on `app.devnixplus.com` where a business owner signs up, picks a design,
+creates a website in about 5 minutes, previews it and then either **hosts it with Devnixplus**
+(first year + yearly renewal) or **downloads it** for their own server. Every business is checked by
+the team before it goes live or can be downloaded. All registrations become leads in the team panel.
+
+- The existing renderer (`template/` + `data.js`) draws every site; Django only manages data,
+  users, payments and publishing. Nginx keeps serving all sites as static files.
+- Platform sites contain only `index.html`, `data.js` and `images/`; CSS, JS and stock photos come from
+  the shared, versioned folder `/_shared/v1/`. Hand-made demos in `demos/` stay self-contained and unchanged.
+- Docs: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (what's where, models, URLs),
+  [`docs/USER_FLOW.md`](docs/USER_FLOW.md) (flow diagram), [`docs/ADMIN_GUIDE.md`](docs/ADMIN_GUIDE.md) (team),
+  [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) (server reference),
+  [`docs/SERVER_SETUP.md`](docs/SERVER_SETUP.md) (server setup, step by step).
+
+### Local setup
+
+Python 3.11+ (developed on 3.14). Install packages **only in the venv**:
+
+```bash
+python -m venv venv                                   # once
+venv/Scripts/python -m pip install -r requirements.txt   # Windows  (macOS/Linux: venv/bin/python …)
+copy .env.example .env                                # or: cp .env.example .env  (then set your own SECRET_KEY)
+cd builder
+../venv/Scripts/python manage.py migrate
+../venv/Scripts/python manage.py setup_roles          # Admin, Sales, Verifier groups
+../venv/Scripts/python manage.py import_templates     # demos/sample-*/data.js -> 26 designs
+../venv/Scripts/python manage.py seed_demo            # demo logins (DEBUG only)
+../venv/Scripts/python manage.py write_showcase_config  # showcase "Use this design" -> APP_URL
+../venv/Scripts/python manage.py runserver 9002       # http://localhost:9002/ (the APP_URL in .env)
+```
+
+`.env` holds **every** setting: ports, URLs, folders, database, keys and secrets, email, Razorpay,
+SMS/WhatsApp, invoice details and the demo login password. Nothing is set in `docker-compose.yml` or in
+the code, so change a value in `.env` and restart (`docker compose up -d`, or restart `runserver`).
+The values in `.env.example` run everything locally with SQLite, emails printed in the console,
+the **MockSMS** OTP shown on screen, WhatsApp messages only logged, and the **Demo Payment Simulator**.
+Comments must be on their own line (`KEY=value  # note` would put the note in the value).
+Keep `APP_URL` in step with the port the builder runs on (`APP_DOCKER_PORT` in Docker).
+
+**Docker instead:** `docker compose up -d` starts the builder on `127.0.0.1:APP_DOCKER_PORT` (http://localhost:9002/).
+There is no Nginx in Docker: on the server, its own Nginx proxies to the container (see `docs/DEPLOYMENT.md`).
+With `DEBUG=True` the container runs the Django dev server and the demo logins; with `DEBUG=False`, Gunicorn.
+After editing `.env`: `docker compose up -d`.
+
+**Client files are never inside the container.** Everything owners upload and every published website
+lives in `MEDIA_DIR` (default: the project's `media/` folder), mounted into the container at `/app/media`:
+
+```
+media/uploads/        photos owners upload (MEDIA_ROOT, URL /media/; uploads/verification/ is never public)
+media/sites/<slug>/   published websites, media/sites/_shared/ the shared template files (SITES_ROOT)
+```
+
+They are plain folders, so the server's Nginx serves them directly, and restarting, rebuilding or removing
+the container never touches them. Back up `MEDIA_DIR` together with the database (`deploy/backup.sh`).
+
+`SERVE_FILES=True` lets Django serve them itself on a computer without Nginx: previews at
+`http://localhost:9002/sites/<slug>/`, the existing demos at `/sites/<demo>/`, shared assets at `/_shared/`,
+photos at `/media/` and, with `DEBUG=False`, `/static/`. Set `SERVE_FILES=False` on the server.
+
+### Demo logins (`manage.py seed_demo`, password = `DEMO_LOGIN_PASSWORD` in `.env`, default `Demo@12345`)
+
+| Login | Role |
+|---|---|
+| `admin@demo.local` | Admin (also `/django-admin/`) |
+| `sales@demo.local` | Sales |
+| `verifier@demo.local` | Verifier |
+| `owner@demo.local` | Business owner |
+
+### Try the whole flow
+
+1. `http://localhost:9002/` → **Use this design** on any card (or sign up and use **New website**).
+2. Sign up, enter the 6-digit code shown on screen, name your business → **Start creating**.
+3. Edit in 8 steps with the live preview on the right (on a phone: the **Preview** button). It autosaves.
+4. **Go live** → pick a plan → the **Demo Payment Simulator** → *Simulate successful payment* → send the
+   verification form (any Google Maps link such as `https://maps.app.goo.gl/test`).
+5. Log in as `verifier@demo.local` → **Team panel → Verification → Review → Approve → Go live**
+   (hosting) or, for a download, the owner's **Download** button unlocks.
+
+Real Razorpay test mode: put `rzp_test_…` keys and the webhook secret in `.env` and set `DEMO_PAYMENTS=False`.
+Google login: set `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` (redirect URI `<APP_URL>/accounts/google/login/callback/`).
+
+### Commands
+
+| Command (from `builder/`) | What it does |
+|---|---|
+| `manage.py import_templates` | Create/update a design for every `demos/sample-*/data.js` (thumbnail from `showcase/thumbs/`) |
+| `manage.py sync_shared [--force]` | Copy `template/css`, `js`, `placeholders` to `SITES_ROOT/_shared/<SHARED_VERSION>/` |
+| `manage.py write_showcase_config` | Write `showcase/config.js` so the showcase "Use this design" buttons open `APP_URL` (Docker runs it on start) |
+| `manage.py republish_all` | Rewrite every published site (after a template change / new `SHARED_VERSION`) |
+| `manage.py send_reminders` | Daily: renewal reminders (30/7/1/0 days) and go-live reminders (1/3/7 days) |
+| `manage.py expire_hosting` | Daily: expire hosting after the grace period (15 days) |
+| `manage.py expire_previews` | Daily: unpublish previews unused for 60 days (data kept) |
+| `manage.py setup_roles` / `seed_demo` | Team groups / local demo logins |
+| `manage.py test` | Run the test suite |
+
+### Cron (server)
+
+```cron
+0 9 * * *   cd /srv/local_business_demo/builder && ../venv/bin/python manage.py send_reminders
+0 1 * * *   cd /srv/local_business_demo/builder && ../venv/bin/python manage.py expire_hosting
+30 1 * * *  cd /srv/local_business_demo/builder && ../venv/bin/python manage.py expire_previews
+30 2 * * *  /srv/local_business_demo/deploy/backup.sh
+```
+
+The full file with logging is `deploy/crontab.txt`; the server setup is in `docs/DEPLOYMENT.md`.
+
+### After changing the template
+
+Hand-made demos: `python new_demo.py --update all` as before. Platform sites: set a new `SHARED_VERSION`
+(e.g. `v2`) in `.env`, then `manage.py sync_shared` and `manage.py republish_all`.
+The changes to `template/js/main.js` for the platform are opt-in through `window.LBD_CONFIG`,
+so demos without it behave exactly as before.
+

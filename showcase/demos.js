@@ -205,6 +205,18 @@ window.DEMOS = [
     "thumb": "thumbs/sample-hotel.jpg"
   },
   {
+    "slug": "sample-insurance",
+    "name": "Mehta Insurance & Investments",
+    "category": "insurance",
+    "label": "Insurance & Investment Advisor",
+    "city": "Surat",
+    "tagline": "Term, health and motor insurance plus mutual fund SIPs, explained simply in Adajan",
+    "rating": 4.9,
+    "reviews": 356,
+    "sample": true,
+    "thumb": "thumbs/sample-insurance.jpg"
+  },
+  {
     "slug": "sample-jewellery",
     "name": "Shree Laxmi Jewellers",
     "category": "jewellery",
@@ -215,6 +227,30 @@ window.DEMOS = [
     "reviews": 642,
     "sample": true,
     "thumb": "thumbs/sample-jewellery.jpg"
+  },
+  {
+    "slug": "sample-pet-shop",
+    "name": "Happy Paws Pet Shop",
+    "category": "pet-shop",
+    "label": "Pet Shop",
+    "city": "Lucknow",
+    "tagline": "Pet food, grooming and accessories with same-day delivery in Gomti Nagar",
+    "rating": 4.8,
+    "reviews": 612,
+    "sample": true,
+    "thumb": "thumbs/sample-pet-shop.jpg"
+  },
+  {
+    "slug": "sample-pet-shop-studio",
+    "name": "Paws & Co. Grooming Studio",
+    "category": "pet-shop",
+    "label": "Pet Shop",
+    "city": "Jaipur",
+    "tagline": "Calm, careful grooming and hand-picked pet essentials in C-Scheme",
+    "rating": 4.9,
+    "reviews": 284,
+    "sample": true,
+    "thumb": "thumbs/sample-pet-shop-studio.jpg"
   },
   {
     "slug": "sample-real-estate",

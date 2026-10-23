@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Terms of Service{% endblock %}
+{% block main %}
+<div class="container py-4 py-md-5 prose">
+  <h1 class="h2">Terms of Service</h1>
+  <p class="text-muted small">Last updated: {% now "d F Y" %}</p>
+  <p class="legal-note"><strong>Note:</strong> this is placeholder text written in plain language. The final legal text must be reviewed by a lawyer or CA before launch.</p>
+
+  <h2>1. Who we are</h2>
+  <p>Devnixplus ("we", "us") runs this website builder at {{ APP_URL }}. By creating an account you ("you", the business owner) agree to these terms.</p>
+
+  <h2>2. Your account and your business details</h2>
+  <p>You must give true details about yourself and your business. You may only create websites for a business you own or are authorised to represent. You are responsible for all text, photos, prices, reviews and links you add. Do not copy other people's photos, logos or reviews without permission, and never invent reviews.</p>
+
+  <h2>3. Verification before going live</h2>
+  <p>Every website is checked by our team before it is published on the internet or becomes downloadable. We may ask for your Google Maps listing, a shop photo, a visiting card, a GST or Udyam number, or call you. We may refuse any website at our discretion, for example if we cannot confirm the business exists or it looks misleading.</p>
+
+  <h2>4. Payments and refunds if rejected</h2>
+  <p>Prices are shown before you pay and are charged in Indian Rupees through Razorpay. If we reject your business during verification, we refund the full amount to your original payment method. See the <a href="{% url 'refund_policy' %}">Refund Policy</a>.</p>
+
+  <h2>5. Hosting, renewal and grace period</h2>
+  <p>Hosting is paid for one year at a time. We remind you before expiry by email and WhatsApp. Renewal adds one year from your current expiry date. If you don't renew, your website stays online for a grace period of {{ ps.grace_period_days }} days after the expiry date, then shows a "temporarily unavailable" page. We keep your data so you can renew later.</p>
+
+  <h2>6. Download licence</h2>
+  <p>If you buy a download, you receive a licence to use the website for that one business and one website only. You may host it anywhere and edit its text and photos. You may not resell it, give it to others, or reuse the design or code for another business or website. The "Website by Devnixplus" credit must stay in the footer. Re-downloads of the same website are free.</p>
+
+  <h2>7. Rules for websites</h2>
+  <p>Websites must not impersonate a bank, government body, police, a brand or another person; must not offer loans, lotteries, crypto schemes or anything illegal; and must not contain false, hateful or adult content. We may <strong>suspend or remove any website that breaks these rules</strong>, without refund where the rules were broken on purpose. Anyone can report a website using the "Report this website" link in its footer.</p>
+
+  <h2>8. Our service</h2>
+  <p>We work to keep websites online and fast, but we cannot promise they will never be unavailable. Our total liability is limited to the amount you paid us in the last 12 months.</p>
+
+  <h2>9. Changes</h2>
+  <p>We may update these terms. We will tell you about important changes by email.</p>
+
+  <h2>10. Contact</h2>
+  <p>{{ ps.support_email }} · {{ ps.support_phone }} · <a href="{% url 'contact' %}">Contact page</a>. These terms are governed by the laws of India.</p>
+</div>
+{% endblock %}

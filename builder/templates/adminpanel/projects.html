@@ -1,0 +1,33 @@
+{% extends "adminpanel/base.html" %}
+{% load ui %}
+{% block title %}Projects{% endblock %}
+{% block manage %}
+<h1 class="h3 mb-3">Projects</h1>
+<form class="toolbar mb-3" method="get">
+  <input class="form-control" type="search" name="q" value="{{ f.q }}" placeholder="Business, slug, owner, domain">
+  <select class="form-select w-auto" name="status"><option value="">Any status</option>{% for k, l in statuses %}<option value="{{ k }}"{% if f.status == k %} selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+  <select class="form-select w-auto" name="plan"><option value="">Any plan</option>{% for k, l in plans %}<option value="{{ k }}"{% if f.plan == k %} selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+  <label class="form-check d-flex align-items-center gap-1 m-0"><input class="form-check-input" type="checkbox" name="flagged" value="1"{% if f.flagged %} checked{% endif %}> Flagged</label>
+  <label class="form-check d-flex align-items-center gap-1 m-0"><input class="form-check-input" type="checkbox" name="expiring" value="1"{% if f.expiring %} checked{% endif %}> Expiring in 30 days</label>
+  <button class="btn btn-brand" type="submit">Filter</button>
+</form>
+<div class="table-app table-responsive">
+  <table class="table">
+    <thead><tr><th>Business</th><th>Owner</th><th>Status</th><th>Plan</th><th>Expires</th><th>Updated</th><th></th></tr></thead>
+    <tbody>
+    {% for p in page.object_list %}
+      <tr>
+        <td><a class="fw-semibold" href="{% url 'manage_project' p.pk %}">{{ p.business_name }}</a>{% if p.flagged %} <i class="bi bi-flag-fill text-danger" title="{{ p.flag_reason }}"></i>{% endif %}<div class="small text-muted">{{ p.slug }}{% if p.custom_domain %} · {{ p.custom_domain }}{% endif %}</div></td>
+        <td class="small">{{ p.owner }}<div class="text-muted">{{ p.owner.mobile|mobile }}</div></td>
+        <td><span class="badge text-bg-{{ p.status|badge }}">{{ p.get_status_display }}</span></td>
+        <td class="small">{{ p.get_plan_display }}</td>
+        <td class="small">{{ p.hosting_expires_at|date:"d M Y"|default:"-" }}</td>
+        <td class="small">{{ p.last_edited_at|timesince }} ago</td>
+        <td class="text-nowrap"><a class="btn btn-sm btn-light" href="{{ p.public_url }}" target="_blank" rel="noopener" title="Open site"><i class="bi bi-box-arrow-up-right"></i></a></td>
+      </tr>
+    {% empty %}<tr><td colspan="7" class="text-center text-muted py-4">No projects match.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "adminpanel/_pager.html" %}
+{% endblock %}

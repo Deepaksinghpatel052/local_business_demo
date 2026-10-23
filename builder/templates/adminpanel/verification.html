@@ -1,0 +1,26 @@
+{% extends "adminpanel/base.html" %}
+{% load ui %}
+{% block title %}Verification queue{% endblock %}
+{% block manage %}
+<h1 class="h3 mb-3">Verification queue</h1>
+<p class="small text-muted">Flagged projects (sensitive words) are listed first. Open a project to see its preview, owner and proof, then approve or reject.</p>
+<div class="table-app table-responsive">
+  <table class="table">
+    <thead><tr><th>Business</th><th>Owner</th><th>Plan</th><th>Details from owner</th><th>Waiting</th><th></th></tr></thead>
+    <tbody>
+    {% for p in projects %}
+      {% with vr=p.verifications.all|first %}
+      <tr>
+        <td><a class="fw-semibold" href="{% url 'manage_project' p.pk %}">{{ p.business_name }}</a>{% if p.flagged %} <span class="badge text-bg-danger" title="{{ p.flag_reason }}">Priority: {{ p.flag_reason|truncatechars:40 }}</span>{% endif %}<div class="small text-muted">{{ p.category_info.title }}</div></td>
+        <td>{{ p.owner }}<div class="small text-muted">{{ p.owner.mobile|mobile }}</div></td>
+        <td>{{ p.get_plan_display }}</td>
+        <td class="small">{% if vr %}<a href="{{ vr.maps_link }}" target="_blank" rel="noopener noreferrer">Maps link</a>{% if vr.shop_photo %} · photo{% endif %}{% if vr.visiting_card %} · card{% endif %}{% if vr.gst_or_udyam %} · {{ vr.gst_or_udyam }}{% endif %}{% else %}<span class="text-warning">Waiting for owner</span>{% endif %}</td>
+        <td class="small">{{ p.updated_at|timesince }}</td>
+        <td><a class="btn btn-sm btn-brand" href="{% url 'manage_project' p.pk %}">Review</a></td>
+      </tr>
+      {% endwith %}
+    {% empty %}<tr><td colspan="6" class="text-center text-muted py-4">Nothing to verify. 🎉</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

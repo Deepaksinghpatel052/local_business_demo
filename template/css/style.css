@@ -154,7 +154,11 @@ section[id] { scroll-margin-top: calc(var(--nav-h) + 8px); }
 .hero-cta { display: flex; flex-wrap: wrap; gap: .75rem; }
 @media (max-width: 575.98px) { .hero-cta .btn { flex: 1 1 100%; } }
 
-/* ---------- Hero layouts (set per category: hero-full | hero-center | hero-split) ---------- */
+/* ---------- Service link button + footer disclaimer (optional, from data.js / category) ---------- */
+.service-cta { margin-top: .9rem; }
+.footer-disclaimer { margin: 1.5rem 0 0; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, .12); font-size: .78rem; line-height: 1.5; opacity: .75; }
+
+/* ---------- Hero layouts (per category, or heroStyle in data.js: hero-full | hero-center | hero-split) ---------- */
 /* Center: showcase businesses (hotel, jewellery, bakery, travel, bar, boutique, school) */
 .hero-center .hero { text-align: center; justify-content: center; min-height: clamp(560px, 92vh, 880px); }
 .hero-center .hero-title, .hero-center .hero-tagline { margin-left: auto; margin-right: auto; }

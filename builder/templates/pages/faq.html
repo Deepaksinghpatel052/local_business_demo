@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}FAQ{% endblock %}
+{% block main %}
+<div class="container py-4 py-md-5 prose">
+  <h1 class="h2 mb-4">Frequently asked questions</h1>
+  <div class="accordion" id="faq">
+    {% with p=prices %}
+    <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#q1">Is it really free to create a website?</button></h2>
+      <div id="q1" class="accordion-collapse collapse show" data-bs-parent="#faq"><div class="accordion-body">Yes. Designing and previewing your website is free. You pay only to put it online: {{ p.hosting_new }} for the first year of hosting (then {{ p.hosting_renewal }}/year), or {{ p.download }} once to download it.</div></div></div>
+    <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q2">Why do you verify my business?</button></h2>
+      <div id="q2" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">So nobody can publish a fake shop, bank or government website using our platform. We check your Google Maps listing (and any proof you share) and usually call you within 24 hours. If we can't verify it, you get a full refund.</div></div></div>
+    <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q3">Can I use my own domain like mybusiness.com?</button></h2>
+      <div id="q3" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Yes, with hosting. Buy the domain from any registrar and message us; our team connects it and sets up HTTPS for you.</div></div></div>
+    <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q4">What happens if I don't renew?</button></h2>
+      <div id="q4" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">We remind you before the expiry date. After expiry you get a {{ ps.grace_period_days }}-day grace period; after that the website shows a "temporarily unavailable" page. Your details are kept, and the website comes back instantly when you renew.</div></div></div>
+    <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q5">Does the downloaded website update when I edit it?</button></h2>
+      <div id="q5" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">No. A downloaded copy is a snapshot. After editing, download again (free for the same website) and upload the new files to your server.</div></div></div>
+    <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q6">How many websites can I make?</button></h2>
+      <div id="q6" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Up to {{ ps.max_projects_per_user }} per account. Need more for an agency or chain? <a href="{% url 'contact' %}">Contact us</a>.</div></div></div>
+    <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q7">Can someone help me fill it in?</button></h2>
+      <div id="q7" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Yes. Message us on <a href="{{ support_wa }}" target="_blank" rel="noopener">WhatsApp</a> and our team will help.</div></div></div>
+    {% endwith %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Go live: {{ project.business_name }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block main %}
+<div class="container py-4 py-md-5">
+  <a class="small" href="{% url 'dashboard' %}"><i class="bi bi-arrow-left"></i> My websites</a>
+  <h1 class="h3 mt-2">Take {{ project.business_name }} live</h1>
+  <p class="text-muted">Your website design is free. Choose how you want to put it online.</p>
+
+  <div class="row g-4 mt-1">
+    <div class="col-lg-6">
+      <form class="plan-option featured" method="post" action="{% url 'checkout' project.pk 'hosting_new' %}">
+        {% csrf_token %}
+        <span class="badge text-bg-primary align-self-start mb-2">Recommended</span>
+        <h2 class="h4 mb-0">Host with Devnixplus</h2>
+        <div class="price">{{ prices.hosting_new }}</div>
+        <div class="small text-muted mb-3">first year (setup + hosting), then {{ prices.hosting_renewal }}/year</div>
+        <ul class="small">
+          <li>Online at <strong>{{ project.site_url }}</strong></li>
+          <li>Edits go live instantly from your phone</li>
+          <li>Fast, secure (HTTPS) and listed on Google</li>
+          <li>Your own domain (yourbusiness.com) connected by our team</li>
+          <li>Renewal reminders on WhatsApp and email</li>
+        </ul>
+        <div class="form-check mt-auto mb-3">
+          <input class="form-check-input" type="checkbox" name="accept_terms" id="terms-h" required>
+          <label class="form-check-label small" for="terms-h">I agree to the <a href="{% url 'terms' %}" target="_blank">Terms</a> and <a href="{% url 'refund_policy' %}" target="_blank">Refund Policy</a>. My business will be verified before it goes live.</label>
+        </div>
+        <button class="btn btn-brand btn-lg w-100" type="submit">Pay {{ prices.hosting_new }} and go live</button>
+      </form>
+    </div>
+    <div class="col-lg-6">
+      <form class="plan-option" method="post" action="{% url 'checkout' project.pk 'download' %}">
+        {% csrf_token %}
+        <h2 class="h4 mb-0 mt-lg-4">Download for my own server</h2>
+        <div class="price">{{ prices.download }}</div>
+        <div class="small text-muted mb-3">one-time</div>
+        <ul class="small">
+          <li>A ZIP file ready for cPanel, Hostinger, Netlify or any web host</li>
+          <li><strong>Unlimited free re-downloads</strong> for this website, always with your latest details</li>
+          <li>Simple upload guide in English and Hindi</li>
+          <li>Technical help from our team</li>
+          <li>You manage your own hosting and domain</li>
+        </ul>
+        <div class="form-check mt-auto mb-3">
+          <input class="form-check-input" type="checkbox" name="accept_terms" id="terms-d" required>
+          <label class="form-check-label small" for="terms-d">I agree to the <a href="{% url 'terms' %}" target="_blank">Terms</a> (licence for this one business and website). My business will be verified before the download unlocks.</label>
+        </div>
+        <button class="btn btn-outline-brand btn-lg w-100" type="submit">Pay {{ prices.download }} and download</button>
+      </form>
+    </div>
+  </div>
+  <p class="small text-muted mt-4 mb-0"><i class="bi bi-shield-check"></i> To keep the internet safe, our team checks every business before its website goes live or can be downloaded. If we can't verify yours, you get a full refund.</p>
+</div>
+{% endblock %}

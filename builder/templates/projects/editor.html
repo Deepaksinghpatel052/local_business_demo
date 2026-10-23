@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% load static ui %}
+{% block title %}Edit {{ project.business_name }}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block body_class %}editor-page{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/editor.css' %}">{% endblock %}
+{% block footer %}{% endblock %}
+{% block messages %}{% endblock %}
+{% block support_fab %}{% endblock %}
+{% block main %}
+<div class="editor">
+  <!-- ============ left: the step form ============ -->
+  <div class="ed-form">
+    <div class="ed-head">
+      <div class="d-flex align-items-center gap-2">
+        <a class="btn btn-sm btn-light" href="{% url 'dashboard' %}" aria-label="Back to my websites"><i class="bi bi-arrow-left"></i></a>
+        <div class="flex-grow-1 min-w-0">
+          <div class="fw-bold text-truncate">{{ project.business_name }}</div>
+          <div class="small text-muted text-truncate"><a href="{% url 'open_preview' project.pk %}" target="_blank" rel="noopener">{{ project.public_url }}</a></div>
+        </div>
+        <span class="save-state small" id="saveState" aria-live="polite"></span>
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="langToggle" aria-pressed="false">हिंदी</button>
+      </div>
+      {% if project.is_live_mode %}
+        <div class="alert alert-success py-1 px-2 small mt-2 mb-0"><i class="bi bi-broadcast"></i> {% tr "Your website is live: changes are published as soon as they are saved." "आपकी वेबसाइट लाइव है: बदलाव सेव होते ही दिखेंगे।" %}</div>
+      {% elif project.plan == "download" %}
+        <div class="alert alert-info py-1 px-2 small mt-2 mb-0"><i class="bi bi-info-circle"></i> {% tr "A downloaded copy does not update by itself. After editing, download again from your dashboard (free)." "डाउनलोड की गई कॉपी अपने-आप अपडेट नहीं होती। बदलाव के बाद डैशबोर्ड से दोबारा डाउनलोड करें (मुफ़्त)।" %}</div>
+      {% endif %}
+      <div class="progress progress-thin mt-2" role="progressbar" aria-label="Progress"><div class="progress-bar" id="edProgress" style="width:0"></div></div>
+      <nav class="ed-steps" aria-label="Steps">
+        {% for s in steps %}<button type="button" class="ed-step" data-step="{{ s.key }}"><span class="num">{{ forloop.counter }}</span> <span class="tr" data-en="{{ s.en }}" data-hi="{{ s.hi }}">{{ s.en }}</span></button>{% endfor %}
+      </nav>
+    </div>
+
+    <div class="ed-body">
+      <div class="alert alert-danger small d-none" id="edErrors" role="alert"></div>
+
+      <!-- 1. Basics -->
+      <section class="step" data-step="basics">
+        <h2 class="h5">{% tr "Basics" "बुनियादी जानकारी" %}</h2>
+        <p class="small text-muted">{% tr "Only these four are required: name, category, phone and address." "सिर्फ़ ये चार ज़रूरी हैं: नाम, कैटेगरी, फ़ोन और पता।" %}</p>
+        <div class="mb-3"><label class="form-label" for="f-name">{% tr "Business name" "व्यवसाय का नाम" %} *</label><input class="form-control" id="f-name" data-path="name" maxlength="80" required></div>
+        <div class="mb-3"><label class="form-label" for="f-category">{% tr "Category" "कैटेगरी" %} *</label><select class="form-select" id="f-category" data-path="category"></select></div>
+        <div class="mb-3"><label class="form-label" for="f-tagline">{% tr "Tagline (one short line)" "टैगलाइन (एक छोटी लाइन)" %}</label><input class="form-control" id="f-tagline" data-path="tagline" maxlength="140"></div>
+        <div class="row g-3">
+          <div class="col-sm-6"><label class="form-label" for="f-phone">{% tr "Phone" "फ़ोन" %} *</label><input class="form-control" id="f-phone" data-path="phone" type="tel" inputmode="tel" placeholder="+91 98765 43210" maxlength="20"></div>
+          <div class="col-sm-6"><label class="form-label" for="f-wa">{% tr "WhatsApp number" "व्हाट्सऐप नंबर" %}</label><input class="form-control" id="f-wa" data-path="whatsapp" data-kind="wa" type="tel" inputmode="numeric" placeholder="919876543210" maxlength="15"><div class="form-text">{% tr "Digits with 91 in front, e.g. 919876543210" "आगे 91 लगाकर, जैसे 919876543210" %}</div></div>
+        </div>
+        <div class="mb-3 mt-3"><label class="form-label" for="f-email">{% tr "Email" "ईमेल" %}</label><input class="form-control" id="f-email" data-path="email" type="email" maxlength="120"></div>
+        <div class="mb-3"><label class="form-label" for="f-address">{% tr "Full address" "पूरा पता" %} *</label><textarea class="form-control" id="f-address" data-path="address" rows="2" maxlength="300"></textarea></div>
+        <div class="row g-3">
+          <div class="col-sm-6"><label class="form-label" for="f-city">{% tr "City" "शहर" %}</label><input class="form-control" id="f-city" data-path="city" maxlength="60"></div>
+          <div class="col-sm-6"><label class="form-label" for="f-map">{% tr "Google Maps search text" "गूगल मैप्स सर्च टेक्स्ट" %}</label><input class="form-control" id="f-map" data-path="mapQuery" maxlength="200" placeholder="Name, area, city"></div>
+        </div>
+      </section>
+
+      <!-- 2. About & highlights -->
+      <section class="step" data-step="about">
+        <h2 class="h5">{% tr "About & highlights" "परिचय और खास बातें" %}</h2>
+        <div class="mb-3"><label class="form-label" for="f-about">{% tr "About your business" "आपके व्यवसाय के बारे में" %}</label><textarea class="form-control" id="f-about" data-path="about" rows="5" maxlength="1500"></textarea><div class="form-text">{% tr "2-3 sentences: what you do, since when, what makes you different." "2-3 वाक्य: आप क्या करते हैं, कब से, आपको क्या खास बनाता है।" %}</div></div>
+        <div class="row g-3 mb-3">
+          <div class="col-sm-6"><label class="form-label" for="f-est">{% tr "Year established" "स्थापना वर्ष" %}</label><input class="form-control" id="f-est" data-path="established" inputmode="numeric" maxlength="4" placeholder="2010"></div>
+          <div class="col-sm-6"><label class="form-label" for="f-owner">{% tr "Owner name" "मालिक का नाम" %}</label><input class="form-control" id="f-owner" data-path="owner" maxlength="80"></div>
+        </div>
+        <label class="form-label">{% tr "Highlights (short chips like “Free Parking”)" "खास बातें (जैसे “फ्री पार्किंग”)" %}</label>
+        <div class="chip-editor" data-list="highlights" data-max="12"></div>
+
+        <div class="cat-only" data-presets="medical">
+          <h3 class="h6 mt-4">{% tr "Doctor" "डॉक्टर" %}</h3>
+          <div class="row g-3">
+            <div class="col-sm-6"><label class="form-label" for="f-dname">{% tr "Doctor's name" "डॉक्टर का नाम" %}</label><input class="form-control" id="f-dname" data-path="doctor.name" maxlength="80" placeholder="Dr. …"></div>
+            <div class="col-sm-6"><label class="form-label" for="f-dtitle">{% tr "Title" "पद" %}</label><input class="form-control" id="f-dtitle" data-path="doctor.title" maxlength="80" placeholder="Physiotherapist"></div>
+            <div class="col-sm-6"><label class="form-label" for="f-dqual">{% tr "Qualification" "योग्यता" %}</label><input class="form-control" id="f-dqual" data-path="doctor.qualification" maxlength="120" placeholder="MBBS, MD"></div>
+            <div class="col-sm-6"><label class="form-label" for="f-dexp">{% tr "Experience" "अनुभव" %}</label><input class="form-control" id="f-dexp" data-path="doctor.experience" maxlength="60" placeholder="12 years"></div>
+            <div class="col-12"><label class="form-label" for="f-dabout">{% tr "About the doctor" "डॉक्टर के बारे में" %}</label><textarea class="form-control" id="f-dabout" data-path="doctor.about" rows="3" maxlength="800"></textarea></div>
+          </div>
+        </div>
+
+        <div class="cat-only" data-presets="education">
+          <h3 class="h6 mt-4">{% tr "Results" "परिणाम" %}</h3>
+          <div class="repeater" data-list="results" data-max="8"></div>
+        </div>
+      </section>
+
+      <!-- 3. Services / menu -->
+      <section class="step" data-step="services">
+        <h2 class="h5 js-services-title"></h2>
+        <p class="small text-muted">{% tr "Add what you offer. Leave the price empty if you don't want to show it." "आप क्या देते हैं, जोड़ें। कीमत न दिखानी हो तो खाली छोड़ें।" %}</p>
+        <div class="repeater" data-list="services" data-max="40"></div>
+        <div class="cat-only" data-styles="menu">
+          <h3 class="h6 mt-4">{% tr "Menu (tabs)" "मेन्यू (टैब)" %}</h3>
+          <div class="repeater" data-list="menuCategories" data-max="15"></div>
+        </div>
+        <div class="cat-only" data-presets="taxi">
+          <h3 class="h6 mt-4">{% tr "Vehicles" "गाड़ियाँ" %}</h3>
+          <div class="repeater" data-list="vehicles" data-max="12"></div>
+        </div>
+      </section>
+
+      <!-- 4. Photos -->
+      <section class="step" data-step="photos">
+        <h2 class="h5">{% tr "Photos" "फ़ोटो" %}</h2>
+        <p class="small text-muted">{% tr "JPG, PNG or WebP, up to 5 MB each. We resize and compress them for you." "JPG, PNG या WebP, हर फ़ोटो 5 MB तक। हम खुद छोटा कर देते हैं।" %} <span class="js-storage"></span></p>
+        <div class="row g-3">
+          <div class="col-sm-6"><label class="form-label">{% tr "Logo" "लोगो" %}</label><div class="img-field" data-path="logo" data-kind="logo"></div>
+            <div class="form-check mt-2"><input class="form-check-input" type="checkbox" id="f-wide"><label class="form-check-label small" for="f-wide">{% tr "My logo already shows the name (wide logo)" "मेरे लोगो में नाम लिखा है (चौड़ा लोगो)" %}</label></div></div>
+          <div class="col-sm-6"><label class="form-label">{% tr "Main photo (top of the page)" "मुख्य फ़ोटो (पेज के ऊपर)" %}</label><div class="img-field" data-path="heroImage" data-kind="hero"></div></div>
+          <div class="col-sm-6 cat-only" data-presets="medical"><label class="form-label">{% tr "Doctor's photo" "डॉक्टर की फ़ोटो" %}</label><div class="img-field" data-path="doctor.photo" data-kind="doctor"></div></div>
+        </div>
+        <label class="form-label mt-4">{% tr "Gallery" "गैलरी" %}</label>
+        <div class="dropzone" id="galleryDrop" tabindex="0" role="button" aria-label="Add gallery photos">
+          <i class="bi bi-images fs-3"></i>
+          <div>{% tr "Drag photos here or tap to choose (you can pick many)" "फ़ोटो यहाँ खींचें या चुनने के लिए टैप करें (कई चुन सकते हैं)" %}</div>
+          <input type="file" id="galleryInput" accept="image/jpeg,image/png,image/webp" multiple hidden>
+        </div>
+        <div class="gallery-list" id="galleryList"></div>
+        <p class="small text-muted mt-2">{% tr "No photos? Leave it empty: the design's own photos are shown." "फ़ोटो नहीं हैं? खाली छोड़ें: डिज़ाइन की फ़ोटो दिखेंगी।" %}</p>
+      </section>
+
+      <!-- 5. Hours -->
+      <section class="step" data-step="hours">
+        <h2 class="h5">{% tr "Opening hours" "खुलने का समय" %}</h2>
+        <p class="small text-muted">{% tr "India time. The website shows “Open now” or “Closed now” automatically." "भारत का समय। वेबसाइट पर “अभी खुला है” अपने-आप दिखेगा।" %}</p>
+        <div class="hours-grid" id="hoursGrid"></div>
+        <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="copyMonday">{% tr "Copy Monday to all days" "सोमवार का समय सभी दिनों में लगाएँ" %}</button>
+      </section>
+
+      <!-- 6. Reviews & FAQ -->
+      <section class="step" data-step="reviews">
+        <h2 class="h5">{% tr "Reviews & FAQ" "रिव्यू और सवाल-जवाब" %}</h2>
+        <div class="row g-3 mb-2">
+          <div class="col-6"><label class="form-label" for="f-rating">{% tr "Google rating" "गूगल रेटिंग" %}</label><input class="form-control" id="f-rating" data-path="rating" data-type="number" type="number" min="0" max="5" step="0.1" placeholder="4.7"></div>
+          <div class="col-6"><label class="form-label" for="f-reviews">{% tr "Number of reviews" "रिव्यू की संख्या" %}</label><input class="form-control" id="f-reviews" data-path="reviewCount" data-type="int" type="number" min="0" step="1"></div>
+          <div class="col-12"><label class="form-label" for="f-gurl">{% tr "Google listing link (required if you show a rating)" "गूगल लिस्टिंग लिंक (रेटिंग दिखाने के लिए ज़रूरी)" %}</label><input class="form-control" id="f-gurl" data-path="googleUrl" type="url" placeholder="https://maps.app.goo.gl/…"></div>
+        </div>
+        <p class="small text-muted">{% tr "Copy real reviews from Google. Never invent reviews." "गूगल से असली रिव्यू कॉपी करें। नकली रिव्यू न लिखें।" %}</p>
+        <h3 class="h6 mt-3">{% tr "Customer reviews" "ग्राहकों के रिव्यू" %}</h3>
+        <div class="repeater" data-list="testimonials" data-max="12"></div>
+        <h3 class="h6 mt-4">{% tr "Questions & answers" "सवाल और जवाब" %}</h3>
+        <p class="small text-muted">{% tr "Leave empty to show common questions for your category." "खाली छोड़ें तो आपकी कैटेगरी के आम सवाल दिखेंगे।" %}</p>
+        <div class="repeater" data-list="faqs" data-max="20"></div>
+      </section>
+
+      <!-- 7. Look & feel -->
+      <section class="step" data-step="look">
+        <h2 class="h5">{% tr "Look & feel" "रंग और डिज़ाइन" %}</h2>
+        <div class="theme-modes mb-3" role="radiogroup">
+          <label class="mode-card"><input type="radio" name="themeMode" value="category"> <span><strong>{% tr "Design colours" "डिज़ाइन के रंग" %}</strong><br><small class="text-muted">{% tr "Made for your category" "आपकी कैटेगरी के लिए" %}</small></span></label>
+          <label class="mode-card"><input type="radio" name="themeMode" value="auto"> <span><strong>{% tr "Brand colours from logo" "लोगो से रंग" %}</strong><br><small class="text-muted">{% tr "Upload your logo first" "पहले लोगो अपलोड करें" %}</small></span></label>
+          <label class="mode-card"><input type="radio" name="themeMode" value="custom"> <span><strong>{% tr "My own colours" "मेरे अपने रंग" %}</strong><br><small class="text-muted">{% tr "Colours, fonts, buttons" "रंग, फ़ॉन्ट, बटन" %}</small></span></label>
+        </div>
+        <div id="customTheme" class="d-none">
+          <label class="form-label">{% tr "Quick colour sets" "तैयार रंग" %}</label>
+          <div class="preset-row mb-3" id="presetRow"></div>
+          <div class="row g-3">
+            <div class="col-6 col-md-4"><label class="form-label" for="c-primary">{% tr "Main colour" "मुख्य रंग" %}</label><input class="form-control form-control-color w-100" type="color" id="c-primary" data-theme="primary"></div>
+            <div class="col-6 col-md-4"><label class="form-label" for="c-accent">{% tr "Accent" "दूसरा रंग" %}</label><input class="form-control form-control-color w-100" type="color" id="c-accent" data-theme="accent"></div>
+            <div class="col-6 col-md-4"><label class="form-label" for="c-bg">{% tr "Background" "बैकग्राउंड" %}</label><input class="form-control form-control-color w-100" type="color" id="c-bg" data-theme="background"></div>
+            <div class="col-6 col-md-4"><label class="form-label" for="c-surface">{% tr "Cards" "कार्ड" %}</label><input class="form-control form-control-color w-100" type="color" id="c-surface" data-theme="surface"></div>
+            <div class="col-6 col-md-4"><label class="form-label" for="c-text">{% tr "Text" "टेक्स्ट" %}</label><input class="form-control form-control-color w-100" type="color" id="c-text" data-theme="text"></div>
+            <div class="col-6 col-md-4"><label class="form-label" for="c-radius">{% tr "Corners" "कोने" %}</label><select class="form-select" id="c-radius" data-theme="borderRadius"><option value="4px">Sharp</option><option value="10px">Soft</option><option value="16px">Round</option><option value="24px">Extra round</option></select></div>
+            <div class="col-md-4"><label class="form-label" for="c-hfont">{% tr "Heading font" "हेडिंग फ़ॉन्ट" %}</label><select class="form-select" id="c-hfont" data-theme="headingFont"></select></div>
+            <div class="col-md-4"><label class="form-label" for="c-bfont">{% tr "Text font" "टेक्स्ट फ़ॉन्ट" %}</label><select class="form-select" id="c-bfont" data-theme="bodyFont"></select></div>
+            <div class="col-md-4"><label class="form-label" for="c-btn">{% tr "Buttons" "बटन" %}</label><select class="form-select" id="c-btn" data-theme="buttonStyle"><option value="rounded">Rounded</option><option value="pill">Pill</option><option value="square">Square</option></select></div>
+          </div>
+        </div>
+        <div class="mt-4"><label class="form-label" for="f-hero">{% tr "Top banner layout" "ऊपर के बैनर का लेआउट" %}</label>
+          <select class="form-select" id="f-hero" data-path="heroStyle">
+            <option value="">Design default</option>
+            <option value="full">Photo behind the text</option>
+            <option value="split">Photo beside the text</option>
+            <option value="center">Centred text on a photo</option>
+          </select></div>
+        <h3 class="h6 mt-4">{% tr "Sections: show, hide and reorder" "सेक्शन: दिखाएँ, छिपाएँ, क्रम बदलें" %}</h3>
+        <ul class="section-list" id="sectionList"></ul>
+        <button type="button" class="btn btn-sm btn-link px-0" id="resetSections">{% tr "Reset to the design's order" "डिज़ाइन का क्रम वापस लाएँ" %}</button>
+      </section>
+
+      <!-- 8. Social & SEO -->
+      <section class="step" data-step="seo">
+        <h2 class="h5">{% tr "Social & SEO" "सोशल और SEO" %}</h2>
+        <div class="row g-3">
+          <div class="col-sm-6"><label class="form-label" for="s-ig"><i class="bi bi-instagram"></i> Instagram</label><input class="form-control" id="s-ig" data-path="social.instagram" type="url" placeholder="https://instagram.com/…"></div>
+          <div class="col-sm-6"><label class="form-label" for="s-fb"><i class="bi bi-facebook"></i> Facebook</label><input class="form-control" id="s-fb" data-path="social.facebook" type="url" placeholder="https://facebook.com/…"></div>
+          <div class="col-sm-6"><label class="form-label" for="s-yt"><i class="bi bi-youtube"></i> YouTube</label><input class="form-control" id="s-yt" data-path="social.youtube" type="url" placeholder="https://youtube.com/…"></div>
+          <div class="col-sm-6"><label class="form-label" for="s-x"><i class="bi bi-twitter-x"></i> X (Twitter)</label><input class="form-control" id="s-x" data-path="social.twitter" type="url"></div>
+          <div class="col-sm-6"><label class="form-label" for="s-li"><i class="bi bi-linkedin"></i> LinkedIn</label><input class="form-control" id="s-li" data-path="social.linkedin" type="url"></div>
+        </div>
+        <h3 class="h6 mt-4">{% tr "Google search listing" "गूगल सर्च में दिखने वाला टेक्स्ट" %}</h3>
+        <div class="mb-3"><label class="form-label" for="seo-title">{% tr "Page title" "पेज का टाइटल" %}</label><input class="form-control" id="seo-title" data-path="seo.title" maxlength="70"><div class="form-text"><span class="js-count" data-for="seo-title"></span>/70</div></div>
+        <div class="mb-3"><label class="form-label" for="seo-desc">{% tr "Description" "विवरण" %}</label><textarea class="form-control" id="seo-desc" data-path="seo.description" rows="3" maxlength="170"></textarea><div class="form-text"><span class="js-count" data-for="seo-desc"></span>/160</div></div>
+        <div class="mb-3"><label class="form-label" for="f-disclaimer">{% tr "Disclaimer (small text in the footer, optional)" "डिस्क्लेमर (फ़ुटर में छोटा टेक्स्ट, वैकल्पिक)" %}</label><textarea class="form-control" id="f-disclaimer" data-path="disclaimer" rows="3" maxlength="1000" placeholder="Empty = your category's standard text, if it has one"></textarea></div>
+        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="f-hindi"><label class="form-check-label" for="f-hindi">{% tr "Show the हिंदी button on my website" "मेरी वेबसाइट पर हिंदी बटन दिखाएँ" %}</label></div>
+      </section>
+
+      <div class="ed-nav">
+        <button type="button" class="btn btn-outline-secondary" id="prevStep"><i class="bi bi-arrow-left"></i> {% tr "Back" "पीछे" %}</button>
+        <button type="button" class="btn btn-brand" id="nextStep">{% tr "Save & continue" "सेव करें और आगे बढ़ें" %} <i class="bi bi-arrow-right"></i></button>
+      </div>
+      <div class="ed-finish d-none" id="edFinish">
+        <h2 class="h5 mb-1">{% tr "All done!" "सब हो गया!" %}</h2>
+        <p class="small text-muted">{% tr "Your website is saved. Preview it, then take it live." "आपकी वेबसाइट सेव हो गई है। प्रीव्यू देखें, फिर लाइव करें।" %}</p>
+        <div class="d-flex flex-wrap gap-2">
+          <a class="btn btn-outline-secondary" href="{% url 'open_preview' project.pk %}" target="_blank" rel="noopener"><i class="bi bi-eye"></i> {% tr "Open preview" "प्रीव्यू खोलें" %}</a>
+          {% if project.can_go_live %}<a class="btn btn-brand" href="{% url 'go_live' project.pk %}"><i class="bi bi-rocket-takeoff"></i> {% tr "Go live" "लाइव करें" %}</a>{% endif %}
+          <a class="btn btn-link" href="{% url 'dashboard' %}">{% tr "Back to my websites" "मेरी वेबसाइटों पर वापस" %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ right: live preview ============ -->
+  <div class="ed-preview" id="edPreview">
+    <div class="ed-preview-bar">
+      <span class="small fw-semibold"><i class="bi bi-eye"></i> {% tr "Live preview" "लाइव प्रीव्यू" %}</span>
+      <div class="btn-group btn-group-sm ms-auto d-none d-lg-inline-flex" role="group" aria-label="Device">
+        <button type="button" class="btn btn-outline-secondary active" data-device="desktop" aria-label="Desktop"><i class="bi bi-laptop"></i></button>
+        <button type="button" class="btn btn-outline-secondary" data-device="phone" aria-label="Phone"><i class="bi bi-phone"></i></button>
+      </div>
+      <button type="button" class="btn btn-sm btn-light d-lg-none ms-auto" id="closePreview"><i class="bi bi-x-lg"></i> {% tr "Close" "बंद करें" %}</button>
+    </div>
+    <div class="ed-frame-wrap"><iframe id="edFrame" title="Live preview of your website"></iframe></div>
+  </div>
+  <button type="button" class="btn btn-brand ed-preview-fab d-lg-none" id="openPreview"><i class="bi bi-eye"></i> {% tr "Preview" "प्रीव्यू" %}</button>
+</div>
+{{ editor_config|json_script:"editor-config" }}
+{% endblock %}
+{% block scripts %}
+<script src="{{ shared_assets }}js/themes.js"></script>
+<script src="{% static 'js/editor.js' %}"></script>
+{% endblock %}

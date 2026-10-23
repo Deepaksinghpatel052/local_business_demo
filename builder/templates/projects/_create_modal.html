@@ -1,0 +1,22 @@
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalTitle" aria-hidden="true"{% if open_template %} data-auto-open="1"{% endif %}>
+  <div class="modal-dialog modal-dialog-centered">
+    <form class="modal-content" method="post" action="{% url 'create_project' %}">
+      {% csrf_token %}
+      <div class="modal-header border-0 pb-0">
+        <h2 class="modal-title h5" id="createModalTitle">Create your website</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="small text-muted js-template-name">{% if open_template %}Design: {{ open_template.name }}{% endif %}</p>
+        {% include "includes/field.html" with field=create_form.business_name %}
+        {% include "includes/field.html" with field=create_form.category %}
+        {{ create_form.template }}
+        <p class="small text-muted mb-0">We fill in sample text and photos for you. You can change everything.</p>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <a class="btn btn-link me-auto" href="{% url 'templates' %}">Browse designs</a>
+        <button class="btn btn-brand btn-lg px-4" type="submit">Start creating <i class="bi bi-arrow-right"></i></button>
+      </div>
+    </form>
+  </div>
+</div>

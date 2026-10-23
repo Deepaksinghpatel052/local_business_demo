@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load ui %}
+{% block title %}Payments & invoices{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block main %}
+<div class="container py-4 py-md-5">
+  <h1 class="h3">Payments &amp; invoices</h1>
+  <div class="table-app table-responsive mt-3">
+    <table class="table">
+      <thead><tr><th>Date</th><th>Website</th><th>For</th><th>Amount</th><th>Status</th><th>Invoice</th></tr></thead>
+      <tbody>
+      {% for o in orders %}
+        <tr>
+          <td>{{ o.paid_at|default:o.created_at|date:"d M Y" }}</td>
+          <td>{{ o.project.business_name }}</td>
+          <td>{{ o.get_type_display }}</td>
+          <td>{{ o.amount|paise }}</td>
+          <td><span class="badge text-bg-{{ o.status|badge }}">{{ o.get_status_display }}</span>{% if o.refund_status != "none" %} <span class="small text-muted">{{ o.get_refund_status_display }}</span>{% endif %}</td>
+          <td>{% if o.invoice_number %}<a href="{% url 'invoice_pdf' o.pk %}" target="_blank">{{ o.invoice_number }}</a>{% else %}-{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No payments yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

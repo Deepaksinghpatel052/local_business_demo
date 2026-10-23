@@ -1,0 +1,18 @@
+{% extends "adminpanel/base.html" %}
+{% block title %}Audit log{% endblock %}
+{% block manage %}
+<h1 class="h3 mb-3">Audit log</h1>
+<div class="table-app table-responsive">
+  <table class="table">
+    <thead><tr><th>When</th><th>Who</th><th>Action</th><th>Target</th><th>Details</th><th>IP</th></tr></thead>
+    <tbody>
+    {% for a in page.object_list %}
+      <tr><td class="small text-nowrap">{{ a.created_at|date:"d M Y H:i" }}</td><td class="small">{{ a.actor|default:"system" }}</td><td><code>{{ a.action }}</code></td>
+        <td class="small">{% if a.target_type == "project" %}<a href="{% url 'manage_project' a.target_id %}">{{ a.target_label }}</a>{% else %}{{ a.target_type }} {{ a.target_label }}{% endif %}</td>
+        <td class="small text-muted">{{ a.details|truncatechars:120 }}</td><td class="small">{{ a.ip|default:"" }}</td></tr>
+    {% empty %}<tr><td colspan="6" class="text-center text-muted py-4">No actions yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "adminpanel/_pager.html" %}
+{% endblock %}

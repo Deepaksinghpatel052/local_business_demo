@@ -1,12 +1,30 @@
-# The host port comes from DOCKER_PORT in .env (Docker Compose reads .env automatically).
+# The Django site builder (builder/) in one container. No Nginx here: the server's own Nginx
+# serves the files and proxies to this container (deploy/nginx-app.conf, deploy/nginx-demos.conf).
+#
+# Every value comes from .env (Docker Compose reads it automatically, and the container gets it too):
+#   APP_DOCKER_PORT  the builder on http://127.0.0.1:<APP_DOCKER_PORT>/ (only this computer; Nginx proxies to it)
+#   MEDIA_DIR        the folder on this computer that holds every client file; mounted at /app/media:
+#                      <MEDIA_DIR>/uploads/  photos owners upload      <MEDIA_DIR>/sites/  published websites
+#                    Restarting, rebuilding or removing the container never touches it.
+#   DEBUG            True: Django dev server + demo logins.  False: Gunicorn (GUNICORN_WORKERS)
+#
+# Start / apply .env changes:  docker compose up -d        Rebuild (new packages):  docker compose up -d --build
 services:
-  demos:
-    build: .
-    image: local-business-demos
-    container_name: local-business-demos
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.app
+    image: local-business-builder
+    container_name: local-business-builder
+    env_file: .env
     ports:
-      - "${DOCKER_PORT:-8080}:80"
+      - "127.0.0.1:${APP_DOCKER_PORT:?Set APP_DOCKER_PORT in .env}:8000"
     volumes:
-      - ./demos:/usr/share/nginx/demos:ro   # live: edits to demos/ show on refresh
-      - ./showcase:/usr/share/nginx/showcase:ro
+      - .:/app                                                  # code, .env, showcase/, var/ (static, logs)
+      - ${MEDIA_DIR:?Set MEDIA_DIR in .env}:/app/media          # client files, kept outside the container
+    environment:
+      # Inside the container the client files are always under /app/media (= MEDIA_DIR on this computer)
+      MEDIA_ROOT: /app/media/uploads
+      SITES_ROOT: /app/media/sites
+    command: ["sh", "-c", "sed 's/\r$//' /app/docker/app-start.sh | sh"]
     restart: unless-stopped

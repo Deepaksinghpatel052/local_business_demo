@@ -1,0 +1,65 @@
+{% extends "adminpanel/base.html" %}
+{% load ui %}
+{% block title %}Leads{% endblock %}
+{% block manage %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="h3 mb-0">Leads</h1>
+  {% if perms_ui.export_leads %}
+  <div class="d-flex gap-2">
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'manage_leads_export' %}?{{ request.GET.urlencode }}"><i class="bi bi-filetype-csv"></i> Export leads</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'manage_leads_export' %}?{{ request.GET.urlencode }}&marketing=1" title="Only people who agreed to marketing"><i class="bi bi-megaphone"></i> Marketing export</a>
+  </div>
+  {% endif %}
+</div>
+
+{% if followups %}
+<div class="panel mb-3">
+  <h2 class="h6"><i class="bi bi-alarm"></i> Follow-ups due today</h2>
+  <ul class="list-unstyled small mb-0">
+    {% for n in followups %}
+      <li class="d-flex flex-wrap align-items-center gap-2 border-bottom py-1">
+        <span class="badge text-bg-warning">{{ n.follow_up_date|date:"d M" }}</span>
+        <a href="{% url 'manage_lead' n.user.pk %}">{{ n.user }}</a> · {{ n.note|truncatechars:80 }}
+        <form method="post" action="{% url 'manage_note_done' n.pk %}" class="ms-auto">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="btn btn-sm btn-light" type="submit">Done</button></form>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<form class="toolbar mb-3" method="get">
+  <input class="form-control" type="search" name="q" value="{{ f.q }}" placeholder="Name, mobile, email, business, city">
+  <select class="form-select w-auto" name="stage"><option value="">Any stage</option>{% for k, label in funnel %}<option value="{{ k }}"{% if f.stage == k %} selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+  <select class="form-select w-auto" name="category"><option value="">Any category</option>{% for k, label in category_options %}<option value="{{ k }}"{% if f.category == k %} selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+  <select class="form-select w-auto" name="city"><option value="">Any city</option>{% for c in cities %}<option{% if f.city == c %} selected{% endif %}>{{ c }}</option>{% endfor %}</select>
+  <select class="form-select w-auto" name="consent"><option value="">Any consent</option><option value="yes"{% if f.consent == "yes" %} selected{% endif %}>Contact consent</option><option value="no"{% if f.consent == "no" %} selected{% endif %}>No consent</option></select>
+  <label class="form-check d-flex align-items-center gap-1 m-0"><input class="form-check-input" type="checkbox" name="followup" value="today"{% if f.followup %} checked{% endif %}> Follow-up due</label>
+  <button class="btn btn-brand" type="submit">Filter</button>
+</form>
+
+<div class="table-app table-responsive">
+  <table class="table">
+    <thead><tr><th>Lead</th><th>Business</th><th>City</th><th>Mobile</th><th>Stage</th><th>Last activity</th><th>Consent</th><th></th></tr></thead>
+    <tbody>
+    {% for u in page.object_list %}
+      <tr class="{% if not u.contact_consent %}no-consent{% endif %}">
+        <td><a href="{% url 'manage_lead' u.pk %}" class="fw-semibold">{{ u.name|default:u.email }}</a><div class="small text-muted">{{ u.email }}</div></td>
+        <td>{{ u.lead_business|default:"-" }}<div class="small text-muted">{{ u.lead_category }}{% if u.business_area %} · {{ u.business_area }}{% endif %}{% if not u.lead_projects %} · <span class="text-warning">no website yet</span>{% endif %}</div></td>
+        <td>{{ u.city }}</td>
+        <td class="text-nowrap">{{ u.mobile_display }}</td>
+        <td><span class="badge text-bg-light border">{{ u.stage }}</span></td>
+        <td class="small text-nowrap">{{ u.last_activity|timesince }} ago</td>
+        <td class="small">{% if u.contact_consent %}<i class="bi bi-check-circle text-success" title="Contact consent"></i>{% else %}<span class="text-danger fw-semibold">No consent</span>{% endif %}{% if u.marketing_consent %} <i class="bi bi-megaphone text-primary" title="Marketing consent"></i>{% endif %}</td>
+        <td class="text-nowrap">
+          {% if u.mobile and u.contact_consent %}
+            <a class="btn btn-sm btn-light" href="{{ u.call_link }}" title="Call"><i class="bi bi-telephone"></i></a>
+            <a class="btn btn-sm btn-wa" href="{{ u.wa_link }}" target="_blank" rel="noopener" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}<tr><td colspan="8" class="text-center text-muted py-4">No leads match.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "adminpanel/_pager.html" %}
+{% endblock %}

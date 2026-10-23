@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Website designs for local businesses{% endblock %}
+{% block main %}
+<div class="container py-4 py-md-5">
+  <h1 class="h3 mb-1">Pick a design <span class="badge rounded-pill text-bg-light border fs-6 align-middle">{{ design_count }} designs</span></h1>
+  <p class="text-muted">Start from the design closest to your business. You can change colours, fonts, photos and every text later.</p>
+  <form class="toolbar mb-4" method="get" role="search">
+    <input class="form-control flex-grow-1" type="search" name="q" value="{{ f.q }}" placeholder="Search: salon, dentist, Gwalior…" aria-label="Search designs">
+    <select class="form-select w-auto" name="category" aria-label="Category">
+      <option value="">All categories</option>
+      {% for k, label in category_options %}<option value="{{ k }}"{% if f.category == k %} selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <select class="form-select w-auto" name="city" aria-label="City">
+      <option value="">All sample cities</option>
+      {% for c in city_options %}<option value="{{ c }}"{% if f.city == c %} selected{% endif %}>{{ c }}</option>{% endfor %}
+    </select>
+    <button class="btn btn-brand px-4" type="submit">Filter</button>
+    {% if f.q or f.category or f.city %}<a class="btn btn-link" href="{% url 'templates' %}">Clear</a>{% endif %}
+  </form>
+  <div class="tpl-grid">
+    {% for t in templates %}{% include "includes/template_card.html" %}
+    {% empty %}
+      <div class="empty-state panel" style="grid-column:1/-1">
+        <p class="mb-2">No design matches. Every design works for any business, so try the <a href="{% url 'templates' %}">full list</a>.</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

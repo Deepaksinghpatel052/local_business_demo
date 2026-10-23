@@ -120,7 +120,7 @@
     }
     .card:hover, .card:focus-visible { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: #d6d3ff; }
     .card:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
-    .frame { position: relative; background: #eceef4; border-bottom: 1px solid var(--line); }
+    .frame { display: block; position: relative; background: #eceef4; border-bottom: 1px solid var(--line); }
     .frame-bar { display: flex; align-items: center; gap: 6px; height: 26px; padding: 0 12px; background: #f3f4f8; border-bottom: 1px solid var(--line); }
     .frame-bar i { width: 8px; height: 8px; border-radius: 50%; background: #d4d6e0; }
     .frame-bar i:nth-child(1) { background: #ff6159; } .frame-bar i:nth-child(2) { background: #ffbd2e; } .frame-bar i:nth-child(3) { background: #28c941; }
@@ -151,6 +151,14 @@
     .rating small { color: var(--muted); font-weight: 500; }
     .tagline { margin: 2px 0 0; font-size: 14px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .empty { text-align: center; color: var(--muted); padding: 48px 0; }
+    .btn-cta { margin-top: 18px; background: var(--brand); color: #fff; padding: 12px 22px; font-size: 15px; }
+    .btn-cta:hover { transform: translateY(-1px); background: #4436d6; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 8px; }
+    .actions .btn { font-size: 13px; padding: 7px 12px; flex: 1 1 auto; justify-content: center; }
+    .btn-use { background: var(--brand); color: #fff; }
+    .btn-use:hover { background: #4436d6; }
+    .btn-open { border: 1px solid var(--line); color: var(--text); }
+    .btn-open:hover { border-color: #c9c6ff; }
 
     /* ---------- CTA + footer ---------- */
     .cta {
@@ -199,6 +207,7 @@
           <span class="eyebrow"><i></i>Websites for local businesses</span>
           <h1>Live demo sites, <span>built by Devnixplus</span></h1>
           <p class="lead">Every business type gets its own design. Click any demo to open it in a new tab.</p>
+          <a class="btn btn-cta js-app" data-path="/accounts/signup/" href="https://app.devnixplus.com/accounts/signup/">Create your business website free in 5 minutes →</a>
         </div>
         <div class="stats" id="stats"></div>
       </div>
@@ -238,6 +247,7 @@
   </footer>
 
   <script src="demos.js"></script>
+  <script src="config.js"></script>
   <script>
     (function () {
       var demos = window.DEMOS || [];
@@ -251,6 +261,11 @@
       }
       function prettyUrl(slug) { return location.host + '/' + slug + '/'; }
 
+      // The self-service builder ("Use this design"): APP_URL from .env, written to config.js by
+      // "manage.py write_showcase_config" (Docker does it on every start)
+      var APP_URL = (window.DEVNIX_APP_URL || 'https://app.devnixplus.com').replace(/\/+$/, '');
+      [].forEach.call(document.querySelectorAll('.js-app'), function (a) { a.href = APP_URL + a.getAttribute('data-path'); });
+
       var clients = demos.filter(function (d) { return !d.sample; });
       var samples = demos.filter(function (d) { return d.sample; });
       var categories = {};
@@ -259,6 +274,7 @@
       document.getElementById('year').textContent = new Date().getFullYear();
       document.getElementById('stats').innerHTML = [
         [demos.length, 'Live demos'],
+        [samples.length, 'Designs'],
         [Object.keys(categories).length, 'Business types'],
         ['100%', 'Mobile friendly']
       ].map(function (s) { return '<div class="stat"><strong>' + s[0] + '</strong><span>' + s[1] + '</span></div>'; }).join('');
@@ -282,18 +298,20 @@
           ? '<img src="' + esc(d.thumb) + '" alt="" loading="lazy" width="640" height="400">'
           : '<div class="shot-fallback">' + esc(initials) + '</div>';
         var rating = d.rating ? '<span class="rating">' + d.rating.toFixed(1) + (d.reviews ? ' <small>(' + d.reviews.toLocaleString('en-IN') + ')</small>' : '') + '</span>' : '';
-        return '<a class="card" href="' + esc(demoUrl(d.slug)) + '" target="_blank" rel="noopener" aria-label="Open ' + esc(d.name) + ' demo in a new tab">' +
-          '<div class="frame">' +
+        var use = d.sample ? '<a class="btn btn-use" href="' + esc(APP_URL + '/start/' + d.slug.replace(/^sample-/, '') + '/') + '">Use this design</a>' : '';
+        return '<article class="card">' +
+          '<a class="frame" href="' + esc(demoUrl(d.slug)) + '" target="_blank" rel="noopener" aria-label="Open ' + esc(d.name) + ' demo in a new tab">' +
             '<div class="frame-bar"><i></i><i></i><i></i><span>' + esc(prettyUrl(d.slug)) + '</span></div>' +
             (d.sample ? '' : '<span class="badge">Business demo</span>') +
             '<div class="shot">' + shot + '</div>' +
-          '</div>' +
+          '</a>' +
           '<div class="info">' +
             '<h3>' + esc(d.name) + '</h3>' +
             '<div class="meta"><span class="tag">' + esc(d.label) + '</span>' + (d.city ? '<span>' + esc(d.city) + '</span>' : '') + rating + '</div>' +
             (d.tagline ? '<p class="tagline">' + esc(d.tagline) + '</p>' : '') +
+            '<div class="actions">' + use + '<a class="btn btn-open" href="' + esc(demoUrl(d.slug)) + '" target="_blank" rel="noopener">Open demo ↗</a></div>' +
           '</div>' +
-        '</a>';
+        '</article>';
       }
 
       function section(title, note, list) {

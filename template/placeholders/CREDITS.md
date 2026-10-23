@@ -122,3 +122,13 @@ All photos are from Unsplash (https://unsplash.com/license): free to use, no att
 - taxi/2.jpg: https://images.unsplash.com/photo-1494783367193-149034c05e8f
 - taxi/3.jpg: https://images.unsplash.com/photo-1529074963764-98f45c47344b
 - taxi/4.jpg: https://images.unsplash.com/photo-1617469767053-d3b523a0b982
+- pets/hero.jpg: https://images.unsplash.com/photo-1560743641-3914f2c45636
+- pets/1.jpg: https://images.unsplash.com/photo-1516734212186-a967f81ad0d7
+- pets/2.jpg: https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba
+- pets/3.jpg: https://images.unsplash.com/photo-1450778869180-41d0601e046e
+- pets/4.jpg: https://images.unsplash.com/photo-1587300003388-59208cc962cb
+- finance/hero.jpg: https://images.unsplash.com/photo-1511895426328-dc8714191300
+- finance/1.jpg: https://images.unsplash.com/photo-1579621970563-ebec7560ff3e
+- finance/2.jpg: https://images.unsplash.com/photo-1521791136064-7986c2920216
+- finance/3.jpg: https://images.unsplash.com/photo-1450101499163-c8848c66ca85
+- finance/4.jpg: https://images.unsplash.com/photo-1543286386-713bdd548da4

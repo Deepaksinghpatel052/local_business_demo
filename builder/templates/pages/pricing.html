@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Pricing{% endblock %}
+{% block main %}
+<div class="container py-4 py-md-5">
+  <h1 class="h2 text-center">Simple pricing</h1>
+  <p class="text-center text-muted mb-4">Designing your website is always free. Pay only when you want it online.</p>
+  <div class="row g-4 justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <div class="plan-option"><h2 class="h5">Design</h2><div class="price">Free</div><div class="small text-muted mb-3">for every business</div>
+        <ul class="small"><li>{{ design_count }} designs made for local businesses</li><li>Live preview while you type</li><li>Your details, photos, hours and reviews</li><li>English + Hindi</li></ul>
+        <a class="btn btn-outline-brand mt-auto" href="{% url 'templates' %}">Pick a design</a></div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="plan-option featured"><h2 class="h5">Host with Devnixplus</h2><div class="price">{{ prices.hosting_new }}</div><div class="small text-muted mb-3">first year (setup + hosting)<br>then {{ prices.hosting_renewal }} per year</div>
+        <ul class="small"><li>Edits go live instantly</li><li>HTTPS and Google-ready SEO</li><li>Connect your own domain (help included)</li><li>Renewal reminders, {{ ps.grace_period_days }}-day grace period</li></ul>
+        <a class="btn btn-brand mt-auto" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'account_signup' %}{% endif %}">Get started</a></div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="plan-option"><h2 class="h5">Download</h2><div class="price">{{ prices.download }}</div><div class="small text-muted mb-3">one-time, per website</div>
+        <ul class="small"><li>ZIP for cPanel, Hostinger, Netlify…</li><li>Unlimited free re-downloads with your latest data</li><li>Upload guide in English and Hindi</li><li>Technical help from our team</li></ul>
+        <a class="btn btn-outline-brand mt-auto" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'account_signup' %}{% endif %}">Get started</a></div>
+    </div>
+  </div>
+  <p class="small text-muted text-center mt-4">Every business is verified by our team before it goes live or can be downloaded. Not verified? Full refund. See the <a href="{% url 'refund_policy' %}">Refund Policy</a>.</p>
+</div>
+{% endblock %}
