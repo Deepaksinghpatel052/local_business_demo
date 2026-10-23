@@ -1,5 +1,9 @@
 # Deployment (Ubuntu server with its own Nginx + Docker)
 
+> **Setting up a server for the first time? Follow [`SERVER_SETUP.md`](SERVER_SETUP.md)**: every step in
+> order (DNS, domain, allowed hosts, media folder, database, Nginx, certificates, first login, checks,
+> troubleshooting). This page is the short reference.
+
 The site builder runs in **one Docker container** (Django + Gunicorn). There is **no Nginx in Docker**:
 the server's own Nginx proxies to the container and serves every file straight from the folders.
 Client files (photos people upload, published websites) live in **`MEDIA_DIR`** on the server, which is

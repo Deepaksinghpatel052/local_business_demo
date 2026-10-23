@@ -731,7 +731,8 @@ the team before it goes live or can be downloaded. All registrations become lead
   the shared, versioned folder `/_shared/v1/`. Hand-made demos in `demos/` stay self-contained and unchanged.
 - Docs: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (what's where, models, URLs),
   [`docs/USER_FLOW.md`](docs/USER_FLOW.md) (flow diagram), [`docs/ADMIN_GUIDE.md`](docs/ADMIN_GUIDE.md) (team),
-  [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) (server).
+  [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) (server reference),
+  [`docs/SERVER_SETUP.md`](docs/SERVER_SETUP.md) (server setup, step by step).
 
 ### Local setup
 
