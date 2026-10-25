@@ -1,0 +1,7 @@
+{% extends "emails/base.html" %}
+{% block heading %}An email address was removed{% endblock %}
+{% block content %}
+{% include "account/email/_hello.html" %}
+<p style="margin:0 0 16px;">The email address <strong>{{ deleted_email }}</strong> was removed from your {{ brand_name }} account.</p>
+{% include "emails/_security.html" %}
+{% endblock %}

@@ -1,0 +1,5 @@
+{% extends "emails/base.html" %}
+{% block content %}
+{{ body_html|safe }}
+{% if button_url %}{% include "emails/_button.html" with url=button_url label=button_label %}{% endif %}
+{% endblock %}

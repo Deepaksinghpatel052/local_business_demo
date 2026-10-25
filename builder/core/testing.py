@@ -31,6 +31,7 @@ class BaseTestCase(TestCase):
             DEMO_URL_STYLE="path", DEMO_BASE_URL="https://demo.example.com",
             EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
             RAZORPAY_KEY_SECRET="test_secret", RAZORPAY_WEBHOOK_SECRET="whsec_test",
+            PHONE_OTP_REQUIRED=True, ACCOUNT_EMAIL_VERIFICATION="optional", SMS_PROVIDER="mock",
         )
         cls._override.enable()
         super().setUpClass()

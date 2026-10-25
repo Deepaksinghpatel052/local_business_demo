@@ -1,0 +1,9 @@
+{% extends "emails/base.html" %}
+{% block heading %}No account with this email{% endblock %}
+{% block content %}
+<p style="margin:0 0 16px;">Hi there,</p>
+<p style="margin:0 0 16px;">Someone (hopefully you) tried to sign in or reset a password with <strong>{{ email }}</strong>, but we don't have an account with this email address.</p>
+{% if signup_url %}<p style="margin:0 0 16px;">Want to create your free website? Sign up here:</p>
+{% include "emails/_button.html" with url=signup_url label="Create my account" %}{% endif %}
+<p style="margin:0 0 16px;color:#646779;font-size:14px;">Wasn't you? You can safely ignore this email.</p>
+{% endblock %}

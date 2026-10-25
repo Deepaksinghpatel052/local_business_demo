@@ -1,0 +1,14 @@
+{% extends "emails/base.html" %}
+{% block heading %}Confirm your email address{% endblock %}
+{% block preheader %}One click to confirm your email and finish setting up your {{ brand_name }} account.{% endblock %}
+{% block content %}
+{% include "account/email/_hello.html" %}
+<p style="margin:0 0 16px;">Welcome to {{ brand_name }}! Please confirm this email address, so we can send you payment receipts, verification updates and renewal reminders for your website.</p>
+{% if code %}
+<p style="margin:0 0 8px;">Enter this code in the open browser window:</p>
+<p style="margin:0 0 24px;font-family:'Courier New',monospace;font-size:28px;font-weight:700;letter-spacing:6px;color:#0f1020;">{{ code }}</p>
+{% else %}
+{% include "emails/_button.html" with url=activate_url label="Confirm my email" %}
+{% endif %}
+<p style="margin:0 0 16px;color:#646779;font-size:14px;">Didn't create an account? You can safely ignore this email.</p>
+{% endblock %}

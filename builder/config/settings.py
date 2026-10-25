@@ -121,6 +121,8 @@ ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*"]
 ACCOUNT_SIGNUP_FORM_CLASS = "accounts.forms.SignupExtraForm"
 ACCOUNT_EMAIL_VERIFICATION = env("ACCOUNT_EMAIL_VERIFICATION", default="optional")
+ACCOUNT_ADAPTER = "accounts.adapter.AccountAdapter"                 # branded HTML emails
+ACCOUNT_EMAIL_SUBJECT_PREFIX = ""                                   # subjects in templates/account/email/*_subject.txt
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_LOGOUT_ON_GET = False
@@ -156,6 +158,8 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Devnixplus <no-reply@devnixplus.com>")
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
+# Logo at the top of every email (PNG: Gmail does not show SVG). Empty = <APP_URL>/static/img/email-logo.png
+EMAIL_LOGO_URL = env("EMAIL_LOGO_URL", default="")
 
 # --- Where the sites live and how they are addressed -----------------------
 APP_URL = env("APP_URL", default="http://127.0.0.1:8000").rstrip("/")
@@ -195,6 +199,8 @@ COMPANY = {
 }
 
 # --- Messaging providers ------------------------------------------------------
+# False = owners give their mobile number at sign-up but skip the SMS code (until MSG91/DLT is ready)
+PHONE_OTP_REQUIRED = env.bool("PHONE_OTP_REQUIRED") if env("PHONE_OTP_REQUIRED", default="") else True
 SMS_PROVIDER = env("SMS_PROVIDER", default="mock")                 # mock | msg91
 MSG91_AUTH_KEY = env("MSG91_AUTH_KEY", default="")
 MSG91_TEMPLATE_ID = env("MSG91_TEMPLATE_ID", default="")

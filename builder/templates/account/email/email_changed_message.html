@@ -1,0 +1,7 @@
+{% extends "emails/base.html" %}
+{% block heading %}Your email address was changed{% endblock %}
+{% block content %}
+{% include "account/email/_hello.html" %}
+<p style="margin:0 0 16px;">The email address of your {{ brand_name }} account was changed from <strong>{{ from_email }}</strong> to <strong>{{ to_email }}</strong>.</p>
+{% include "emails/_security.html" %}
+{% endblock %}

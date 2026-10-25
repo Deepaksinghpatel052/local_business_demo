@@ -32,10 +32,17 @@ def _send_otp(request, user):
     code = "%06d" % secrets.randbelow(1000000)
     request.session["otp"] = {"m": user.mobile, "h": _otp_hash(code, user.mobile), "t": time.time(), "n": 0}
     provider = messaging.sms()
-    provider.send_otp(user.mobile, code)
+    if not provider.send_otp(user.mobile, code):
+        messages.error(request, "We could not send the SMS right now. Please tap \"Send a new code\" in a minute, "
+                                "or contact us on WhatsApp.")
     if provider.shows_code_on_screen:
         request.session["otp_demo_code"] = code
     return code
+
+
+def _welcome(request, user):
+    messages.success(request, "Welcome, %s! Your account is ready." % user.first_name)
+    return _after_onboarding(request)
 
 
 def _after_onboarding(request):
@@ -59,13 +66,20 @@ def onboarding(request):
         if request.method == "POST" and form.is_valid():
             user = form.save(commit=False)
             user.mobile_verified = False
-            user.onboarded = False           # a new number must be verified again
+            user.onboarded = not settings.PHONE_OTP_REQUIRED   # a new number must be verified again
             if not user.signup_source:
                 user.signup_source = request.session.get("signup_source", "") or "google"
             user.save()
+            if user.onboarded:
+                return _welcome(request, user)
             _send_otp(request, user)
             return redirect("onboarding")
-        return render(request, "accounts/onboarding.html", {"form": form, "step": 1})
+        return render(request, "accounts/onboarding.html", {"form": form, "step": 1, "phone_otp": settings.PHONE_OTP_REQUIRED})
+
+    if not settings.PHONE_OTP_REQUIRED:     # details given, SMS code switched off
+        user.onboarded = True
+        user.save(update_fields=["onboarded"])
+        return _welcome(request, user)
 
     otp = request.session.get("otp")
     if not otp or otp.get("m") != user.mobile:
@@ -90,7 +104,7 @@ def onboarding(request):
         else:
             form.add_error("code", "That code is not right. Please check and try again.")
     return render(request, "accounts/onboarding.html", {
-        "form": form, "step": 2, "demo_code": request.session.get("otp_demo_code"),
+        "form": form, "step": 2, "demo_code": request.session.get("otp_demo_code"), "phone_otp": True,
     })
 
 
