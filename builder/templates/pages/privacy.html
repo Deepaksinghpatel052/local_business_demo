@@ -3,10 +3,23 @@
 {% block main %}
 <div class="container py-4 py-md-5 prose">
   <h1 class="h2">Privacy Policy</h1>
-  <p class="text-muted small">Last updated: {% now "d F Y" %}</p>
-  <p class="legal-note"><strong>Note:</strong> placeholder text. Have the final policy reviewed by a lawyer or CA (including for the Digital Personal Data Protection Act, 2023).</p>
+  <p class="text-muted small">Last updated: 25 October 2026</p>
+  {% if user.is_staff %}<p class="legal-note"><strong>Team note (only staff see this):</strong> have the final policy reviewed by a lawyer or CA (including for the Digital Personal Data Protection Act, 2023).</p>{% endif %}
+
+  <p>Devnixplus ("we", "us") runs this website builder at {{ APP_URL }}. This policy explains what personal data we collect, why, and the choices you have. It applies to this website and to your account on it.</p>
+
   <h2>What we collect</h2>
-  <p>Your name, email, mobile and WhatsApp number, city, your consent choices, the business details and photos you add, verification documents you upload, payment references from Razorpay (we never see or store your card or UPI PIN), and basic usage logs such as IP address and pages visited.</p>
+  <ul>
+    <li><strong>Account details:</strong> your name, email, mobile and WhatsApp number, city, and your consent choices.</li>
+    <li><strong>Business details:</strong> the business name, address, photos, text and other content you add to your website, and the verification documents you upload.</li>
+    <li><strong>Payments:</strong> payment references from Razorpay. We never see or store your card details, UPI PIN or bank password.</li>
+    <li><strong>Usage data:</strong> basic logs such as IP address, browser type and pages visited, used for security and to fix problems.</li>
+  </ul>
+
+  <h2>Sign in with Google</h2>
+  <p>If you choose "Continue with Google", Google shares with us only your <strong>name</strong> and <strong>email address</strong>, and confirms that the email is verified. We use them only to create your account and log you in. We do not get your Google password, and we do not access your Gmail, contacts, Drive or any other Google data.</p>
+  <p>We do not sell this information, use it for advertising, or share it with anyone except as described under "Who we share it with". Our use of information received from Google follows the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements. You can remove our access at any time from your <a href="https://myaccount.google.com/connections" target="_blank" rel="noopener">Google Account settings</a>; your account here stays, and you can set a password with "Forgot password" on the login page and log in with your email.</p>
+
   <h2>Why we use it</h2>
   <ul>
     <li>To create, publish and host your website, and to verify your business.</li>
@@ -14,11 +27,29 @@
     <li>To send offers and tips, only if you chose to receive them. You can turn this off in <a href="{% url 'profile' %}">My account</a>.</li>
     <li>For invoices, tax and legal requirements, and to prevent fraud and abuse.</li>
   </ul>
+
+  <h2>Cookies</h2>
+  <p>We use only the cookies needed to keep you logged in, remember your session and protect forms against misuse. We do not use advertising cookies.</p>
+
   <h2>Who we share it with</h2>
-  <p>Razorpay (payments), our email and messaging providers, and our hosting provider, only as needed to run the service. The details you put on your website are public once it is live. We do not sell your data.</p>
+  <p>Only the service providers we need to run the service, and only what each one needs: Razorpay (payments), our email and SMS/WhatsApp providers (to send you messages), and our hosting provider. We may also share data when the law requires it. The details you put on your website are public once it is live. We do not sell your data.</p>
+
   <h2>How long we keep it</h2>
-  <p>As long as your account is active, and afterwards as required by law (for example invoices). Ask us to delete your account at any time.</p>
+  <p>As long as your account is active. After you delete your account we remove your personal data, except what we must keep by law (for example invoices).</p>
+
+  <h2>How we protect it</h2>
+  <p>Your data is sent over HTTPS, passwords are stored only in encrypted (hashed) form, and only our team members who need it can see your verification documents.</p>
+
   <h2>Your rights</h2>
-  <p>You can see, correct or delete your data, and withdraw consent, by writing to {{ ps.support_email }}.</p>
+  <p>You can see, correct or delete your data, and withdraw consent, at any time. Update most details yourself in <a href="{% url 'profile' %}">My account</a>, or write to {{ ps.support_email }} to get a copy of your data or delete your account. We reply within 30 days.</p>
+
+  <h2>Children</h2>
+  <p>This service is for business owners and is not meant for anyone under 18.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>We may update this policy. The date at the top shows the latest version, and we will tell you about important changes by email.</p>
+
+  <h2>Contact</h2>
+  <p>{{ ps.support_email }} · {{ ps.support_phone }} · <a href="{% url 'contact' %}">Contact page</a></p>
 </div>
 {% endblock %}

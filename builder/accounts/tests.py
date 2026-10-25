@@ -78,6 +78,17 @@ class SignupTests(BaseTestCase):
         u.refresh_from_db()
         self.assertEqual((u.mobile, u.business_name, u.business_category), ("9123456789", "G Garage", "garage"))
 
+    def test_google_name_goes_into_name_field(self):
+        from allauth.socialaccount.models import SocialAccount, SocialLogin
+        from accounts.adapter import SocialAccountAdapter
+        login = SocialLogin(user=User(), account=SocialAccount(provider="google", uid="1"))
+        u = SocialAccountAdapter().populate_user(None, login, {
+            "email": "asha@gmail.com", "first_name": "Asha", "last_name": "Verma", "name": "Asha Verma"})
+        self.assertEqual((u.email, u.name, u.first_name), ("asha@gmail.com", "Asha Verma", "Asha"))
+        u = SocialAccountAdapter().populate_user(None, SocialLogin(user=User(), account=login.account),
+                                                 {"email": "x@gmail.com", "first_name": "Ravi", "last_name": "Jain"})
+        self.assertEqual(u.name, "Ravi Jain")
+
     @override_settings(PHONE_OTP_REQUIRED=False)
     def test_phone_otp_off_skips_the_code(self):
         u = User.objects.create_user(email="g2@test.local", name="G User")
@@ -150,6 +161,18 @@ class UtilTests(BaseTestCase):
             self.assertEqual(self.client.get(reverse(name)).status_code, 200, name)
         self.assertContains(self.client.get(reverse("pricing")), "₹1,999")
 
+
+    def test_legal_pages_public_and_in_footer(self):
+        r = self.client.get(reverse("privacy"))
+        self.assertContains(r, "Sign in with Google")                   # needed for the Google consent screen
+        self.assertContains(r, "Limited Use")
+        home = self.client.get(reverse("home"))
+        self.assertContains(home, 'href="%s"' % reverse("privacy"))
+        self.assertContains(home, 'href="%s"' % reverse("terms"))
+        for name in ["privacy", "terms", "refund_policy"]:              # lawyer note only for the team
+            self.assertNotContains(self.client.get(reverse(name)), "legal-note", msg_prefix=name)
+        self.client.force_login(self.make_team("Admin", email="legal@team.local"))
+        self.assertContains(self.client.get(reverse("privacy")), "legal-note")
 
 class DesignCountTests(BaseTestCase):
     def test_design_count_follows_the_templates(self):
