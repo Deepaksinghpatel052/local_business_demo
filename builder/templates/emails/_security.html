@@ -1,0 +1,10 @@
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 20px;background:#f6f6fa;border-radius:12px;">
+  <tr>
+    <td style="padding:16px 20px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.7;color:#1d1e2c;">
+      {% if timestamp %}<strong>When:</strong> {{ timestamp }}<br>{% endif %}
+      {% if ip %}<strong>IP address:</strong> {{ ip }}<br>{% endif %}
+      {% if user_agent %}<strong>Browser:</strong> {{ user_agent|truncatechars:90 }}{% endif %}
+    </td>
+  </tr>
+</table>
+<p style="margin:0 0 16px;">If this wasn't you, reset your password right away and contact us at <a href="mailto:{{ support_email }}" style="color:#4436d6;">{{ support_email }}</a>.</p>

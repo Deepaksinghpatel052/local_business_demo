@@ -1,5 +1,7 @@
 import re
 
+from django.core import mail
+from django.test import override_settings
 from django.urls import reverse
 
 from accounts.models import User
@@ -75,6 +77,50 @@ class SignupTests(BaseTestCase):
                                                      contact_consent="on"))
         u.refresh_from_db()
         self.assertEqual((u.mobile, u.business_name, u.business_category), ("9123456789", "G Garage", "garage"))
+
+    @override_settings(PHONE_OTP_REQUIRED=False)
+    def test_phone_otp_off_skips_the_code(self):
+        u = User.objects.create_user(email="g2@test.local", name="G User")
+        self.client.force_login(u)
+        r = self.client.get(reverse("onboarding"))
+        self.assertNotContains(r, "Verify mobile")
+        self.client.post(reverse("onboarding"), {"name": "G User", "mobile": "9123456789", "city": "Indore",
+                                                 "business_name": "G Garage", "business_category": "garage",
+                                                 "contact_consent": "on"})
+        u.refresh_from_db()
+        self.assertTrue(u.onboarded)
+        self.assertFalse(u.mobile_verified)
+        self.assertEqual(self.client.get(reverse("dashboard")).status_code, 200)
+
+    @override_settings(ACCOUNT_EMAIL_VERIFICATION="mandatory", PHONE_OTP_REQUIRED=False)
+    def test_mandatory_email_confirmation(self):
+        self.client.post(reverse("account_signup"), {
+            "name": "Ravi", "email": "r5@test.local", "mobile": "9876543210", "city": "Gwalior",
+            "business_name": "Ravi Sweets", "business_category": "bakery", "password1": "Zx!93kdLqp",
+            "contact_consent": "on"})
+        self.assertNotEqual(self.client.get(reverse("dashboard")).status_code, 200)    # not logged in yet
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertIn("confirm your email", msg.subject)
+        self.assertIn("Confirm my email", msg.alternatives[0][0])                         # branded HTML part
+        login = {"login": "r5@test.local", "password": "Zx!93kdLqp"}
+        r = self.client.post(reverse("account_login"), login)
+        self.assertIn("confirm-email", r["Location"])                                    # blocked until confirmed
+        link = re.search(r"https?://\S+/accounts/confirm-email/\S+/", msg.body).group(0)
+        self.client.post(link.split("testserver", 1)[-1])
+        r = self.client.post(reverse("account_login"), login)
+        self.assertNotIn("confirm-email", r["Location"])
+        r = self.client.get(reverse("dashboard"), follow=True)                             # via /onboarding/, no code
+        self.assertEqual(r.redirect_chain[-1][0], reverse("dashboard"))
+        self.assertTrue(User.objects.get(email="r5@test.local").onboarded)
+
+    @override_settings(ACCOUNT_EMAIL_VERIFICATION="mandatory")
+    def test_team_login_needs_no_email_confirmation(self):
+        self.make_team("Admin", email="boss@team.local")
+        r = self.client.post(reverse("account_login"), {"login": "boss@team.local", "password": "pw-Secret-123"})
+        self.assertEqual(r.status_code, 302)
+        self.assertNotIn("confirm-email", r["Location"])
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_use_this_design_sends_new_visitors_to_signup(self):
         r = self.client.get(reverse("start", args=["salon"]))

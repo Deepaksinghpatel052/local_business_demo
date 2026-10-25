@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <title>{% block title %}{{ heading }}{% endblock %}</title>
+  <!-- Every style is inline: Gmail and Outlook drop most <style> rules. -->
+</head>
+<body style="margin:0;padding:0;background:#f6f6fa;-webkit-text-size-adjust:100%;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#f6f6fa;font-size:1px;line-height:1px;">{% block preheader %}{{ preheader }}{% endblock %}&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;</div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f6f6fa;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;">
+
+          <!-- logo -->
+          <tr>
+            <td align="center" style="padding:0 0 20px;">
+              <a href="{{ app_url }}" target="_blank" style="text-decoration:none;">
+                <img src="{{ logo_url }}" width="216" height="48" alt="{{ brand_name }}" style="display:block;border:0;outline:none;width:216px;height:auto;max-width:216px;font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:700;color:#4436d6;">
+              </a>
+            </td>
+          </tr>
+
+          <!-- card -->
+          <tr>
+            <td style="background:#ffffff;border:1px solid #e6e7ef;border-radius:16px;overflow:hidden;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr><td style="height:6px;line-height:6px;font-size:0;background:#5b4bff;background-image:linear-gradient(90deg,#5b4bff,#00c2a8);">&nbsp;</td></tr>
+                <tr>
+                  <td style="padding:36px 40px 12px;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;">
+                    <h1 style="margin:0 0 20px;font-size:22px;line-height:1.35;font-weight:700;color:#0f1020;">{% block heading %}{{ heading }}{% endblock %}</h1>
+                    <div style="font-size:15px;line-height:1.65;color:#1d1e2c;">
+                      {% block content %}{% endblock %}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 40px 36px;font-family:'Plus Jakarta Sans',Arial,Helvetica,sans-serif;font-size:15px;line-height:1.65;color:#1d1e2c;">
+                    {% block signoff %}<p style="margin:0;">Warm regards,<br><strong>Team {{ brand_name }}</strong></p>{% endblock %}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- help -->
+          <tr>
+            <td style="padding:20px 24px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;color:#646779;text-align:center;">
+              Need help? Email <a href="mailto:{{ support_email }}" style="color:#4436d6;text-decoration:none;">{{ support_email }}</a>
+              {% if support_phone %} or call <a href="tel:{{ support_phone|cut:' ' }}" style="color:#4436d6;text-decoration:none;">{{ support_phone }}</a>{% endif %}{% if support_wa %} &middot; <a href="{{ support_wa }}" style="color:#00a38d;text-decoration:none;">WhatsApp us</a>{% endif %}
+            </td>
+          </tr>
+
+          <!-- footer -->
+          <tr>
+            <td style="padding:16px 24px 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#8a8c9c;text-align:center;">
+              {% block footer_note %}{% endblock %}
+              &copy; {{ year }} {{ brand_name }}{% if brand_address %} &middot; {{ brand_address }}{% endif %}<br>
+              <a href="{{ app_url }}" style="color:#8a8c9c;text-decoration:underline;">{{ app_url|cut:"https://"|cut:"http://" }}</a>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

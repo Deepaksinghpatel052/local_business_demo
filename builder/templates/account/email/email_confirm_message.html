@@ -1,0 +1,7 @@
+{% extends "emails/base.html" %}
+{% block heading %}Email address confirmed{% endblock %}
+{% block content %}
+{% include "account/email/_hello.html" %}
+<p style="margin:0 0 16px;">Your email address <strong>{{ email }}</strong> is now confirmed on your {{ brand_name }} account.</p>
+{% include "emails/_security.html" %}
+{% endblock %}
