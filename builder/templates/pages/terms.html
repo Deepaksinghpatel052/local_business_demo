@@ -3,8 +3,8 @@
 {% block main %}
 <div class="container py-4 py-md-5 prose">
   <h1 class="h2">Terms of Service</h1>
-  <p class="text-muted small">Last updated: {% now "d F Y" %}</p>
-  <p class="legal-note"><strong>Note:</strong> this is placeholder text written in plain language. The final legal text must be reviewed by a lawyer or CA before launch.</p>
+  <p class="text-muted small">Last updated: 25 October 2026</p>
+  {% if user.is_staff %}<p class="legal-note"><strong>Team note (only staff see this):</strong> this is placeholder text written in plain language. The final legal text must be reviewed by a lawyer or CA before launch.</p>{% endif %}
 
   <h2>1. Who we are</h2>
   <p>Devnixplus ("we", "us") runs this website builder at {{ APP_URL }}. By creating an account you ("you", the business owner) agree to these terms.</p>

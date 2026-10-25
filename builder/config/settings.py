@@ -122,6 +122,7 @@ ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*"]
 ACCOUNT_SIGNUP_FORM_CLASS = "accounts.forms.SignupExtraForm"
 ACCOUNT_EMAIL_VERIFICATION = env("ACCOUNT_EMAIL_VERIFICATION", default="optional")
 ACCOUNT_ADAPTER = "accounts.adapter.AccountAdapter"                 # branded HTML emails
+SOCIALACCOUNT_ADAPTER = "accounts.adapter.SocialAccountAdapter"     # Google name -> User.name
 ACCOUNT_EMAIL_SUBJECT_PREFIX = ""                                   # subjects in templates/account/email/*_subject.txt
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_SESSION_REMEMBER = True

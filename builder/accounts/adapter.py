@@ -1,7 +1,10 @@
-"""allauth emails (confirm email, password reset, ...) in the branded layout of templates/emails/base.html."""
+"""allauth hooks: emails (confirm email, password reset, ...) in the branded layout of templates/emails/base.html,
+and Google sign-up filling our single `name` field."""
 import re
 
 from allauth.account.adapter import DefaultAccountAdapter
+from allauth.account.utils import valid_email_or_none
+from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
@@ -18,3 +21,13 @@ class AccountAdapter(DefaultAccountAdapter):
                 context, body_html=html_from_text(msg.body),
                 heading=re.sub(r"^\[[^\]]*\]\s*", "", msg.subject))), "text/html")
         return msg
+
+
+class SocialAccountAdapter(DefaultSocialAccountAdapter):
+    def populate_user(self, request, sociallogin, data):
+        """Google gives first/last name; our User keeps one `name` (first_name is a read-only property)."""
+        user = sociallogin.user
+        user.email = valid_email_or_none(data.get("email")) or ""
+        full = data.get("name") or " ".join(p for p in (data.get("first_name"), data.get("last_name")) if p)
+        user.name = (full or "")[:120]
+        return user

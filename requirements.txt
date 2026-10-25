@@ -1,12 +1,14 @@
 # Everything for local development (venv):  venv/Scripts/python -m pip install -r requirements.txt
-# - Django site builder (builder/): Django, allauth, environ, razorpay, Pillow, jsonschema, xhtml2pdf, requests, psycopg, gunicorn
+# - Django site builder (builder/): Django, allauth (+ PyJWT, cryptography for Google login), environ, razorpay, Pillow, jsonschema, xhtml2pdf, requests, psycopg, gunicorn
 # - tools/build_showcase.py screenshots: playwright (+ greenlet, pyee)
 # The server only needs requirements-server.txt (no Playwright).
 arabic-reshaper==3.0.1
 asgiref==3.12.1
 attrs==26.1.0
 certifi==2026.10.18
+cffi==2.1.1
 charset-normalizer==3.5.2
+cryptography==50.0.2
 cssselect2==0.10.1
 Django==5.2.18
 django-allauth==65.20.0
@@ -23,7 +25,9 @@ playwright==1.63.0
 psycopg==3.3.6
 psycopg-binary==3.3.6
 pyee==13.0.1
+pycparser==3.12
 pypdf==6.21.1
+PyJWT==2.15.1
 razorpay==2.0.1
 referencing==0.37.0
 reportlab==5.0.1
