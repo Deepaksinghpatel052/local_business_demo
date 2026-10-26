@@ -29,7 +29,7 @@ class PlatformSettings(models.Model):
 
     support_whatsapp = models.CharField("Support WhatsApp (digits with country code)", max_length=15, default="919183559191")
     support_phone = models.CharField(max_length=20, default="+91 91835 59191")
-    support_email = models.EmailField(default="hello@devnixplus.com")
+    support_email = models.EmailField(default="info@devnixplus.com")
 
     updated_at = models.DateTimeField(auto_now=True)
 

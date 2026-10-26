@@ -169,10 +169,11 @@ class UtilTests(BaseTestCase):
         home = self.client.get(reverse("home"))
         self.assertContains(home, 'href="%s"' % reverse("privacy"))
         self.assertContains(home, 'href="%s"' % reverse("terms"))
-        for name in ["privacy", "terms", "refund_policy"]:              # lawyer note only for the team
-            self.assertNotContains(self.client.get(reverse(name)), "legal-note", msg_prefix=name)
         self.client.force_login(self.make_team("Admin", email="legal@team.local"))
-        self.assertContains(self.client.get(reverse("privacy")), "legal-note")
+        for name in ["privacy", "terms", "refund_policy", "contact"]:   # no notes, company email shown
+            r = self.client.get(reverse(name))
+            self.assertNotContains(r, "legal-note", msg_prefix=name)
+            self.assertContains(r, "info@devnixplus.com", msg_prefix=name)
 
 class DesignCountTests(BaseTestCase):
     def test_design_count_follows_the_templates(self):

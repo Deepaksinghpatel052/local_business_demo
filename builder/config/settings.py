@@ -192,7 +192,7 @@ GST_ENABLED = env.bool("GST_ENABLED", default=False)
 COMPANY = {
     "name": env("COMPANY_NAME", default="Devnixplus"),
     "address": env("COMPANY_ADDRESS", default="India"),
-    "email": env("COMPANY_EMAIL", default="hello@devnixplus.com"),
+    "email": env("COMPANY_EMAIL", default="info@devnixplus.com"),
     "phone": env("COMPANY_PHONE", default="+91 91835 59191"),
     "gstin": env("COMPANY_GSTIN", default=""),
     "state": env("COMPANY_STATE", default=""),
