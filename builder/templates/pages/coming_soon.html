@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Launching {{ launch_at|date:"j F" }}: first {{ total }} businesses get a free website{% endblock %}
+{% block description %}Devnixplus launches on {{ launch_at|date:"j F Y" }}. Mobile-friendly websites for shops, clinics, salons and every local business in India. The first {{ total }} businesses to join get their website free.{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/soon.css' %}">{% endblock %}
+{% block body_class %}soon{% endblock %}
+
+{% block navbar %}
+<nav class="navbar app-nav" aria-label="Main">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'coming_soon' %}"><img src="https://www.devnixplus.com/images/logo_devnix.svg" alt="Devnixplus" height="34"></a>
+    <a class="btn btn-brand btn-sm px-3" href="#join"><i class="bi bi-gift"></i> Claim free website</a>
+  </div>
+</nav>
+{% endblock %}
+
+{% block main %}
+{# ---------- hero ---------- #}
+<section class="soon-dark soon-hero" id="top">
+  <div class="soon-grid-bg"></div>
+  <div class="container">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-6">
+        <span class="soon-pill"><span class="dot"></span> Launching {{ launch_at|date:"l, j F Y" }}</span>
+        <h1 class="mt-3 mb-3">Get your business online with a website that <span class="grad">brings customers to you</span></h1>
+        <p class="lead mb-4">Beautiful websites made for shops, clinics, salons, gyms, coaching and {{ designs|length }} kinds of local business. Call and WhatsApp buttons, Google Maps and Hindi included. Edit it all from your phone.</p>
+
+        <div class="countdown" data-countdown aria-label="Time left until launch">
+          <div><b data-unit="d">--</b><span>Days</span></div>
+          <div><b data-unit="h">--</b><span>Hours</span></div>
+          <div><b data-unit="m">--</b><span>Minutes</span></div>
+          <div><b data-unit="s">--</b><span>Seconds</span></div>
+        </div>
+
+        <div class="offer-box mt-4">
+          <p class="offer-title mb-2"><i class="bi bi-gift-fill"></i> First {{ total }} businesses get their website <u>free</u></p>
+          <div class="spots-bar" role="progressbar" aria-valuenow="{{ taken }}" aria-valuemin="0" aria-valuemax="{{ total }}" aria-label="Free spots taken"><div style="width: {{ taken_pct }}%"></div></div>
+          <p class="small mb-0 mt-2">
+            {% if left %}<strong>{{ left }} of {{ total }} free spots left</strong>{% if taken %} · {{ taken }} business{{ taken|pluralize:"es" }} already joined{% endif %}
+            {% else %}<strong>All {{ total }} free spots are taken.</strong> Join the launch list for an early-bird offer.{% endif %}
+          </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mt-4">
+          <a class="btn btn-brand btn-lg px-4 btn-glow" href="#join"><i class="bi bi-gift"></i> {% if left %}Claim my free website{% else %}Join the launch list{% endif %}</a>
+          <a class="btn btn-outline-light btn-lg px-4" href="#designs"><i class="bi bi-phone"></i> See the designs</a>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="phone-stage" aria-hidden="true">
+          {% for d in hero_designs %}
+          <div class="phone"><div class="phone-screen" data-rotate="{{ forloop.counter0 }}"><img src="{% static d.img %}" alt=""><img class="is-hidden" src="{% static d.img %}" alt=""></div></div>
+          {% endfor %}
+          <span class="float-chip c1"><i class="bi bi-telephone-fill"></i> Call in one tap</span>
+          <span class="float-chip c2"><i class="bi bi-whatsapp"></i> WhatsApp orders</span>
+          <span class="float-chip c3"><i class="bi bi-geo-alt-fill"></i> Directions on Maps</span>
+          <span class="float-chip c4"><i class="bi bi-star-fill"></i> Your Google rating</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ---------- designs ---------- #}
+<section class="soon-section pb-4" id="designs">
+  <div class="container text-center mb-4">
+    <span class="soon-kicker">{{ designs|length }} business types, one for you</span>
+    <h2 class="soon-h2">A design made for <em>your</em> kind of business</h2>
+    <p class="text-muted mx-auto mb-0" style="max-width:620px">A sweet shop sells differently than a clinic. Every design is built around how that business wins customers, with its own colours, photos and layout.</p>
+  </div>
+  <div class="marquee">
+    <div class="marquee-track">
+      {% for d in designs %}<figure class="mini-phone"><div class="shot"><img src="{% static d.img %}" alt="{{ d.title }} website design" loading="lazy" width="390" height="600"></div><p><i class="bi {{ d.icon }}"></i> {{ d.title }}</p></figure>{% endfor %}
+      {% for d in designs %}<figure class="mini-phone" aria-hidden="true"><div class="shot"><img src="{% static d.img %}" alt="" loading="lazy" width="390" height="600"></div><p><i class="bi {{ d.icon }}"></i> {{ d.title }}</p></figure>{% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ---------- live preview + form ---------- #}
+<section class="soon-section" id="join">
+  <div class="container">
+    <div class="text-center mb-4">
+      <span class="soon-kicker">Try it now</span>
+      <h2 class="soon-h2">Type your business name. See your website.</h2>
+      <p class="text-muted mb-0">Fill the form and watch the phone: this is how your customers will see you.</p>
+    </div>
+    <div class="row g-4 g-lg-5 align-items-center justify-content-center">
+      <div class="col-md-6 col-lg-5 order-2 order-md-1">
+        <div class="preview-wrap">
+          <div class="preview-url"><i class="bi bi-lock-fill"></i><span>{{ sites_base }}/<b data-pv="slug">your-business</b>/</span></div>
+          <div class="phone is-preview">
+            <div class="phone-screen">
+              <img data-pv="img" src="{% static designs.0.img %}" alt="Preview of your website">
+              <div class="preview-blur"></div>
+              <div class="preview-bar"><span class="mark" data-pv="mark">YB</span><span class="nm" data-pv="name">Your Business Name</span><span class="call"><i class="bi bi-telephone-fill"></i></span></div>
+              <div class="preview-card">
+                <span class="k"><i class="bi bi-shop"></i> <span data-pv="type">{{ designs.0.title }}</span></span>
+                <div class="t" data-pv="name2">Your Business Name</div>
+                <div class="s"><i class="bi bi-geo-alt-fill"></i> <span data-pv="city">Your city</span></div>
+                <div class="chips"><span class="open">Open now</span><span><i class="bi bi-star-fill star"></i> Google rating</span></div>
+                <div class="ph" aria-hidden="true"><span data-pv="tile"></span><span data-pv="tile"></span><span data-pv="tile"></span></div>
+                <div class="b"><span><i class="bi bi-telephone-fill"></i> Call now</span><span class="wa"><i class="bi bi-whatsapp"></i> WhatsApp us</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="preview-hint mb-0"><i class="bi bi-hand-index"></i> Change the type of business to see another design</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-6 order-1 order-md-2">
+        <div class="panel soon-form">
+          {% if entry %}
+            <div class="text-center py-2">
+              <i class="bi bi-check-circle-fill text-success" style="font-size:56px"></i>
+              <h3 class="h4 mt-2">You're on the list, {{ entry.name.split.0 }}!</h3>
+              {% if entry.free_offer %}
+                <p class="mb-2">Your website for <strong>{{ entry.business_name }}</strong> is <strong>free</strong>. You are one of the first {{ total }}.</p>
+              {% else %}
+                <p class="mb-2">The free spots were taken, but <strong>{{ entry.business_name }}</strong> is on our launch list for an early-bird offer.</p>
+              {% endif %}
+              <p class="small text-muted">We will call or WhatsApp you on +91 {{ entry.mobile }} on {{ launch_at|date:"j F" }}. A confirmation is on its way to {{ entry.email }}.</p>
+              <div class="countdown is-small justify-content-center mt-3" data-countdown>
+                <div><b data-unit="d">--</b><span>Days</span></div><div><b data-unit="h">--</b><span>Hrs</span></div><div><b data-unit="m">--</b><span>Min</span></div><div><b data-unit="s">--</b><span>Sec</span></div>
+              </div>
+            </div>
+          {% else %}
+            <h3 class="h4 mb-1">{% if left %}Claim your free website{% else %}Join the launch list{% endif %}</h3>
+            <p class="small text-muted mb-3">Takes 30 seconds. No payment, no card.</p>
+            {% if left %}<div class="offer-mini mb-3"><i class="bi bi-lightning-charge-fill"></i><span><strong>{{ left }} of {{ total }}</strong> free websites left</span></div>{% endif %}
+            <form method="post" action="#join" novalidate>
+              {% csrf_token %}
+              {% if form.non_field_errors %}<div class="alert alert-danger small">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+              <div class="row g-2">
+                {% for field in form %}{% if field.name == "website" %}
+                <div class="visually-hidden" aria-hidden="true">{{ field.label_tag }}{{ field }}</div>
+                {% elif field.name == "contact_consent" %}
+                <div class="col-12 form-check ms-1 mt-2">
+                  <input class="form-check-input{% if field.errors %} is-invalid{% endif %}" type="checkbox" name="{{ field.html_name }}" id="{{ field.id_for_label }}"{% if field.value %} checked{% endif %} required>
+                  <label class="form-check-label small" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {% for e in field.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+                </div>
+                {% else %}
+                <div class="{% if field.name == 'business_name' or field.name == 'email' %}col-12{% else %}col-sm-6{% endif %}">
+                  <label class="form-label small mb-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {% if field.name == "business_category" %}
+                    <select class="form-select{% if field.errors %} is-invalid{% endif %}" name="{{ field.html_name }}" id="{{ field.id_for_label }}" required>
+                      {% for value, label in field.field.choices %}<option value="{{ value }}"{% if field.value == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                  {% else %}
+                    <input class="form-control{% if field.errors %} is-invalid{% endif %}" type="{% if field.name == 'email' %}email{% elif field.name == 'mobile' %}tel{% else %}text{% endif %}" name="{{ field.html_name }}" id="{{ field.id_for_label }}" value="{{ field.value|default:'' }}"{% if field.field.widget.attrs.placeholder %} placeholder="{{ field.field.widget.attrs.placeholder }}"{% endif %}{% if field.name == 'mobile' %} inputmode="numeric" autocomplete="tel-national"{% endif %} required>
+                  {% endif %}
+                  {% for e in field.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+                </div>
+                {% endif %}{% endfor %}
+              </div>
+              <button class="btn btn-brand btn-lg w-100 mt-3 btn-glow" type="submit"><i class="bi bi-gift"></i> {% if left %}Claim my free website{% else %}Join the launch list{% endif %}</button>
+              <p class="small text-muted text-center mt-2 mb-0">By joining you agree to our <a href="{% url 'terms' %}" target="_blank">Terms</a> and <a href="{% url 'privacy' %}" target="_blank">Privacy Policy</a>.</p>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ---------- what customers can do ---------- #}
+<section class="soon-section pt-0">
+  <div class="container">
+    <div class="text-center mb-4">
+      <span class="soon-kicker">Built to bring customers</span>
+      <h2 class="soon-h2">Everything your customers look for, on one page</h2>
+    </div>
+    <div class="row g-3">
+      <div class="col-6 col-lg-3"><div class="feat"><div class="ic" style="background:#5b4bff"><i class="bi bi-telephone-fill"></i></div><h3>Call in one tap</h3><p>A big call button on every screen. No searching for your number.</p></div></div>
+      <div class="col-6 col-lg-3"><div class="feat"><div class="ic" style="background:#25d366"><i class="bi bi-whatsapp"></i></div><h3>WhatsApp you</h3><p>Customers message you for orders, bookings and questions.</p></div></div>
+      <div class="col-6 col-lg-3"><div class="feat"><div class="ic" style="background:#ea4335"><i class="bi bi-geo-alt-fill"></i></div><h3>Find your shop</h3><p>Google Maps directions straight to your door.</p></div></div>
+      <div class="col-6 col-lg-3"><div class="feat"><div class="ic" style="background:#f5a524"><i class="bi bi-star-fill"></i></div><h3>Show your rating</h3><p>Your Google rating and reviews build trust before they visit.</p></div></div>
+      <div class="col-6 col-lg-3"><div class="feat"><div class="ic" style="background:#12a26b"><i class="bi bi-clock-fill"></i></div><h3>Open or closed?</h3><p>Opening hours with a live "Open now" sign.</p></div></div>
+      <div class="col-6 col-lg-3"><div class="feat"><div class="ic" style="background:#0ea5e9"><i class="bi bi-tags-fill"></i></div><h3>Services &amp; prices</h3><p>Fewer "how much?" calls. Customers come ready to buy.</p></div></div>
+      <div class="col-6 col-lg-3"><div class="feat"><div class="ic" style="background:#e11d74"><i class="bi bi-images"></i></div><h3>Photo gallery</h3><p>Show your shop, products and work the way you want.</p></div></div>
+      <div class="col-6 col-lg-3"><div class="feat"><div class="ic" style="background:#7c3aed"><i class="bi bi-translate"></i></div><h3>Hindi + English</h3><p>Customers switch language in one tap.</p></div></div>
+    </div>
+  </div>
+</section>
+
+{# ---------- before / after ---------- #}
+<section class="soon-section pt-0">
+  <div class="container">
+    <div class="text-center mb-4">
+      <span class="soon-kicker">Why it matters</span>
+      <h2 class="soon-h2">Before a customer visits, they search for you online</h2>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6"><div class="vs no">
+        <h3><i class="bi bi-emoji-frown"></i> Without a website</h3>
+        <ul>
+          <li><i class="bi bi-x-circle-fill"></i> Customers can't see your timings, prices or services</li>
+          <li><i class="bi bi-x-circle-fill"></i> You answer the same questions on the phone all day</li>
+          <li><i class="bi bi-x-circle-fill"></i> A competitor with a website looks more trusted</li>
+          <li><i class="bi bi-x-circle-fill"></i> Your posts on social media are gone in a day</li>
+        </ul>
+      </div></div>
+      <div class="col-md-6"><div class="vs yes">
+        <h3><i class="bi bi-emoji-smile"></i> With your Devnixplus website</h3>
+        <ul>
+          <li><i class="bi bi-check-circle-fill"></i> Your details, prices and photos are there 24×7</li>
+          <li><i class="bi bi-check-circle-fill"></i> One link to share on WhatsApp, visiting cards and Instagram</li>
+          <li><i class="bi bi-check-circle-fill"></i> Customers call, WhatsApp or get directions in one tap</li>
+          <li><i class="bi bi-check-circle-fill"></i> Change offers and prices yourself from your phone</li>
+        </ul>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+{# ---------- launch day steps ---------- #}
+<section class="soon-dark soon-section">
+  <div class="soon-grid-bg"></div>
+  <div class="container">
+    <div class="text-center mb-4">
+      <span class="soon-kicker" style="color:#b3a9ff">What happens next</span>
+      <h2 class="soon-h2">From sign-up to live website</h2>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-4"><div class="step"><div class="n">1</div><h3>Join today</h3><p>Fill the form in 30 seconds and lock your spot. No payment needed.</p></div></div>
+      <div class="col-md-4"><div class="step"><div class="n">2</div><h3>We call you on {{ launch_at|date:"j F" }}</h3><p>Our team calls or WhatsApps you to set up your website with your details and photos.</p></div></div>
+      <div class="col-md-4"><div class="step"><div class="n">3</div><h3>Your website goes live</h3><p>After a quick check of your business, share your link with every customer.</p></div></div>
+    </div>
+    <div class="text-center mt-4">
+      <div class="countdown is-small justify-content-center mb-3" data-countdown>
+        <div><b data-unit="d">--</b><span>Days</span></div><div><b data-unit="h">--</b><span>Hrs</span></div><div><b data-unit="m">--</b><span>Min</span></div><div><b data-unit="s">--</b><span>Sec</span></div>
+      </div>
+      <a class="btn btn-brand btn-lg px-4 btn-glow" href="#join"><i class="bi bi-gift"></i> {% if left %}Claim my free website{% else %}Join the launch list{% endif %}</a>
+    </div>
+  </div>
+</section>
+
+{# ---------- FAQ + share ---------- #}
+<section class="soon-section">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <span class="soon-kicker">Questions</span>
+        <h2 class="soon-h2 mb-3">Good to know</h2>
+        <div class="accordion soon-faq" id="faq">
+          {% for q, a in faq %}
+          <div class="accordion-item">
+            <h3 class="accordion-header"><button class="accordion-button{% if not forloop.first %} collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ forloop.counter }}" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" aria-controls="faq{{ forloop.counter }}">{{ q }}</button></h3>
+            <div id="faq{{ forloop.counter }}" class="accordion-collapse collapse{% if forloop.first %} show{% endif %}" data-bs-parent="#faq"><div class="accordion-body">{{ a }}</div></div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="share-card">
+          <h3 class="h5 fw-bold"><i class="bi bi-people-fill text-success"></i> Know a business owner?</h3>
+          <p class="mb-3">Your favourite sweet shop, clinic or salon could get a free website too. Share it before the spots are gone.</p>
+          <a class="btn btn-success w-100" target="_blank" rel="noopener" href="https://wa.me/?text={{ share_text|urlencode }}"><i class="bi bi-whatsapp"></i> Share on WhatsApp</a>
+        </div>
+        <div class="panel mt-3">
+          <h3 class="h6 fw-bold mb-2"><i class="bi bi-headset text-primary"></i> Talk to us</h3>
+          <p class="small text-muted mb-2">Questions before launch? We're happy to help.</p>
+          <p class="small mb-0"><i class="bi bi-envelope"></i> <a href="mailto:{{ ps.support_email }}">{{ ps.support_email }}</a><br><i class="bi bi-whatsapp"></i> <a href="{{ support_wa }}" target="_blank" rel="noopener">WhatsApp us</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<a class="soon-sticky" href="#join" data-sticky><i class="bi bi-gift-fill"></i> {% if left %}Claim free website <small>· {{ left }} left</small>{% else %}Join the launch list{% endif %}</a>
+{{ designs|json_script:"soon-designs" }}
+<div hidden id="soon-launch" data-launch="{{ launch_at|date:'c' }}" data-static="{% static '' %}"></div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/soon.js' %}" defer></script>
+{% endblock %}

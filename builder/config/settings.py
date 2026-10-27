@@ -4,6 +4,7 @@ Settings for the Devnixplus site builder (app.devnixplus.com).
 Every secret and every value that differs between your laptop and the server
 comes from the .env file in the repository root (see .env.example).
 """
+from datetime import datetime
 from pathlib import Path
 
 import environ
@@ -59,6 +60,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "accounts.middleware.OnboardingMiddleware",
+    "pages.middleware.ComingSoonMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -149,6 +151,12 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 GOOGLE_LOGIN_ENABLED = bool(env("GOOGLE_CLIENT_ID", default=""))
+
+# --- Coming soon page until launch ------------------------------------------
+# Before LAUNCH_AT every public page goes to /coming-soon/ (team members see the real site).
+# Empty = launched. Format: 2026-11-08T00:00:00+05:30
+LAUNCH_AT = datetime.fromisoformat(env("LAUNCH_AT")) if env("LAUNCH_AT", default="") else None
+EARLY_OFFER_SPOTS = env.int("EARLY_OFFER_SPOTS", default=50)    # first N early sign-ups get a free website
 
 # --- Email -----------------------------------------------------------------
 EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")

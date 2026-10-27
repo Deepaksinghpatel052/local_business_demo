@@ -10,4 +10,5 @@ urlpatterns = [
     path("privacy/", views.page("privacy"), name="privacy"),
     path("refund-policy/", views.page("refund"), name="refund_policy"),
     path("contact/", views.contact, name="contact"),
+    path("coming-soon/", views.coming_soon, name="coming_soon"),
 ]
