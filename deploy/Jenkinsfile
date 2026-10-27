@@ -1,0 +1,375 @@
+// Jenkins job "Deploy-LocalBusinessDemo" (agent label docker-deploy).
+//
+// One container: local-business-builder (Django). The server's own Nginx serves static/, media/, demos/ and
+// sites/ from APP_DIR and proxies everything else to 127.0.0.1:9002. No Nginx in Docker.
+//
+// The agent runs in its own container: it reaches the server's Docker through /var/run/docker.sock and
+// sees /opt/jenkins-deploy as /run/deploy, but it cannot see APP_DIR. Everything that touches APP_DIR
+// therefore runs in a short-lived helper container that mounts it.
+//   alpine:3.20            plain file checks (no network needed)
+//   jenkins-deploy-agent   the agent's own image: already has git, so no package download is needed
+//
+// Server compose file: /opt/jenkins-deploy/local-business-demo/docker-compose.yml (deploy/jenkins-compose.yml)
+pipeline {
+    agent { label 'docker-deploy' }
+
+    options {
+        skipDefaultCheckout(true)
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+        timeout(time: 45, unit: 'MINUTES')
+    }
+
+    environment {
+        REPO_URL = 'git@github.com:Deepaksinghpatel052/local_business_demo.git'
+        GIT_TERMINAL_PROMPT = '0'
+
+        COMPOSE_PROJECT_NAME = 'local_business_demo'
+        COMPOSE_DISABLE_ENV_FILE = 'true'
+        COMPOSE_ANSI = 'never'
+        BUILDKIT_PROGRESS = 'plain'
+
+        DEPLOY_CONFIG = '/run/deploy/local-business-demo/docker-compose.yml'
+
+        // Project folder on the server: Nginx serves static/, demos/, sites/ from here and the app reads .env here.
+        APP_DIR = '/var/www/html/clientDemoProjects/local_business_demo'
+        SERVICE_NAME = 'app'
+        CONTAINER = 'local-business-builder'
+        OLD_NGINX_CONTAINER = 'local-business-demos'     // old Nginx container, no longer used
+        HELPER_IMAGE = 'alpine:3.20'
+        GIT_IMAGE = 'jenkins-deploy-agent'
+        APP_URL = 'https://www.businessbuilder.devnixplus.com'
+    }
+
+    stages {
+        stage('Validate selections') {
+            steps {
+                script {
+                    // There is only one service now (the Django app), so SERVICE is not checked.
+                    echo "SERVICE parameter received: '${params.SERVICE}' (ignored, always deploys the app)"
+
+                    def branch = params.BRANCH?.trim()
+
+                    if (!branch ||
+                        branch.startsWith('--') ||
+                        branch.startsWith('ERROR:')) {
+                        error("Select a valid branch before deploying. Received: '${params.BRANCH}'")
+                    }
+
+                    env.DEPLOY_BRANCH = branch
+
+                    // Separate image tag for each build of this job.
+                    env.DEPLOY_IMAGE =
+                        "local-business-builder:jenkins-${env.BUILD_NUMBER}"
+
+                    env.TEST_CONTAINER =
+                        "local-business-builder-test-${env.BUILD_NUMBER}"
+
+                    int status = sh(
+                        script: '''
+                            git check-ref-format \
+                              --branch "$DEPLOY_BRANCH" >/dev/null 2>&1
+                        ''',
+                        returnStatus: true
+                    )
+
+                    if (status != 0) {
+                        error("Invalid Git branch name: '${branch}'")
+                    }
+
+                    currentBuild.description = "app | ${branch}"
+
+                    echo "Service: app (Django site builder)"
+                    echo "Branch: ${branch}"
+                    echo "Application port: 9002"
+                }
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                deleteDir()
+
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[
+                        name: "refs/remotes/origin/${env.DEPLOY_BRANCH}"
+                    ]],
+                    userRemoteConfigs: [[
+                        url: env.REPO_URL,
+                        credentialsId: 'github-ssh-global',
+                        refspec: '+refs/heads/*:refs/remotes/origin/*'
+                    ]]
+                ])
+
+                script {
+                    env.DEPLOY_COMMIT = sh(
+                        script: 'git rev-parse HEAD',
+                        returnStdout: true
+                    ).trim()
+                }
+
+                sh 'git log -1 --format="%h %s"'
+            }
+        }
+
+        stage('Preflight') {
+            steps {
+                sh '''
+                    set -eu
+
+                    test -r "$DEPLOY_CONFIG"
+                    test -f docker/Dockerfile.app
+                    test -f docker/app-start.sh
+                    test -f requirements-server.txt
+                    test -d builder
+                    test -d demos
+
+                    cp "$DEPLOY_CONFIG" deploy.compose.yml
+
+                    docker compose \
+                      -f deploy.compose.yml config --quiet
+
+                    # The git helper image (the agent's own image) is on the server.
+                    docker image inspect "$GIT_IMAGE" >/dev/null
+
+                    # Protect against replacing a container from another project.
+                    if docker container inspect "$CONTAINER" \
+                      >/dev/null 2>&1; then
+
+                        project=$(docker inspect \
+                          --format '{{ index .Config.Labels "com.docker.compose.project" }}' \
+                          "$CONTAINER")
+
+                        service=$(docker inspect \
+                          --format '{{ index .Config.Labels "com.docker.compose.service" }}' \
+                          "$CONTAINER")
+
+                        echo "Live container: project=$project service=$service"
+                        test "$project" = "$COMPOSE_PROJECT_NAME"
+                        test "$service" = "$SERVICE_NAME"
+                    fi
+
+                    # The server folder must be a git checkout with its .env (checked through Docker,
+                    # so Jenkins needs no direct file access to it).
+                    docker run --rm \
+                      -v "$APP_DIR:/repo:ro" \
+                      "$HELPER_IMAGE" \
+                      sh -c 'test -d /repo/.git && test -f /repo/.env && test -d /repo/media'
+
+                    echo "Preflight checks passed."
+                '''
+            }
+        }
+
+        stage('Build image') {
+            steps {
+                sh '''
+                    set -eu
+
+                    docker compose -f deploy.compose.yml build "$SERVICE_NAME"
+                '''
+            }
+        }
+
+        stage('Test new image') {
+            steps {
+                sh '''
+                    set -eu
+
+                    # Every package the app needs is installed.
+                    docker run --rm "$DEPLOY_IMAGE" python -c "
+import django, allauth, environ, jwt, cryptography, razorpay, psycopg, PIL, xhtml2pdf, gunicorn
+print('Django', django.get_version(), '- packages ok')"
+
+                    cleanup_test() {
+                        docker rm -f "$TEST_CONTAINER" >/dev/null 2>&1 || true
+                    }
+                    trap cleanup_test EXIT
+
+                    # No host port, no host bind mounts, no .env: the checked-out code is copied in
+                    # and tested against a throwaway SQLite database.
+                    docker run -d \
+                      --name "$TEST_CONTAINER" \
+                      --entrypoint sleep \
+                      "$DEPLOY_IMAGE" 1800
+
+                    docker cp . "$TEST_CONTAINER:/app"
+
+                    docker exec \
+                      -w /app/builder \
+                      -e SECRET_KEY=jenkins-test-only \
+                      -e DATABASE_URL=sqlite:////tmp/jenkins-test.sqlite3 \
+                      -e DEBUG=False \
+                      "$TEST_CONTAINER" \
+                      sh -c 'python manage.py check && python manage.py test --noinput'
+
+                    echo "New image passed the system check and all tests."
+                '''
+            }
+        }
+
+        stage('Update server code') {
+            steps {
+                sh '''
+                    set -eu
+
+                    # Move APP_DIR to exactly the commit that was tested. Tracked files only:
+                    # .env, media/ and var/ are git-ignored and stay as they are.
+                    git bundle create deploy.bundle HEAD
+
+                    owner=$(docker run --rm \
+                      -v "$APP_DIR:/repo:ro" \
+                      "$HELPER_IMAGE" \
+                      stat -c '%u:%g' /repo)
+
+                    echo "Server folder owner: $owner"
+
+                    docker run --rm -i \
+                      --user 0:0 \
+                      --entrypoint sh \
+                      -e HOME=/tmp \
+                      -v "$APP_DIR:/repo" \
+                      -e COMMIT="$DEPLOY_COMMIT" \
+                      -e BRANCH="$DEPLOY_BRANCH" \
+                      -e OWNER="$owner" \
+                      "$GIT_IMAGE" \
+                      -c '
+                        set -eu
+                        cat > /tmp/deploy.bundle
+                        cd /repo
+                        git config --global --add safe.directory /repo
+                        git fetch -q /tmp/deploy.bundle HEAD
+                        git checkout -q -f -B "$BRANCH" FETCH_HEAD
+                        now=$(git rev-parse HEAD)
+                        echo "Server code commit: $now"
+                        test "$now" = "$COMMIT"
+                        chown -R "$OWNER" .git
+                        git ls-files -z | xargs -0 chown -h "$OWNER"
+                        git log -1 --format="Server code is now at %h %s"
+                      ' < deploy.bundle
+                '''
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                    set -eu
+
+                    # Remove the old Nginx container (only if it belongs to this project).
+                    if docker container inspect "$OLD_NGINX_CONTAINER" \
+                      >/dev/null 2>&1; then
+
+                        old_project=$(docker inspect \
+                          --format '{{ index .Config.Labels "com.docker.compose.project" }}' \
+                          "$OLD_NGINX_CONTAINER")
+
+                        if [ "$old_project" = "$COMPOSE_PROJECT_NAME" ]; then
+                            docker rm -f "$OLD_NGINX_CONTAINER"
+                            echo "Removed the old Nginx container $OLD_NGINX_CONTAINER."
+                        fi
+                    fi
+
+                    # Migrations, collectstatic and template sync run in docker/app-start.sh on start.
+                    docker compose -f deploy.compose.yml \
+                      up -d \
+                      --no-deps \
+                      --no-build \
+                      --pull never \
+                      --force-recreate \
+                      --remove-orphans \
+                      --wait \
+                      --wait-timeout 300 \
+                      "$SERVICE_NAME"
+                '''
+            }
+        }
+
+        stage('Verify deployment') {
+            steps {
+                sh '''
+                    set -eu
+
+                    health=$(docker inspect --format '{{.State.Health.Status}}' "$CONTAINER")
+                    echo "Container health: $health"
+                    test "$health" = healthy
+
+                    expected_image=$(docker image inspect --format '{{.Id}}' "$DEPLOY_IMAGE")
+                    actual_image=$(docker inspect --format '{{.Image}}' "$CONTAINER")
+                    echo "Image expected: $expected_image"
+                    echo "Image running:  $actual_image"
+                    test "$actual_image" = "$expected_image"
+
+                    # The live code is the commit that was tested.
+                    live_commit=$(docker run --rm \
+                      --user 0:0 \
+                      --entrypoint sh \
+                      -e HOME=/tmp \
+                      -v "$APP_DIR:/repo:ro" \
+                      "$GIT_IMAGE" \
+                      -c 'git config --global --add safe.directory /repo; git -C /repo rev-parse HEAD')
+                    echo "Live commit: $live_commit"
+                    test "$live_commit" = "$DEPLOY_COMMIT"
+
+                    # Pages answer (Host = first ALLOWED_HOSTS entry in .env; coming soon redirects are fine).
+                    docker exec "$CONTAINER" python -c "
+import re, urllib.request as u, urllib.error as e
+host = re.search(r'^ALLOWED_HOSTS=([^,\\s]+)', open('/app/.env').read(), re.M).group(1)
+class Stay(u.HTTPRedirectHandler):
+    def redirect_request(self, *a, **k): return None
+web = u.build_opener(Stay)
+for path in ['/', '/coming-soon/', '/privacy/', '/accounts/login/']:
+    try:
+        code = web.open(u.Request('http://127.0.0.1:8000' + path, headers={'Host': host, 'X-Forwarded-Proto': 'https'}), timeout=20).status
+    except e.HTTPError as err:
+        code = err.code
+    print(path, code)
+    assert code in (200, 301, 302), path
+"
+
+                    # collectstatic wrote the files Nginx serves from APP_DIR/var/static/.
+                    docker exec "$CONTAINER" test -f /app/var/static/css/app.css
+
+                    docker port "$CONTAINER" 8000/tcp
+
+                    docker compose -f deploy.compose.yml ps
+
+                    echo "Deployment verified successfully."
+                '''
+            }
+        }
+
+        stage('Clean up') {
+            steps {
+                sh '''
+                    # Keep the 3 newest Jenkins images (rollback options), remove older ones.
+                    docker images local-business-builder --format '{{.Tag}}' \
+                      | grep '^jenkins-' \
+                      | sort -t- -k2 -n -r \
+                      | tail -n +4 \
+                      | xargs -r -I{} docker rmi "local-business-builder:{}" || true
+
+                    docker image prune -f >/dev/null || true
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployed app from branch ${env.DEPLOY_BRANCH} (${env.DEPLOY_COMMIT?.take(7)})"
+            echo "Website: ${env.APP_URL}"
+        }
+
+        failure {
+            sh '''
+                docker logs --tail 80 local-business-builder 2>&1 || true
+            '''
+
+            echo 'Deployment failed. Check Console Output.'
+            echo 'Automatic rollback is not configured. If the Deploy stage started, the live container may have changed.'
+            echo 'To roll back: pick an older image (docker images local-business-builder) and rerun Deploy with it.'
+        }
+    }
+}

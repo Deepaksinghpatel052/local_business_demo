@@ -1,0 +1,34 @@
+# Server file: /opt/jenkins-deploy/local-business-demo/docker-compose.yml  (the Jenkins agent sees it as /run/deploy/...)
+#
+# One container: the Django site builder. The server's own Nginx serves /static/, /media/, /_shared/, /sites/
+# straight from APP_DIR and proxies everything else to 127.0.0.1:9002. No Nginx in Docker.
+#
+# Jenkins copies this file into its workspace, so `build.context: .` is the checked-out code.
+# DEPLOY_IMAGE comes from the pipeline (local-business-builder:jenkins-<build number>).
+# The app reads its settings from /app/.env itself (= APP_DIR/.env), so no env_file is needed here.
+name: local_business_demo
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.app
+    image: ${DEPLOY_IMAGE:?DEPLOY_IMAGE is set by the Jenkins pipeline}
+    container_name: local-business-builder
+    ports:
+      - "127.0.0.1:9002:8000"
+    volumes:
+      - /var/www/html/clientDemoProjects/local_business_demo:/app                     # code + .env + var/static
+      - /var/www/html/clientDemoProjects/local_business_demo/media:/app/media         # client files (MEDIA_DIR)
+    environment:
+      MEDIA_ROOT: /app/media/uploads
+      SITES_ROOT: /app/media/sites
+    command: ["sh", "-c", "sed 's/\\r$//' /app/docker/app-start.sh | sh"]
+    restart: unless-stopped
+    healthcheck:
+      # /privacy/ answers 200 before and after launch; Host = first ALLOWED_HOSTS entry in .env
+      test: ["CMD", "python", "-c", "import re,urllib.request as u;h=re.search(r'^ALLOWED_HOSTS=([^,\\s]+)',open('/app/.env').read(),re.M).group(1);u.urlopen(u.Request('http://127.0.0.1:8000/privacy/',headers={'Host':h,'X-Forwarded-Proto':'https'}),timeout=5)"]
+      interval: 15s
+      timeout: 8s
+      retries: 5
+      start_period: 180s
