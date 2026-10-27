@@ -74,3 +74,23 @@ def log_activity(user, event, project=None, detail="", once=False):
     if once and ActivityLog.objects.filter(user=user, project=project, event=event).exists():
         return None
     return ActivityLog.objects.create(user=user, project=project, event=event, detail=str(detail)[:200])
+
+
+class EarlyAccess(models.Model):
+    """Sign-ups on the coming soon page. The first EARLY_OFFER_SPOTS get a free website (free_offer=True)."""
+    name = models.CharField(max_length=120)
+    email = models.EmailField(unique=True)
+    mobile = models.CharField(max_length=10, unique=True)
+    business_name = models.CharField(max_length=80)
+    business_category = models.CharField(max_length=40)
+    city = models.CharField(max_length=80)
+    free_offer = models.BooleanField(default=False, db_index=True)
+    contacted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+        verbose_name_plural = "early access sign-ups"
+
+    def __str__(self):
+        return "%s (%s)" % (self.business_name, self.name)

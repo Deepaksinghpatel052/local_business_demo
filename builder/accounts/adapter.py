@@ -9,9 +9,13 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
 from core.emails import brand_context, html_from_text
+from pages.launch import before_launch
 
 
 class AccountAdapter(DefaultAccountAdapter):
+    def is_open_for_signup(self, request):
+        return not before_launch()          # new accounts open on LAUNCH_AT
+
     def render_mail(self, template_prefix, email, context, headers=None):
         context = dict(brand_context(), **context)
         msg = super().render_mail(template_prefix, email, context, headers)
@@ -24,6 +28,9 @@ class AccountAdapter(DefaultAccountAdapter):
 
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
+    def is_open_for_signup(self, request, sociallogin):
+        return not before_launch()          # existing accounts can still log in with Google
+
     def populate_user(self, request, sociallogin, data):
         """Google gives first/last name; our User keeps one `name` (first_name is a read-only property)."""
         user = sociallogin.user

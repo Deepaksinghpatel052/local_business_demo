@@ -1,12 +1,26 @@
+import logging
+
 from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.utils import timezone
 
+from accounts.forms import CONSENT_LABEL, MobileField, business_category_choices
+from core.emails import send_branded
 from core.models import PlatformSettings
 from core.ratelimit import ratelimit
+from crm.models import EarlyAccess
+from templates_lib.categories import categories
 from templates_lib.models import Template
+
+from .launch import before_launch, spots
+
+log = logging.getLogger(__name__)
 
 
 def home(request):
@@ -50,3 +64,120 @@ def contact(request):
         messages.success(request, "Thank you! We will get back to you within one working day.")
         return redirect("contact")
     return render(request, "pages/contact.html", {"form": form})
+
+
+class EarlyAccessForm(forms.ModelForm):
+    mobile = MobileField()
+    business_category = forms.ChoiceField(label="Type of business", choices=business_category_choices)
+    contact_consent = forms.BooleanField(label=CONSENT_LABEL, required=True)
+    website = forms.CharField(required=False, label="Leave this empty",
+                              widget=forms.TextInput(attrs={"tabindex": "-1", "autocomplete": "off"}))
+
+    class Meta:
+        model = EarlyAccess
+        fields = ["name", "mobile", "business_name", "business_category", "city", "email"]
+        labels = {"name": "Your name", "business_name": "Business name", "email": "Email"}
+        widgets = {"business_name": forms.TextInput(attrs={"placeholder": "e.g. Sharma Sweets"})}
+
+    def clean_website(self):
+        if self.cleaned_data.get("website"):
+            raise forms.ValidationError("Spam check failed.")
+        return ""
+
+    def validate_unique(self):
+        pass        # a repeat sign-up is answered in the view ("you're already on the list")
+
+
+@ratelimit("early-access", 5, 3600)
+def coming_soon(request):
+    """Countdown to LAUNCH_AT and the early access form. After launch it sends visitors to the home page."""
+    if not before_launch():
+        return redirect("home")
+    form = EarlyAccessForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        d = form.cleaned_data
+        entry = EarlyAccess.objects.filter(Q(email__iexact=d["email"]) | Q(mobile=d["mobile"])).first()
+        if entry:
+            request.session["early_access"] = entry.pk
+            messages.info(request, "You are already on the list, %s. We will contact you on launch day." % entry.name.split()[0])
+            return redirect("coming_soon")
+        with transaction.atomic():
+            entry = form.save(commit=False)
+            entry.free_offer = spots()[1] > 0
+            entry.save()
+        request.session["early_access"] = entry.pk
+        _early_access_emails(entry)
+        return redirect("coming_soon")
+    entry = EarlyAccess.objects.filter(pk=request.session.get("early_access")).first()
+    taken, left = spots()
+    designs = _soon_designs()
+    launch = timezone.localtime(settings.LAUNCH_AT).strftime("%d %B").lstrip("0")
+    total = settings.EARLY_OFFER_SPOTS
+    return render(request, "pages/coming_soon.html", {
+        "form": form, "entry": entry, "taken": taken, "left": left, "total": total,
+        "taken_pct": round(100 * taken / total) if total else 100,
+        "launch_at": settings.LAUNCH_AT, "designs": designs, "hero_designs": _hero_designs(designs),
+        "sites_base": settings.DEMO_BASE_URL.split("://", 1)[-1],
+        "share_text": "Free website for local businesses! The first %d businesses get their website free. "
+                      "Launching %s. Claim yours: %s" % (total, launch, request.build_absolute_uri(reverse("coming_soon"))),
+        "faq": [
+            ("Do I need a computer or any technical knowledge?",
+             "No. Everything works from your phone. If you can use WhatsApp, you can edit your website."),
+            ("What do the first %d businesses get?" % total,
+             "Their website free. Our team calls you on launch day to explain everything and set it up with you. "
+             "You don't pay anything to join."),
+            ("What if all %d free spots are taken?" % total,
+             "You stay on our launch list and we contact you on launch day with an early-bird offer."),
+            ("Will my website work on mobile phones?",
+             "Yes. Every design is made for phones first, because that's where your customers are."),
+            ("Why do you check every business?",
+             "So customers can trust every website made with Devnixplus. We confirm the business is real before it goes live."),
+        ],
+    })
+
+
+def _hero_designs(designs):
+    """Three phones for the hero: the middle (front) one is shown last in the markup."""
+    by_key = {d["key"]: d for d in designs}
+    picks = [by_key[k] for k in ("restaurant", "gym", "salon") if k in by_key]
+    return (picks + [d for d in designs if d not in picks])[:3]
+
+
+def _soon_designs():
+    """Business types with a phone screenshot in static/img/soon/<type>.jpg (made from the demo designs),
+    plus three photos from that design's sample site for the live preview."""
+    folder = settings.BASE_DIR / "static" / "img" / "soon"
+    samples = {}
+    for t in Template.objects.filter(is_active=True).order_by("pk"):
+        samples.setdefault(t.category, t.source_folder)
+    out = []
+    for key, c in categories().items():
+        if not (folder / ("%s.jpg" % key)).exists():
+            continue
+        src = samples.get(key, "")
+        photos = settings.DEMOS_DIR / src / "placeholders" / c["photos"] if src else None
+        out.append({"key": key, "title": c["title"], "icon": c["icon"], "img": "img/soon/%s.jpg" % key,
+                    "photos": ["%s/%s/placeholders/%s/%d.jpg" % (settings.DEMO_BASE_URL, src, c["photos"], n) for n in (1, 2, 3)
+                               if photos and (photos / ("%d.jpg" % n)).exists()]})
+    return out
+
+
+def _early_access_emails(entry):
+    launch = timezone.localtime(settings.LAUNCH_AT).strftime("%d %B %Y")
+    if entry.free_offer:
+        text = ("You are one of the first %d businesses, so your website for %s is free.\n\n"
+                "We launch on %s. Our team will call or WhatsApp you on %s to set it up."
+                % (settings.EARLY_OFFER_SPOTS, entry.business_name, launch, entry.mobile))
+    else:
+        text = ("All %d free websites are taken, but you are on our launch list for %s.\n\n"
+                "We launch on %s and will contact you on %s with a launch offer."
+                % (settings.EARLY_OFFER_SPOTS, entry.business_name, launch, entry.mobile))
+    try:
+        send_branded([entry.email], "You're on the list for %s" % entry.business_name,
+                     "Hi %s,\n\n%s" % (entry.name.split()[0], text), heading="You're on the list!")
+        send_branded([PlatformSettings.load().support_email], "Early access: %s (%s)" % (entry.business_name, entry.city),
+                     "%s\nType: %s\nName: %s\nMobile: %s\nEmail: %s\nFree website: %s"
+                     % (entry.business_name, entry.business_category, entry.name, entry.mobile, entry.email,
+                        "yes" if entry.free_offer else "no (spots full)"))
+    except Exception as e:   # the sign-up is saved; email is a bonus
+        log.warning("early access email failed: %s", e)
