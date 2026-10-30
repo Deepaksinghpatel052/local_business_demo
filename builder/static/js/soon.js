@@ -83,4 +83,44 @@
     new IntersectionObserver(function (e) { heroOut = !e[0].isIntersecting; upd(); }).observe(hero);
     new IntersectionObserver(function (e) { joinIn = e[0].isIntersecting; upd(); }, { threshold: 0.15 }).observe(join);
   }
+
+  /* join popup: full screen, opens 5 s after load (straight away when its form came back with errors).
+     It opens on every page load; it never opens over someone typing in the page form. */
+  var jp = document.getElementById("join-popup");
+  if (jp) {
+    var lastFocus = null;
+    var openJp = function () {
+      if (!jp.hidden) return;
+      lastFocus = document.activeElement;
+      jp.hidden = false;
+      document.body.classList.add("jp-lock");
+      requestAnimationFrame(function () { jp.classList.add("is-in"); });
+      var first = jp.querySelector(".is-invalid") || jp.querySelector("input:not([type=hidden]):not([tabindex='-1'])");
+      if (first) setTimeout(function () { first.focus({ preventScroll: true }); }, calm ? 0 : 350);
+    };
+    var closeJp = function () {
+      jp.classList.remove("is-in");
+      document.body.classList.remove("jp-lock");
+      setTimeout(function () { jp.hidden = true; }, calm ? 0 : 350);
+      if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    };
+    jp.querySelectorAll("[data-jp-close]").forEach(function (b) { b.addEventListener("click", closeJp); });
+    jp.addEventListener("click", function (e) { if (e.target === jp) closeJp(); });
+    document.addEventListener("keydown", function (e) {
+      if (jp.hidden) return;
+      if (e.key === "Escape") closeJp();
+      if (e.key === "Tab") {      /* keep focus inside the popup */
+        var f = jp.querySelectorAll("button, a[href], input:not([type=hidden]):not([tabindex='-1']), select");
+        var a = f[0], z = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
+        else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
+      }
+    });
+    var pageForm = join && join.querySelector("form");
+    if (jp.dataset.open === "now") openJp();
+    else if (jp.dataset.open !== "off") setTimeout(function () {
+      if (pageForm && pageForm.contains(document.activeElement)) return;
+      openJp();
+    }, parseInt(jp.dataset.open, 10) || 5000);
+  }
 })();

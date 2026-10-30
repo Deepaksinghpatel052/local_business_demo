@@ -188,3 +188,32 @@ class DesignCountTests(BaseTestCase):
         self.assertContains(self.client.get(reverse("templates")), "3 designs</span>")
         Template.objects.filter(slug="gym").update(is_active=False)                     # switched off in /manage/templates/
         self.assertContains(self.client.get(reverse("home")), "2 designs for 1 types of business")
+
+
+class PasswordChangeTests(BaseTestCase):
+    def test_errors_and_success_are_shown(self):
+        self.client.force_login(self.make_owner())
+        url = reverse("account_change_password")
+        r = self.client.post(url, {"oldpassword": "wrong", "password1": "Abc!12345xyz", "password2": "Different!999"})
+        self.assertContains(r, "Password not changed")
+        self.assertContains(r, "Please type your current password.")
+        self.assertContains(r, "You must type the same password each time.")
+        self.assertContains(r, "is-invalid")
+        r = self.client.post(url, {"oldpassword": "pw-Secret-123", "password1": "Abc!12345xyz", "password2": "Abc!12345xyz"}, follow=True)
+        self.assertContains(r, "alert-success")
+        self.assertContains(r, "Password successfully changed.")
+
+    def test_reset_from_email_link_shows_errors_and_success(self):
+        self.make_owner()
+        r = self.client.post(reverse("account_reset_password"), {"email": "owner@test.local"}, follow=True)
+        self.assertContains(r, "Check your email")
+        link = re.search(r"http://\S+/accounts/password/reset/key/\S+/", mail.outbox[-1].body).group(0)
+        r = self.client.get(link, follow=True)
+        url = r.redirect_chain[-1][0] if r.redirect_chain else link
+        r = self.client.post(url, {"password1": "Abc!12345xyz", "password2": "Different!999"})
+        self.assertContains(r, "Password not changed")
+        self.assertContains(r, "You must type the same password each time.")
+        r = self.client.post(url, {"password1": "Abc!12345xyz", "password2": "Abc!12345xyz"}, follow=True)
+        self.assertContains(r, "Password changed")
+        self.assertContains(r, "alert-success")
+        self.assertContains(self.client.get(link, follow=True), "This reset link doesn")   # used once: link is dead

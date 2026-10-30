@@ -20,15 +20,15 @@ admin.site.register(ReminderLog)
 @admin.register(EarlyAccess)
 class EarlyAccessAdmin(admin.ModelAdmin):
     list_display = ["created_at", "business_name", "business_category", "city", "name", "mobile", "email",
-                    "free_offer", "contacted"]
-    list_filter = ["free_offer", "contacted", "business_category"]
+                    "source", "free_offer", "contacted"]
+    list_filter = ["free_offer", "contacted", "source", "business_category"]
     list_editable = ["contacted"]
     search_fields = ["business_name", "name", "email", "mobile", "city"]
     actions = ["export_csv"]
 
     @admin.action(description="Download selected as CSV")
     def export_csv(self, request, queryset):
-        fields = ["created_at", "business_name", "business_category", "city", "name", "mobile", "email", "free_offer"]
+        fields = ["created_at", "business_name", "business_category", "city", "name", "mobile", "email", "source", "free_offer"]
         resp = HttpResponse(content_type="text/csv")
         resp["Content-Disposition"] = 'attachment; filename="early-access.csv"'
         w = csv.writer(resp)

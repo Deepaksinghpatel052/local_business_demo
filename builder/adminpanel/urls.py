@@ -22,5 +22,7 @@ urlpatterns = [
     path("templates/", views.templates, name="manage_templates"),
     path("abuse/", views.abuse, name="manage_abuse"),
     path("settings/", views.settings_view, name="manage_settings"),
+    path("emails/", views.email_test, name="manage_emails"),
+    path("emails/<slug:key>/preview/", views.email_preview, name="manage_email_preview"),
     path("audit/", views.audit_log, name="manage_audit"),
 ]

@@ -83,7 +83,7 @@
             {% elif p.needs_verification_form %}
               <a class="btn btn-brand" href="{% url 'verify' p.pk %}"><i class="bi bi-shield-check"></i> Verify</a>
             {% elif p.can_download %}
-              <form method="post" action="{% url 'request_download' p.pk %}">{% csrf_token %}<button class="btn btn-brand w-100" type="submit"><i class="bi bi-download"></i> Download</button></form>
+              <form method="post" action="{% url 'request_download' p.pk %}" data-loading-reset="5000">{% csrf_token %}<button class="btn btn-brand w-100" type="submit" data-loading-text="Preparing your download..."><i class="bi bi-download"></i> Download</button></form>
             {% elif p.can_renew %}
               <form method="post" action="{% url 'checkout' p.pk 'hosting_renewal' %}">{% csrf_token %}<button class="btn btn-brand w-100" type="submit" title="Renew for {{ prices.hosting_renewal }}/year"><i class="bi bi-arrow-repeat"></i> Renew</button></form>
             {% else %}

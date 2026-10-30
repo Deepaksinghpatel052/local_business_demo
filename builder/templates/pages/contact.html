@@ -17,7 +17,7 @@
       <form class="panel" method="post" novalidate>
         {% csrf_token %}
         {% for field in form %}{% if field.name == "website" %}<div class="visually-hidden" aria-hidden="true">{{ field }}</div>{% else %}{% include "includes/field.html" %}{% endif %}{% endfor %}
-        <button class="btn btn-brand" type="submit">Send message</button>
+        <button class="btn btn-brand" type="submit" data-loading-text="Sending...">Send message</button>
       </form>
     </div>
   </div>

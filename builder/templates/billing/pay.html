@@ -43,6 +43,7 @@ $(function () {
     f.razorpay_order_id.value = r.razorpay_order_id;
     f.razorpay_payment_id.value = r.razorpay_payment_id;
     f.razorpay_signature.value = r.razorpay_signature;
+    window.LBD.busy('Payment received. Confirming it, please don't close this page...');
     f.submit();
   };
   o.theme = { color: '#5b4bff' };
@@ -51,6 +52,7 @@ $(function () {
     var f = document.getElementById('rpFail');
     f.payment_id.value = (r.error && r.error.metadata && r.error.metadata.payment_id) || '';
     f.reason.value = (r.error && r.error.description) || '';
+    window.LBD.busy('Payment not completed. One moment...');
     f.submit();
   });
   $('#payBtn').on('click', function () { rzp.open(); });

@@ -4,7 +4,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -84,37 +84,47 @@ class EarlyAccessForm(forms.ModelForm):
             raise forms.ValidationError("Spam check failed.")
         return ""
 
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        for f in ("business_name", "email"):      # optional in the model for the popup, asked here
+            self.fields[f].required = True
+
     def validate_unique(self):
         pass        # a repeat sign-up is answered in the view ("you're already on the list")
 
 
+class QuickJoinForm(EarlyAccessForm):
+    """The short form in the popup that opens 5 seconds after the page loads."""
+    class Meta(EarlyAccessForm.Meta):
+        fields = ["name", "mobile", "business_category", "city"]
+        labels = {"name": "Your name", "city": "City"}
+        widgets = {}
+
+    def __init__(self, *args, **kw):
+        forms.ModelForm.__init__(self, *args, prefix="q", **kw)
+        self.fields["mobile"].label = "Mobile / WhatsApp number"
+        self.fields["contact_consent"].label = "Call or WhatsApp me about my free website"
+
+
 @ratelimit("early-access", 5, 3600)
 def coming_soon(request):
-    """Countdown to LAUNCH_AT and the early access form. After launch it sends visitors to the home page."""
+    """Countdown to LAUNCH_AT and the early access forms (page + popup). After launch it sends visitors home."""
     if not before_launch():
         return redirect("home")
-    form = EarlyAccessForm(request.POST or None)
-    if request.method == "POST" and form.is_valid():
-        d = form.cleaned_data
-        entry = EarlyAccess.objects.filter(Q(email__iexact=d["email"]) | Q(mobile=d["mobile"])).first()
-        if entry:
-            request.session["early_access"] = entry.pk
-            messages.info(request, "You are already on the list, %s. We will contact you on launch day." % entry.name.split()[0])
-            return redirect("coming_soon")
-        with transaction.atomic():
-            entry = form.save(commit=False)
-            entry.free_offer = spots()[1] > 0
-            entry.save()
-        request.session["early_access"] = entry.pk
-        _early_access_emails(entry)
-        return redirect("coming_soon")
+    popup = request.method == "POST" and "popup" in request.POST
+    form = EarlyAccessForm(request.POST if request.method == "POST" and not popup else None)
+    quick = QuickJoinForm(request.POST if popup else None)
+    posted = quick if popup else form
+    if request.method == "POST" and posted.is_valid():
+        _join(request, posted, "popup" if popup else "page")
+        return redirect(reverse("coming_soon") + "#join")
     entry = EarlyAccess.objects.filter(pk=request.session.get("early_access")).first()
     taken, left = spots()
     designs = _soon_designs()
     launch = timezone.localtime(settings.LAUNCH_AT).strftime("%d %B").lstrip("0")
     total = settings.EARLY_OFFER_SPOTS
     return render(request, "pages/coming_soon.html", {
-        "form": form, "entry": entry, "taken": taken, "left": left, "total": total,
+        "form": form, "quick": quick, "popup_open": popup, "entry": entry, "taken": taken, "left": left, "total": total,
         "taken_pct": round(100 * taken / total) if total else 100,
         "launch_at": settings.LAUNCH_AT, "designs": designs, "hero_designs": _hero_designs(designs),
         "sites_base": settings.DEMO_BASE_URL.split("://", 1)[-1],
@@ -134,6 +144,35 @@ def coming_soon(request):
              "So customers can trust every website made with Devnixplus. We confirm the business is real before it goes live."),
         ],
     })
+
+
+def _join(request, form, source):
+    """Save a sign-up once per mobile/email. A repeat fills in what the first form didn't ask."""
+    d = form.cleaned_data
+    match = Q(mobile=d["mobile"])
+    if d.get("email"):
+        match |= Q(email__iexact=d["email"])
+    entry = EarlyAccess.objects.filter(match).first()
+    if entry:
+        changed = [f for f in ("email", "business_name") if d.get(f) and not getattr(entry, f)]
+        for f in changed:
+            setattr(entry, f, d[f])
+        try:
+            if changed:
+                entry.save(update_fields=changed)
+        except IntegrityError:      # that email belongs to another sign-up
+            pass
+        request.session["early_access"] = entry.pk
+        messages.info(request, "You are already on the list, %s. We will contact you on launch day." % entry.name.split()[0])
+        return
+    with transaction.atomic():
+        entry = form.save(commit=False)
+        entry.email = entry.email or None
+        entry.source = source
+        entry.free_offer = spots()[1] > 0
+        entry.save()
+    request.session["early_access"] = entry.pk
+    _early_access_emails(entry)
 
 
 def _hero_designs(designs):
@@ -164,20 +203,24 @@ def _soon_designs():
 
 def _early_access_emails(entry):
     launch = timezone.localtime(settings.LAUNCH_AT).strftime("%d %B %Y")
+    business = entry.business_name or "your business"
     if entry.free_offer:
         text = ("You are one of the first %d businesses, so your website for %s is free.\n\n"
                 "We launch on %s. Our team will call or WhatsApp you on %s to set it up."
-                % (settings.EARLY_OFFER_SPOTS, entry.business_name, launch, entry.mobile))
+                % (settings.EARLY_OFFER_SPOTS, business, launch, entry.mobile))
     else:
         text = ("All %d free websites are taken, but you are on our launch list for %s.\n\n"
                 "We launch on %s and will contact you on %s with a launch offer."
-                % (settings.EARLY_OFFER_SPOTS, entry.business_name, launch, entry.mobile))
+                % (settings.EARLY_OFFER_SPOTS, business, launch, entry.mobile))
     try:
-        send_branded([entry.email], "You're on the list for %s" % entry.business_name,
-                     "Hi %s,\n\n%s" % (entry.name.split()[0], text), heading="You're on the list!")
-        send_branded([PlatformSettings.load().support_email], "Early access: %s (%s)" % (entry.business_name, entry.city),
-                     "%s\nType: %s\nName: %s\nMobile: %s\nEmail: %s\nFree website: %s"
-                     % (entry.business_name, entry.business_category, entry.name, entry.mobile, entry.email,
+        if entry.email:
+            send_branded([entry.email], "You're on the list for %s" % business,
+                         "Hi %s,\n\n%s" % (entry.name.split()[0], text), heading="You're on the list!")
+        send_branded([PlatformSettings.load().support_email],
+                     "Early access: %s (%s)" % (entry.business_name or entry.name, entry.city),
+                     "%s\nType: %s\nName: %s\nMobile: %s\nEmail: %s\nCity: %s\nFrom: %s\nFree website: %s"
+                     % (entry.business_name or "-", entry.business_category, entry.name, entry.mobile,
+                        entry.email or "-", entry.city, entry.get_source_display(),
                         "yes" if entry.free_offer else "no (spots full)"))
     except Exception as e:   # the sign-up is saved; email is a bonus
         log.warning("early access email failed: %s", e)

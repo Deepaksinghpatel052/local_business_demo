@@ -115,11 +115,11 @@
               <i class="bi bi-check-circle-fill text-success" style="font-size:56px"></i>
               <h3 class="h4 mt-2">You're on the list, {{ entry.name.split.0 }}!</h3>
               {% if entry.free_offer %}
-                <p class="mb-2">Your website for <strong>{{ entry.business_name }}</strong> is <strong>free</strong>. You are one of the first {{ total }}.</p>
+                <p class="mb-2">Your website{% if entry.business_name %} for <strong>{{ entry.business_name }}</strong>{% endif %} is <strong>free</strong>. You are one of the first {{ total }}.</p>
               {% else %}
-                <p class="mb-2">The free spots were taken, but <strong>{{ entry.business_name }}</strong> is on our launch list for an early-bird offer.</p>
+                <p class="mb-2">The free spots were taken, but {% if entry.business_name %}<strong>{{ entry.business_name }}</strong> is{% else %}you are{% endif %} on our launch list for an early-bird offer.</p>
               {% endif %}
-              <p class="small text-muted">We will call or WhatsApp you on +91 {{ entry.mobile }} on {{ launch_at|date:"j F" }}. A confirmation is on its way to {{ entry.email }}.</p>
+              <p class="small text-muted">We will call or WhatsApp you on +91 {{ entry.mobile }} on {{ launch_at|date:"j F" }}.{% if entry.email %} A confirmation is on its way to {{ entry.email }}.{% endif %}</p>
               <div class="countdown is-small justify-content-center mt-3" data-countdown>
                 <div><b data-unit="d">--</b><span>Days</span></div><div><b data-unit="h">--</b><span>Hrs</span></div><div><b data-unit="m">--</b><span>Min</span></div><div><b data-unit="s">--</b><span>Sec</span></div>
               </div>
@@ -154,7 +154,7 @@
                 </div>
                 {% endif %}{% endfor %}
               </div>
-              <button class="btn btn-brand btn-lg w-100 mt-3 btn-glow" type="submit"><i class="bi bi-gift"></i> {% if left %}Claim my free website{% else %}Join the launch list{% endif %}</button>
+              <button class="btn btn-brand btn-lg w-100 mt-3 btn-glow" type="submit" data-loading-text="Saving your spot..."><i class="bi bi-gift"></i> {% if left %}Claim my free website{% else %}Join the launch list{% endif %}</button>
               <p class="small text-muted text-center mt-2 mb-0">By joining you agree to our <a href="{% url 'terms' %}" target="_blank">Terms</a> and <a href="{% url 'privacy' %}" target="_blank">Privacy Policy</a>.</p>
             </form>
           {% endif %}
@@ -269,6 +269,77 @@
 </section>
 
 <a class="soon-sticky" href="#join" data-sticky><i class="bi bi-gift-fill"></i> {% if left %}Claim free website <small>· {{ left }} left</small>{% else %}Join the launch list{% endif %}</a>
+{% if not entry %}
+{# ---------- popup: opens 5 seconds after the page loads (soon.js) ---------- #}
+<div class="jp" id="join-popup" role="dialog" aria-modal="true" aria-labelledby="jp-title" data-open="{% if popup_open %}now{% elif form.is_bound %}off{% else %}5000{% endif %}" hidden>
+  <div class="jp-box">
+    <button class="jp-close" type="button" data-jp-close aria-label="Close"><i class="bi bi-x-lg"></i></button>
+
+    <div class="jp-brand soon-dark">
+      <div class="soon-grid-bg"></div>
+      <span class="jp-logo"><img src="https://www.devnixplus.com/images/logo_devnix.svg" alt="Devnixplus" height="26"></span>
+      <span class="soon-pill mt-3"><span class="dot"></span> Launching {{ launch_at|date:"j F Y" }}</span>
+      <h2 class="jp-title" id="jp-title">{% if left %}Get your business website <span class="grad">free</span>{% else %}Be first in line on <span class="grad">launch day</span>{% endif %}</h2>
+      <p class="jp-sub">{% if left %}Only for the first {{ total }} local businesses. No payment, no card. We set it up with you.{% else %}All free spots are taken. Join the launch list for an early-bird offer.{% endif %}</p>
+      {% if left %}
+      <div class="jp-spots">
+        <div class="spots-bar"><div style="width: {{ taken_pct }}%"></div></div>
+        <p><strong>{{ left }} of {{ total }}</strong> free websites left</p>
+      </div>
+      {% endif %}
+      <div class="countdown is-small" data-countdown aria-label="Time left until launch">
+        <div><b data-unit="d">--</b><span>Days</span></div><div><b data-unit="h">--</b><span>Hrs</span></div><div><b data-unit="m">--</b><span>Min</span></div><div><b data-unit="s">--</b><span>Sec</span></div>
+      </div>
+      <ul class="jp-points">
+        <li><i class="bi bi-telephone-fill"></i> Customers call &amp; WhatsApp you in one tap</li>
+        <li><i class="bi bi-geo-alt-fill"></i> Google Maps directions and your rating</li>
+        <li><i class="bi bi-phone-fill"></i> Edit prices, photos and offers from your phone</li>
+      </ul>
+      <div class="jp-phones" aria-hidden="true">
+        {% for d in hero_designs %}<div class="phone"><div class="phone-screen"><img src="{% static d.img %}" alt="" loading="lazy"></div></div>{% endfor %}
+      </div>
+    </div>
+
+    <div class="jp-form">
+      <span class="soon-kicker"><i class="bi bi-gift-fill"></i> {% if left %}Free website offer{% else %}Launch list{% endif %}</span>
+      <h3 class="h4 fw-bold mb-1">{% if left %}Claim your free website{% else %}Join the launch list{% endif %}</h3>
+      <p class="small text-muted mb-3">4 quick details. We'll call or WhatsApp you on {{ launch_at|date:"j F" }}.</p>
+      <form method="post" action="{% url 'coming_soon' %}" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="popup" value="1">
+        {% if quick.non_field_errors %}<div class="alert alert-danger small">{{ quick.non_field_errors|join:" " }}</div>{% endif %}
+        {% for field in quick %}{% if field.name == "website" %}
+        <div class="visually-hidden" aria-hidden="true">{{ field.label_tag }}{{ field }}</div>
+        {% elif field.name == "contact_consent" %}
+        <div class="form-check mt-2">
+          <input class="form-check-input{% if field.errors %} is-invalid{% endif %}" type="checkbox" name="{{ field.html_name }}" id="{{ field.id_for_label }}"{% if field.value %} checked{% endif %} required>
+          <label class="form-check-label small" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {% for e in field.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+        </div>
+        {% else %}
+        <div class="mb-2">
+          <label class="form-label small fw-semibold mb-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {% if field.name == "business_category" %}
+            <select class="form-select{% if field.errors %} is-invalid{% endif %}" name="{{ field.html_name }}" id="{{ field.id_for_label }}" required>
+              {% for value, label in field.field.choices %}<option value="{{ value }}"{% if field.value == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
+            </select>
+          {% elif field.name == "mobile" %}
+            <div class="input-group"><span class="input-group-text"><i class="bi bi-whatsapp text-success me-1"></i>+91</span><input class="form-control{% if field.errors %} is-invalid{% endif %}" type="tel" name="{{ field.html_name }}" id="{{ field.id_for_label }}" value="{{ field.value|default:'' }}" inputmode="numeric" autocomplete="tel-national" placeholder="98765 43210" required></div>
+          {% else %}
+            <input class="form-control{% if field.errors %} is-invalid{% endif %}" type="text" name="{{ field.html_name }}" id="{{ field.id_for_label }}" value="{{ field.value|default:'' }}" placeholder="{% if field.name == 'name' %}e.g. Rahul Sharma{% else %}e.g. Gwalior{% endif %}" autocomplete="{% if field.name == 'name' %}name{% else %}address-level2{% endif %}" required>
+          {% endif %}
+          {% for e in field.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+        </div>
+        {% endif %}{% endfor %}
+        <button class="btn btn-brand btn-lg w-100 mt-3 btn-glow" type="submit" data-loading-text="Saving your spot..."><i class="bi bi-gift"></i> {% if left %}Claim my free website{% else %}Join the launch list{% endif %}</button>
+        <p class="jp-trust"><span><i class="bi bi-shield-check"></i> No spam</span><span><i class="bi bi-credit-card-2-front"></i> No payment</span><span><i class="bi bi-clock"></i> 20 seconds</span></p>
+        <p class="small text-muted text-center mb-0">By joining you agree to our <a href="{% url 'terms' %}" target="_blank">Terms</a> and <a href="{% url 'privacy' %}" target="_blank">Privacy Policy</a>.</p>
+      </form>
+      <button class="jp-later" type="button" data-jp-close>Maybe later</button>
+    </div>
+  </div>
+</div>
+{% endif %}
 {{ designs|json_script:"soon-designs" }}
 <div hidden id="soon-launch" data-launch="{{ launch_at|date:'c' }}" data-static="{% static '' %}"></div>
 {% endblock %}

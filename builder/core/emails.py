@@ -19,10 +19,11 @@ URL_RE = re.compile(r"(https?://[^\s<>\"']+)")
 def brand_context():
     ps = PlatformSettings.load()
     return {
-        "brand_name": settings.COMPANY["name"],
+        "brand_name": settings.EMAIL_BRAND_NAME,          # product brand in subjects, text and sign-off
+        "company_name": settings.COMPANY["name"],          # legal name in the footer
         "brand_address": settings.COMPANY["address"],
         "app_url": settings.APP_URL,
-        "logo_url": settings.EMAIL_LOGO_URL or "%s%simg/email-logo.png" % (settings.APP_URL, settings.STATIC_URL),
+        "logo_url": settings.EMAIL_LOGO_URL or "%s%simg/email-logo-businessbuilder.png" % (settings.APP_URL, settings.STATIC_URL),
         "support_email": ps.support_email,
         "support_phone": ps.support_phone,
         "support_wa": wa_link(ps.support_whatsapp, "Hi Devnixplus, I need help with my website."),

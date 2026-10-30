@@ -78,12 +78,14 @@ def log_activity(user, event, project=None, detail="", once=False):
 
 class EarlyAccess(models.Model):
     """Sign-ups on the coming soon page. The first EARLY_OFFER_SPOTS get a free website (free_offer=True)."""
+    SOURCES = [("page", "Page form"), ("popup", "Popup")]
     name = models.CharField(max_length=120)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, null=True, blank=True)       # the short popup form doesn't ask for it
     mobile = models.CharField(max_length=10, unique=True)
-    business_name = models.CharField(max_length=80)
+    business_name = models.CharField(max_length=80, blank=True)
     business_category = models.CharField(max_length=40)
     city = models.CharField(max_length=80)
+    source = models.CharField(max_length=10, choices=SOURCES, default="page", db_default="page")   # db default: older code can still insert
     free_offer = models.BooleanField(default=False, db_index=True)
     contacted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

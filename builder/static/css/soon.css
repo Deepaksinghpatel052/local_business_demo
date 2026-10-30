@@ -129,6 +129,49 @@
 .soon-sticky:hover { color: #fff; }
 .soon-sticky small { opacity: .85; font-weight: 600; }
 
+/* full-screen join popup (opens 5 s after load, see soon.js) */
+.jp { position: fixed; inset: 0; z-index: 1060; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(8,7,22,.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); overflow-y: auto; opacity: 0; transition: opacity .35s ease; }
+.jp[hidden] { display: none; }
+.jp.is-in { opacity: 1; }
+.jp-box { position: relative; display: grid; grid-template-columns: 1.05fr 1fr; width: 100%; max-width: 1040px; min-height: min(660px, calc(100vh - 48px)); margin: auto; border-radius: 28px; overflow: hidden; background: #fff; box-shadow: 0 40px 120px -20px rgba(0,0,0,.6); transform: translateY(24px) scale(.98); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+.jp.is-in .jp-box { transform: none; }
+.jp-close { position: absolute; top: 14px; right: 14px; z-index: 5; width: 40px; height: 40px; border: 0; border-radius: 50%; display: grid; place-items: center; background: #f1f0f7; color: #17162b; font-size: 16px; }
+.jp-close:hover { background: #e4e2f0; }
+.jp-brand { display: flex; flex-direction: column; align-items: flex-start; padding: 34px 34px 0; }
+.jp-logo { display: inline-flex; padding: 8px 14px; border-radius: 12px; background: #fff; }
+.jp-title { margin: 16px 0 8px; font-size: clamp(28px, 3.4vw, 42px); line-height: 1.06; font-weight: 800; letter-spacing: -.02em; }
+.jp-title .grad { background: linear-gradient(90deg, #ffd36e, #ff7a59); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.jp-sub { color: #c9cbe0; margin-bottom: 16px; max-width: 420px; }
+.jp-spots { width: 100%; max-width: 380px; margin-bottom: 16px; }
+.jp-spots p { margin: 6px 0 0; font-size: 13px; color: #e3e0ff; }
+.jp-points { list-style: none; padding: 0; margin: 18px 0 0; font-size: 14px; color: #e3e0ff; }
+.jp-points li { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+.jp-points i { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border-radius: 9px; background: rgba(255,255,255,.1); color: #5ff2dc; font-size: 13px; }
+.jp-phones { position: relative; align-self: stretch; flex: 1; min-height: 170px; margin-top: 22px; }
+.jp-phones .phone { position: absolute; bottom: -150px; width: 150px; border-radius: 24px; padding: 6px; }
+.jp-phones .phone::before { top: 10px; width: 46px; height: 12px; }
+.jp-phones .phone-screen { border-radius: 19px; }
+.jp-phones .phone:nth-child(1) { left: 6%; transform: rotate(-10deg); }
+.jp-phones .phone:nth-child(2) { right: 6%; transform: rotate(10deg); }
+.jp-phones .phone:nth-child(3) { left: 50%; bottom: -120px; z-index: 2; transform: translateX(-50%); }
+.jp-form { position: relative; display: flex; flex-direction: column; justify-content: center; padding: 40px 38px 26px; }
+.jp-form .form-control, .jp-form .form-select { padding-top: 10px; padding-bottom: 10px; }
+.jp-trust { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 14px; margin: 10px 0 6px; font-size: 12.5px; color: #3a3955; }
+.jp-trust i { color: #12a26b; }
+.jp-later { align-self: center; margin-top: 10px; border: 0; background: none; color: var(--muted); font-size: 13px; text-decoration: underline; }
+body.jp-lock { overflow: hidden; }
+@media (max-width: 991.98px) { .jp-phones .phone { width: 120px; } }
+@media (max-width: 767.98px) {
+  .jp { padding: 0; align-items: stretch; }
+  .jp-box { grid-template-columns: 1fr; min-height: 100%; border-radius: 0; }
+  .jp-brand { padding: 22px 20px 20px; }
+  .jp-title { margin: 12px 0 6px; font-size: 28px; }
+  .jp-sub { font-size: 14px; margin-bottom: 12px; }
+  .jp-points, .jp-phones { display: none; }
+  .jp-form { justify-content: flex-start; padding: 22px 20px 28px; }
+  .jp-close { top: 12px; right: 12px; background: rgba(255,255,255,.14); color: #fff; }
+}
+
 @media (max-width: 991.98px) {
   .phone-stage { height: 470px; margin-top: 8px; }
   .phone-stage .phone { width: 200px; }

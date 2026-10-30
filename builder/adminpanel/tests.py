@@ -147,3 +147,22 @@ class ReminderTests(BaseTestCase):
         owner.save()
         self.assertEqual(unpaid_reminders(today, ps), 1)
         self.assertTrue(ReminderLog.objects.filter(key="unpaid:3").exists())
+
+
+class EmailTestPageTests(BaseTestCase):
+    def test_admin_previews_and_sends_every_email(self):
+        from django.core import mail
+        from . import emails
+        self.client.force_login(self.make_team("Admin"))
+        self.assertContains(self.client.get(reverse("manage_emails")), "Test emails")
+        for key, _ in emails.samples():
+            r = self.client.get(reverse("manage_email_preview", args=[key]))
+            self.assertContains(r, emails.brand_context()["logo_url"], msg_prefix=key)
+            self.assertContains(r, emails.brand_context()["brand_name"], msg_prefix=key)
+        self.client.post(reverse("manage_emails"), {"to": "me@test.local", "sample": "all"})
+        self.assertEqual(len(mail.outbox), len(emails.samples()))
+        self.assertTrue(all(m.subject.startswith("[Test] ") and m.alternatives for m in mail.outbox))
+
+    def test_sales_cannot_use_it(self):
+        self.client.force_login(self.make_team("Sales"))
+        self.assertEqual(self.client.get(reverse("manage_emails")).status_code, 403)
