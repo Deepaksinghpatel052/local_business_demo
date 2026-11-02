@@ -21,7 +21,7 @@
           <tr>
             <td align="center" style="padding:0 0 20px;">
               <a href="{{ app_url }}" target="_blank" style="text-decoration:none;">
-                <img src="{{ logo_url }}" width="216" height="48" alt="{{ brand_name }}" style="display:block;border:0;outline:none;width:216px;height:auto;max-width:216px;font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:700;color:#4436d6;">
+                <img src="{{ logo_url }}" width="253" height="48" alt="{{ brand_name }}" style="display:block;border:0;outline:none;width:253px;height:auto;max-width:253px;font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:700;color:#4436d6;">
               </a>
             </td>
           </tr>
@@ -60,7 +60,7 @@
           <tr>
             <td style="padding:16px 24px 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#8a8c9c;text-align:center;">
               {% block footer_note %}{% endblock %}
-              &copy; {{ year }} {{ brand_name }}{% if brand_address %} &middot; {{ brand_address }}{% endif %}<br>
+              {{ brand_name }}<br>&copy; {{ year }} {{ company_name }}{% if brand_address %} &middot; {{ brand_address }}{% endif %}<br>
               <a href="{{ app_url }}" style="color:#8a8c9c;text-decoration:underline;">{{ app_url|cut:"https://"|cut:"http://" }}</a>
             </td>
           </tr>

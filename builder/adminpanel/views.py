@@ -2,6 +2,7 @@ import csv
 from datetime import timedelta
 
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.core.management import call_command
 from django.core.paginator import Paginator
@@ -25,6 +26,7 @@ from projects.services import restore_version
 from templates_lib.categories import categories
 from templates_lib.models import Template
 
+from . import emails
 from .domain import clean_domain, install_commands, server_block
 from .permissions import Perms, can, team_required
 
@@ -488,6 +490,46 @@ def settings_view(request):
         messages.success(request, "Settings saved.")
         return redirect("manage_settings")
     return render(request, "adminpanel/settings.html", ctx(request, form=form))
+
+
+class TestEmailForm(forms.Form):
+    to = forms.EmailField(label="Send to")
+    sample = forms.ChoiceField(label="Email", choices=lambda: [("all", "All of them")] + emails.samples())
+
+
+@team_required("edit_settings")
+def email_test(request):
+    """Preview every email and send test copies, to check the logo, branding and SMTP settings."""
+    form = TestEmailForm(request.POST or None, initial={"to": request.user.email, "sample": "all"})
+    if request.method == "POST" and form.is_valid():
+        to, key = form.cleaned_data["to"], form.cleaned_data["sample"]
+        keys = [k for k, _ in emails.samples()] if key == "all" else [key]
+        try:
+            for k in keys:
+                emails.send(k, request.user, to)
+        except Exception as e:
+            messages.error(request, "Sending failed: %s" % e)
+        else:
+            audit(request, "test_email_sent", to=to, emails=keys)
+            messages.success(request, "%d test email%s sent to %s. Check the inbox (and spam)." % (
+                len(keys), "" if len(keys) == 1 else "s", to))
+            return redirect("manage_emails")
+    return render(request, "adminpanel/emails.html", ctx(
+        request, form=form, samples=emails.samples(), shown=request.GET.get("show") or emails.samples()[0][0],
+        logo_url=emails.brand_context()["logo_url"], brand_name=settings.EMAIL_BRAND_NAME,
+        from_email=settings.DEFAULT_FROM_EMAIL, email_backend=settings.EMAIL_BACKEND.rsplit(".", 1)[-1],
+        email_host=getattr(settings, "EMAIL_HOST", "")))
+
+
+@team_required("edit_settings")
+def email_preview(request, key):
+    try:
+        _, _, html = emails.render(key, request.user)
+    except KeyError:
+        raise Http404
+    resp = HttpResponse(html)
+    resp["X-Frame-Options"] = "SAMEORIGIN"
+    return resp
 
 
 @team_required("view_audit")

@@ -14,6 +14,7 @@
     {% if perms_ui.manage_templates %}<a href="{% url 'manage_templates' %}" class="{% if u == 'manage_templates' %}active{% endif %}"><i class="bi bi-grid-3x3-gap"></i> Templates</a>{% endif %}
     {% if perms_ui.view_abuse %}<a href="{% url 'manage_abuse' %}" class="{% if u == 'manage_abuse' %}active{% endif %}"><i class="bi bi-flag"></i> Abuse reports{% if counts.abuse %}<span class="count">{{ counts.abuse }}</span>{% endif %}</a>{% endif %}
     {% if perms_ui.edit_settings %}<a href="{% url 'manage_settings' %}" class="{% if u == 'manage_settings' %}active{% endif %}"><i class="bi bi-sliders"></i> Settings</a>{% endif %}
+    {% if perms_ui.edit_settings %}<a href="{% url 'manage_emails' %}" class="{% if 'email' in u %}active{% endif %}"><i class="bi bi-envelope-paper"></i> Test emails</a>{% endif %}
     {% if perms_ui.view_audit %}<a href="{% url 'manage_audit' %}" class="{% if u == 'manage_audit' %}active{% endif %}"><i class="bi bi-journal-text"></i> Audit log</a>{% endif %}
   </nav>
   <div class="manage-main">{% block manage %}{% endblock %}</div>

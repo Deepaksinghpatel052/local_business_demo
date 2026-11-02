@@ -1,0 +1,48 @@
+{% extends "adminpanel/base.html" %}
+{% block title %}Test emails{% endblock %}
+{% block manage %}
+<h1 class="h3 mb-1">Test emails</h1>
+<p class="text-muted mb-3">See how every email looks and send yourself a copy to check the logo, branding and mail settings.</p>
+
+<div class="row g-3">
+  <div class="col-lg-4">
+    <form class="panel" method="post">
+      {% csrf_token %}
+      {% include "includes/form_errors.html" %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.to.id_for_label }}">{{ form.to.label }}</label>
+        <input class="form-control" type="email" name="{{ form.to.html_name }}" id="{{ form.to.id_for_label }}" value="{{ form.to.value|default:'' }}" required>
+        {% for e in form.to.errors %}<div class="invalid-feedback d-block">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.sample.id_for_label }}">{{ form.sample.label }}</label>
+        <select class="form-select" name="{{ form.sample.html_name }}" id="{{ form.sample.id_for_label }}">
+          {% for value, label in form.sample.field.choices %}<option value="{{ value }}"{% if form.sample.value == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <button class="btn btn-brand w-100" type="submit" data-loading-text="Sending..."><i class="bi bi-send"></i> Send test email</button>
+      <p class="small text-muted mt-2 mb-0">Test emails have "[Test]" in the subject.</p>
+    </form>
+
+    <div class="panel mt-3 small">
+      <h2 class="h6 fw-bold">Current settings <span class="text-muted fw-normal">(from .env)</span></h2>
+      <dl class="mb-0">
+        <dt>From</dt><dd>{{ from_email }}</dd>
+        <dt>Brand name</dt><dd>{{ brand_name }}</dd>
+        <dt>Sending with</dt><dd>{{ email_backend }}{% if email_host %} · {{ email_host }}{% endif %}</dd>
+        <dt>Logo</dt>
+        <dd class="mb-0"><img src="{{ logo_url }}" alt="Email logo not found" style="max-width:100%;height:48px;object-fit:contain;background:#f6f6fa;border-radius:8px;padding:4px"><br><a class="text-break" href="{{ logo_url }}" target="_blank" rel="noopener">{{ logo_url }}</a></dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="panel p-0 overflow-hidden">
+      <div class="d-flex flex-wrap gap-1 p-2 border-bottom">
+        {% for key, label in samples %}<a class="btn btn-sm {% if key == shown %}btn-brand{% else %}btn-outline-secondary{% endif %}" href="?show={{ key }}">{{ label }}</a>{% endfor %}
+      </div>
+      <iframe title="Email preview" src="{% url 'manage_email_preview' shown %}" style="display:block;width:100%;height:820px;border:0;background:#f6f6fa"></iframe>
+    </div>
+  </div>
+</div>
+{% endblock %}

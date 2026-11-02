@@ -169,6 +169,7 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Devnixplus <no-reply@dev
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 # Logo at the top of every email (PNG: Gmail does not show SVG). Empty = <APP_URL>/static/img/email-logo.png
 EMAIL_LOGO_URL = env("EMAIL_LOGO_URL", default="")
+EMAIL_BRAND_NAME = env("EMAIL_BRAND_NAME", default="BusinessBuilder - Devnixplus")
 
 # --- Where the sites live and how they are addressed -----------------------
 APP_URL = env("APP_URL", default="http://127.0.0.1:8000").rstrip("/")

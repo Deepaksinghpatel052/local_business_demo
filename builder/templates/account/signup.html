@@ -12,7 +12,7 @@
       {% include "includes/form_errors.html" %}
       {% for field in form %}{% if field.name == "business_name" %}<h2 class="h6 mt-4 mb-2 text-uppercase small text-muted">About your business</h2>{% elif field.name == "password1" %}<h2 class="h6 mt-4 mb-2 text-uppercase small text-muted">Your login</h2>{% endif %}{% include "includes/field.html" %}{% endfor %}
       {{ redirect_field }}
-      <button class="btn btn-brand btn-lg w-100" type="submit">Create my account</button>
+      <button class="btn btn-brand btn-lg w-100" type="submit" data-loading-text="Creating your account...">Create my account</button>
       <p class="small text-muted mt-3 mb-0">By signing up you agree to our <a href="{% url 'terms' %}" target="_blank">Terms</a> and <a href="{% url 'privacy' %}" target="_blank">Privacy Policy</a>.</p>
     </form>
   </div>

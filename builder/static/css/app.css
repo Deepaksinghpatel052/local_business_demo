@@ -126,3 +126,22 @@ a { text-decoration: none; }
 .table-app td { vertical-align: middle; font-size: 14px; }
 .code-block { background: #0f1020; color: #e6e7ef; border-radius: 12px; padding: 14px; font-size: 12.5px; white-space: pre; overflow-x: auto; max-height: 420px; }
 .no-consent { background: #fff1f1; }
+
+/* password forms: live "passwords match" hint (app.js) */
+.pw-match { margin-top: 6px; font-size: 13px; font-weight: 600; }
+.pw-match.ok { color: #12a26b; }
+.pw-match.no { color: #dc3545; }
+/* other allauth pages (password reset, email...): make field errors visible */
+.allauth-generic .errorlist { list-style: none; padding: 8px 12px; margin: 0 0 8px; border-radius: 10px; background: #fff1f1; color: #b42318; font-size: 14px; }
+.allauth-generic .helptext { display: block; margin: -6px 0 12px; font-size: 12.5px; color: var(--muted); }
+.allauth-generic .helptext ul { padding-left: 18px; margin: 0; }
+
+/* busy feedback (app.js): spinner button, top progress bar, full-screen wait */
+.is-loading { pointer-events: none; opacity: .85; cursor: progress; }
+.is-loading .spinner-border-sm { width: 1em; height: 1em; border-width: .15em; vertical-align: -.125em; margin-right: 4px; }
+.page-progress { position: fixed; top: 0; left: 0; z-index: 2000; height: 3px; width: 0; background: linear-gradient(90deg, var(--brand), #00c2a8); box-shadow: 0 0 8px rgba(91,75,255,.6); opacity: 0; transition: width .3s ease, opacity .3s ease; pointer-events: none; }
+.page-progress.is-on { opacity: 1; width: 90%; transition: width 8s cubic-bezier(.1,.7,.2,1), opacity .2s ease; }
+.page-busy { position: fixed; inset: 0; z-index: 1990; display: grid; place-items: center; background: rgba(255,255,255,.82); backdrop-filter: blur(3px); text-align: center; }
+.page-busy .spinner-border { width: 3rem; height: 3rem; color: var(--brand); }
+.page-busy p { margin: 14px 0 0; font-weight: 700; color: #17162b; }
+@media (prefers-reduced-motion: reduce) { .page-progress.is-on { transition: none; } }

@@ -5,7 +5,7 @@
   </a>
   <div class="tpl-body">
     <h3>{{ t.name }}</h3>
-    <div class="tpl-meta"><i class="bi {{ t.category_info.icon }}"></i> {{ t.category_info.title }}{% if t.city_label %} · sample in {{ t.city_label }}{% endif %}</div>
+    <div class="tpl-meta"><i class="bi {{ t.category_info.icon }}"></i> {{ t.category_info.title }}</div>
     {% if t.tagline %}<p class="small text-muted mb-1">{{ t.tagline|truncatechars:90 }}</p>{% endif %}
     <div class="tpl-actions">
       <a class="btn btn-brand btn-sm" href="{% url 'start' t.slug %}"><i class="bi bi-magic"></i> Use this design</a>

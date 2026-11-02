@@ -39,22 +39,19 @@ def owned(request, pk):
 # ---------------------------------------------------------------------------
 def template_gallery(request):
     qs = Template.objects.filter(is_active=True)
-    cat, city, q = request.GET.get("category", ""), request.GET.get("city", ""), request.GET.get("q", "").strip()
+    cat, q = request.GET.get("category", ""), request.GET.get("q", "").strip()
     if cat:
         qs = qs.filter(category=cat)
-    if city:
-        qs = qs.filter(city_label__iexact=city)
     if q:
         from django.db.models import Q
         qs = qs.filter(Q(name__icontains=q) | Q(category__icontains=q) | Q(sample_name__icontains=q)
-                       | Q(tagline__icontains=q) | Q(city_label__icontains=q))
+                       | Q(tagline__icontains=q))
     all_active = Template.objects.filter(is_active=True)
     cats = categories()
     return render(request, "projects/templates.html", {
         "templates": qs,
         "category_options": [(k, cats[k]["title"]) for k in cats if all_active.filter(category=k).exists()],
-        "city_options": sorted(set(all_active.exclude(city_label="").values_list("city_label", flat=True))),
-        "f": {"category": cat, "city": city, "q": q},
+        "f": {"category": cat, "q": q},
     })
 
 
