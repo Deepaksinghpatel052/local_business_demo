@@ -218,7 +218,8 @@ Details and other locations: [step 5](#5-the-media-folder-client-files).
 |---|---|---|
 | `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET` | `DEMO_PAYMENTS=True`: checkout uses the Demo Payment Simulator (no real money; the team still approves every site) | fill them in and set `DEMO_PAYMENTS=False` |
 | `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD` | `EMAIL_BACKEND=…console…`: emails only appear in the logs | set `EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend` |
-| `MSG91_AUTH_KEY`, `MSG91_TEMPLATE_ID` | `SMS_PROVIDER=mock`: the OTP code is shown on screen | set `SMS_PROVIDER=msg91` |
+| `FAST2SMS_API_KEY` (and `FAST2SMS_ROUTE`, `FAST2SMS_SENDER_ID`, `FAST2SMS_TEMPLATE_ID` for DLT) | `SMS_PROVIDER=mock`: the OTP code is shown on screen | set `SMS_PROVIDER=fast2sms` and `PHONE_OTP_REQUIRED=True` |
+| `MSG91_AUTH_KEY`, `MSG91_TEMPLATE_ID` (alternative) | same | set `SMS_PROVIDER=msg91` |
 | `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_ID` | `WHATSAPP_PROVIDER=mock`: messages only logged | set `WHATSAPP_PROVIDER=cloud` |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | no "Continue with Google" button | the button appears ([step 10](#10-razorpay-google-login-email)) |
 | `COMPANY_ADDRESS`, `COMPANY_GSTIN`, `COMPANY_STATE`, `GST_ENABLED` | placeholder address on invoices | your real details |
@@ -618,4 +619,4 @@ Run them in `/srv/local_business_demo`:
 | `nginx -t`: `unknown directive "http2"` | Older Nginx: see the end of step 7c. |
 | `nginx -t`: `duplicate default server` | You installed `00-acme-default.conf` but already had a default server: remove the link and follow the second case in step 7a. |
 | `Set APP_DOCKER_PORT in .env` (or another key) when running docker compose | `.env` is missing or not in `/srv/local_business_demo`. Step 4. |
-| OTP code shown on the page | `SMS_PROVIDER=mock`. Fill in MSG91 (step 4e). |
+| OTP code shown on the page | `SMS_PROVIDER=mock`. Fill in Fast2SMS (step 4e). |

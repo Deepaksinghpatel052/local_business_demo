@@ -217,3 +217,41 @@ class PasswordChangeTests(BaseTestCase):
         self.assertContains(r, "Password changed")
         self.assertContains(r, "alert-success")
         self.assertContains(self.client.get(link, follow=True), "This reset link doesn")   # used once: link is dead
+
+
+@override_settings(SMS_PROVIDER="fast2sms", FAST2SMS_API_KEY="key123", FAST2SMS_ROUTE="otp")
+class Fast2SMSTests(BaseTestCase):
+    def _post(self, status=200, body=None):
+        from unittest import mock
+        resp = mock.Mock(status_code=status, text="x")
+        resp.json.return_value = body if body is not None else {"return": True, "request_id": "r1"}
+        return mock.patch("core.messaging.requests.post", return_value=resp)
+
+    def test_otp_route_sends_code_and_logs(self):
+        from core import messaging
+        from core.models import OutgoingMessage
+        with self._post() as post:
+            self.assertTrue(messaging.sms().send_otp("9876543210", "123456"))
+        args, kwargs = post.call_args
+        self.assertEqual(args[0], "https://www.fast2sms.com/dev/bulkV2")
+        self.assertEqual(kwargs["headers"], {"authorization": "key123"})
+        self.assertEqual(kwargs["json"], {"route": "otp", "variables_values": "123456", "numbers": "9876543210"})
+        self.assertEqual(OutgoingMessage.objects.get().status, "sent")
+
+    @override_settings(FAST2SMS_ROUTE="dlt", FAST2SMS_SENDER_ID="DVNXPL", FAST2SMS_TEMPLATE_ID="1707")
+    def test_dlt_route_uses_template(self):
+        from core import messaging
+        with self._post() as post:
+            messaging.sms().send_otp("9876543210", "123456")
+        self.assertEqual(post.call_args.kwargs["json"], {"route": "dlt", "sender_id": "DVNXPL", "message": "1707",
+                                                         "variables_values": "123456", "flash": 0,
+                                                         "numbers": "9876543210"})
+
+    def test_failure_is_logged_and_code_not_shown(self):
+        from core import messaging
+        from core.models import OutgoingMessage
+        with self._post(400, {"return": False, "message": "Invalid Authentication"}):
+            self.assertFalse(messaging.sms().send_otp("9876543210", "123456"))
+        msg = OutgoingMessage.objects.get()
+        self.assertEqual((msg.status, msg.error), ("failed", "Invalid Authentication"))
+        self.assertFalse(messaging.Fast2SMS.shows_code_on_screen)

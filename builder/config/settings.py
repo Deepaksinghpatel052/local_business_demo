@@ -209,11 +209,15 @@ COMPANY = {
 }
 
 # --- Messaging providers ------------------------------------------------------
-# False = owners give their mobile number at sign-up but skip the SMS code (until MSG91/DLT is ready)
+# False = owners give their mobile number at sign-up but skip the SMS code (until the SMS provider is ready)
 PHONE_OTP_REQUIRED = env.bool("PHONE_OTP_REQUIRED") if env("PHONE_OTP_REQUIRED", default="") else True
-SMS_PROVIDER = env("SMS_PROVIDER", default="mock")                 # mock | msg91
+SMS_PROVIDER = env("SMS_PROVIDER", default="mock")                 # mock | msg91 | fast2sms
 MSG91_AUTH_KEY = env("MSG91_AUTH_KEY", default="")
 MSG91_TEMPLATE_ID = env("MSG91_TEMPLATE_ID", default="")
+FAST2SMS_API_KEY = env("FAST2SMS_API_KEY", default="")
+FAST2SMS_ROUTE = env("FAST2SMS_ROUTE", default="otp")             # otp | dlt
+FAST2SMS_SENDER_ID = env("FAST2SMS_SENDER_ID", default="")       # dlt route only
+FAST2SMS_TEMPLATE_ID = env("FAST2SMS_TEMPLATE_ID", default="")   # dlt route only: Fast2SMS message id
 WHATSAPP_PROVIDER = env("WHATSAPP_PROVIDER", default="mock")       # mock | cloud
 WHATSAPP_TOKEN = env("WHATSAPP_TOKEN", default="")
 WHATSAPP_PHONE_ID = env("WHATSAPP_PHONE_ID", default="")
