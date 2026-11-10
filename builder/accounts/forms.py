@@ -70,6 +70,11 @@ class SignupExtraForm(ContactFieldsMixin):
     field_order = ["name", "email", "mobile", "business_name", "business_category", "city", "business_area",
                    "business_maps_link", "password1", "contact_consent", "marketing_consent"]
 
+    @property
+    def email_taken(self):
+        """The email already has an account: the page offers log in / reset password next to the error."""
+        return self.has_error("email", "email_taken")
+
     def signup(self, request, user):
         d = self.cleaned_data
         user.name = d["name"].strip()

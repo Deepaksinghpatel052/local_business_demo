@@ -73,7 +73,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def first_name(self):
-        return (self.name or self.email.split("@")[0]).split()[0]
+        # "" for the blank user allauth builds to check the password (no name or email yet)
+        words = (self.name or (self.email or "").split("@")[0]).split()
+        return words[0] if words else ""
 
     # --- team roles (Django groups "Admin", "Sales", "Verifier") ---------
     def has_role(self, *roles):

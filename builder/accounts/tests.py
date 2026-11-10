@@ -40,6 +40,19 @@ class SignupTests(BaseTestCase):
             "business_name": "Ravi Sweets", "business_category": "bakery"})
         self.assertFalse(User.objects.filter(email="r2@test.local").exists())
 
+    def test_signup_with_taken_or_bad_email_does_not_crash(self):
+        owner = self.make_owner()
+        base = {"name": "Ravi", "mobile": "9876543210", "city": "Gwalior", "password1": "Zx!93kdLqp",
+                "business_name": "Ravi Sweets", "business_category": "bakery", "contact_consent": "on"}
+        r = self.client.post(reverse("account_signup"), dict(base, email=owner.email))
+        self.assertContains(r, "already registered with this email")
+        self.assertContains(r, 'href="%s">Log in instead' % reverse("account_login"))
+        self.assertContains(r, reverse("account_reset_password"))
+        r = self.client.post(reverse("account_signup"), dict(base, email="not-an-email"))
+        self.assertEqual(r.status_code, 200)
+        self.assertNotContains(r, "Log in instead")
+        self.assertEqual(User(name="", email="").first_name, "")
+
     def test_business_details_required_and_maps_link_checked(self):
         base = {"name": "Ravi", "email": "r3@test.local", "mobile": "9876543210", "city": "Gwalior",
                 "password1": "Zx!93kdLqp", "contact_consent": "on"}
