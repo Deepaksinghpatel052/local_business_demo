@@ -2,6 +2,7 @@
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.static import serve
 
 
@@ -12,6 +13,10 @@ def serve_site(request, path=""):
         raise Http404
     if not _ and not rest:
         return redirect(request.path + "/")
+    if slug.startswith("sample-") and (not rest or rest.endswith(".html") or rest == "data.js"):
+        # a design's live sample is for signed-in owners only (projects.views.sample_preview);
+        # its photos stay public for the coming soon page. Nginx does the same (deploy/nginx-app.conf).
+        return redirect(reverse("sample_preview", args=[slug[len("sample-"):], ""]))
     for root in (settings.SITES_ROOT, settings.DEMOS_DIR):
         if (root / slug).is_dir():
             return serve(request, rest or "index.html", document_root=str(root / slug))

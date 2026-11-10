@@ -67,6 +67,11 @@ a { text-decoration: none; }
 /* template gallery */
 .toolbar { display: flex; flex-wrap: wrap; gap: 10px; padding: 14px; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-hover); }
 .toolbar .form-control, .toolbar .form-select { min-width: 160px; }
+.toolbar .form-control { flex: 1 1 220px; width: auto; }     /* Bootstrap's width:100% would push it onto its own line */
+@media (max-width: 575.98px) {                                /* phone: search on top, filters + button below it */
+  .toolbar .form-control { flex-basis: 100%; }
+  .toolbar .form-select { flex: 1 1 0; min-width: 0; width: auto !important; }
+}
 .tpl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 22px; }
 .tpl-card { display: flex; flex-direction: column; background: #fff; border-radius: var(--radius); border: 1px solid var(--line); overflow: hidden; box-shadow: var(--shadow); transition: transform .2s, box-shadow .2s; }
 .tpl-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }

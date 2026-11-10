@@ -1,7 +1,8 @@
 from django.shortcuts import redirect
 
 # Pages that need a finished profile (mobile + consent + verified mobile).
-GUARDED_PREFIXES = ("/dashboard/", "/projects/", "/billing/payments/", "/billing/checkout/", "/account/", "/start/")
+GUARDED_PREFIXES = ("/dashboard/", "/projects/", "/billing/payments/", "/billing/checkout/", "/account/", "/start/",
+                    "/designs/")
 
 
 class OnboardingMiddleware:

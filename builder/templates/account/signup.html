@@ -4,7 +4,11 @@
 {% block main %}
 <div class="container py-4 py-md-5">
   <div class="auth-card mx-auto">
+    {% if "/designs/" in request.GET.next %}
+    <h1 class="h3 mb-1">Create a free account to see the live sample</h1>
+    {% else %}
     <h1 class="h3 mb-1">Create your business website</h1>
+    {% endif %}
     <p class="text-muted mb-4">Free account. Takes about 5 minutes. Already registered? <a href="{% url 'account_login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">Log in</a>.</p>
     {% include "includes/google_button.html" %}
     <form method="post" action="{% url 'account_signup' %}" novalidate data-category="{{ request.session.signup_category|default:'' }}">

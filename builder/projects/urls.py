@@ -1,10 +1,11 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from . import views
 
 urlpatterns = [
     path("templates/", views.template_gallery, name="templates"),
     path("start/<slug:slug>/", views.start_with_template, name="start"),
+    re_path(r"^designs/(?P<slug>[-\w]+)/preview/(?P<path>.*)$", views.sample_preview, name="sample_preview"),
     path("dashboard/", views.dashboard, name="dashboard"),
     path("projects/create/", views.create, name="create_project"),
     path("projects/<int:pk>/delete/", views.delete, name="delete_project"),

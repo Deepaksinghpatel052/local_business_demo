@@ -4,6 +4,7 @@ from django.db import models
 EVENTS = [
     ("signed_up", "Signed up"),
     ("mobile_verified", "Mobile verified"),
+    ("sample_viewed", "Live sample viewed"),
     ("project_created", "Project created"),
     ("data_step_completed", "Data step completed"),
     ("preview_opened", "Preview opened"),

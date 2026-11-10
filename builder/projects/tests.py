@@ -474,3 +474,42 @@ class ReferralLinkTests(BaseTestCase):
         data, errors = clean_data(services.starting_data(t, "My Advisory", "insurance"))
         self.assertEqual(errors, [])
         self.assertTrue(data["services"][0]["link"].startswith("https://"))
+
+
+class SamplePreviewTests(BaseTestCase):
+    """Live samples are for signed-in owners only: every visitor who looks at a design is a lead."""
+
+    def test_visitor_is_sent_to_signup_then_back_to_the_sample(self):
+        url = reverse("sample_preview", args=["salon", ""])
+        self.assertEqual(self.template.live_sample_url, url)
+        r = self.client.get(url)
+        self.assertEqual(r["Location"], "%s?next=%s" % (reverse("account_signup"), url))
+        self.assertEqual(self.client.session["signup_source"], "sample:salon")
+        self.assertEqual(self.client.session["signup_category"], "salon")
+        self.assertEqual(self.client.get(url + "data.js").status_code, 302)          # no content without an account
+
+    def test_owner_sees_the_sample_and_the_team_sees_who_looked(self):
+        owner = self.make_owner()
+        self.login(owner)
+        url = reverse("sample_preview", args=["salon", ""])
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 200)
+        self.assertIn(b"data.js", b"".join(r.streaming_content))
+        self.assertEqual(self.client.get(url + "data.js").status_code, 200)
+        self.assertEqual(list(owner.activities.values_list("event", "detail")), [("sample_viewed", "salon")])
+
+    def test_owner_without_mobile_is_asked_for_it_first(self):
+        owner = self.make_owner()
+        owner.onboarded = False
+        owner.save()
+        self.login(owner)
+        r = self.client.get(reverse("sample_preview", args=["salon", ""]))
+        self.assertEqual(r["Location"], reverse("onboarding"))
+
+    @override_settings(SERVE_FILES=True)
+    def test_typing_the_old_sites_url_goes_through_the_check(self):
+        from core.views import serve_site
+        from django.test import RequestFactory
+        for path in ("sample-salon/", "sample-salon/index.html", "sample-salon/data.js"):
+            r = serve_site(RequestFactory().get("/sites/" + path), path)
+            self.assertEqual(r["Location"], reverse("sample_preview", args=["salon", ""]))

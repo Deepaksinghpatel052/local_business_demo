@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.db import models
-
-from core.utils import site_url
+from django.urls import reverse
 
 from .categories import category
 
@@ -34,7 +33,8 @@ class Template(models.Model):
 
     @property
     def live_sample_url(self):
-        return site_url(self.source_folder)
+        """Signed-in owners only (projects.views.sample_preview): every visitor who sees one is a lead."""
+        return reverse("sample_preview", args=[self.slug, ""])
 
     @property
     def images_dir(self):

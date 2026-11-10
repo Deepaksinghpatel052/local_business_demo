@@ -65,6 +65,20 @@ def start_with_template(request, slug):
     return redirect("%s?template=%s" % (reverse("dashboard"), slug))
 
 
+def sample_preview(request, slug, path=""):
+    """Target of every "Live sample" link. Visitors sign up (or log in) first, so everyone who looks at a design
+    is a lead the team can follow up; OnboardingMiddleware also asks for their mobile number."""
+    template = get_object_or_404(Template, slug=slug, is_active=True)
+    if not request.user.is_authenticated:
+        request.session["signup_source"] = "sample:%s" % slug
+        request.session["signup_category"] = template.category      # pre-selects "Type of business"
+        return redirect("%s?next=%s" % (reverse("account_signup"), reverse("sample_preview", args=[slug, ""])))
+    if not path:
+        log_activity(request.user, "sample_viewed", detail=slug)
+    from django.views.static import serve
+    return serve(request, path or "index.html", document_root=str(settings.DEMOS_DIR / template.source_folder))
+
+
 # ---------------------------------------------------------------------------
 # Dashboard + create
 # ---------------------------------------------------------------------------
