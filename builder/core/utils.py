@@ -7,8 +7,12 @@ MOBILE_RE = re.compile(r"^[6-9]\d{9}$")
 
 
 def client_ip(request):
-    fwd = request.META.get("HTTP_X_FORWARDED_FOR", "")
-    ip = fwd.split(",")[0].strip() if fwd else request.META.get("REMOTE_ADDR", "")
+    """Visitor IP. Behind TRUSTED_PROXY_COUNT proxies it is the entry they added to X-Forwarded-For
+    (the first entries can be typed in by the visitor, so they are not trusted)."""
+    from django.conf import settings
+    count = settings.TRUSTED_PROXY_COUNT
+    fwd = [p.strip() for p in request.META.get("HTTP_X_FORWARDED_FOR", "").split(",") if p.strip()]
+    ip = fwd[-count] if count and len(fwd) >= count else request.META.get("REMOTE_ADDR", "")
     return ip or None
 
 

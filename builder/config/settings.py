@@ -232,6 +232,10 @@ CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE
 SECURE_HSTS_SECONDS = int(env("SECURE_HSTS_SECONDS", default="") or (0 if DEBUG else 31536000))
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False      # customer sites on *.demo… must not inherit app policies by accident
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# Proxies in front of the app (server: 1 = its Nginx). The visitor IP is then read from X-Forwarded-For,
+# so rate limits (sign-up, login, OTP) count each visitor, not the Docker gateway every request comes from.
+TRUSTED_PROXY_COUNT = env.int("TRUSTED_PROXY_COUNT", default=0)
+ALLAUTH_TRUSTED_PROXY_COUNT = TRUSTED_PROXY_COUNT
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=False)
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = "same-origin"

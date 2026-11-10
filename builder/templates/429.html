@@ -3,7 +3,7 @@
 {% block main %}
 <div class="container py-5 text-center">
   <h1 class="h3">Please wait a moment</h1>
-  <p class="text-muted">{{ message }}</p>
+  <p class="text-muted">{{ message|default:"Too many tries in a short time. Please wait a few minutes and try again." }}</p>
   <a class="btn btn-brand" href="javascript:history.back()">Go back</a>
 </div>
 {% endblock %}
