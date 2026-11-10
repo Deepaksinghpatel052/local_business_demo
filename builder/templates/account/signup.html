@@ -10,7 +10,10 @@
     <form method="post" action="{% url 'account_signup' %}" novalidate data-category="{{ request.session.signup_category|default:'' }}">
       {% csrf_token %}
       {% include "includes/form_errors.html" %}
-      {% for field in form %}{% if field.name == "business_name" %}<h2 class="h6 mt-4 mb-2 text-uppercase small text-muted">About your business</h2>{% elif field.name == "password1" %}<h2 class="h6 mt-4 mb-2 text-uppercase small text-muted">Your login</h2>{% endif %}{% include "includes/field.html" %}{% endfor %}
+      {% for field in form %}{% if field.name == "business_name" %}<h2 class="h6 mt-4 mb-2 text-uppercase small text-muted">About your business</h2>{% elif field.name == "password1" %}<h2 class="h6 mt-4 mb-2 text-uppercase small text-muted">Your login</h2>{% endif %}{% include "includes/field.html" %}{% if field.name == "email" and form.email_taken %}
+      <div class="alert alert-info py-2 small mt-n2 mb-3" role="alert"><i class="bi bi-person-check"></i> This email already has an account.
+        <a class="fw-semibold" href="{% url 'account_login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">Log in instead</a>
+        or <a href="{% url 'account_reset_password' %}">reset your password</a>.</div>{% endif %}{% endfor %}
       {{ redirect_field }}
       <button class="btn btn-brand btn-lg w-100" type="submit" data-loading-text="Creating your account...">Create my account</button>
       <p class="small text-muted mt-3 mb-0">By signing up you agree to our <a href="{% url 'terms' %}" target="_blank">Terms</a> and <a href="{% url 'privacy' %}" target="_blank">Privacy Policy</a>.</p>
