@@ -1,23 +1,31 @@
+import datetime
 import hashlib
 import hmac
+import logging
 import secrets
 import time
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from core import messaging
+from core.emails import send_branded
 from core.ratelimit import hit, ratelimit
 from crm.models import log_activity
 
 from .forms import OnboardingForm, OtpForm, ProfileForm
+from .models import User
 
 OTP_TTL = 10 * 60
 OTP_MAX_TRIES = 5
+
+log = logging.getLogger(__name__)
 
 
 def _otp_hash(code, mobile):
@@ -29,6 +37,13 @@ def _send_otp(request, user):
     if not hit("otp-send:%s" % user.pk, 5, 3600):
         messages.error(request, "Too many codes sent. Please try again in an hour.")
         return None
+    if not hit("otp-mobile:%s" % user.mobile, settings.OTP_PER_MOBILE_PER_HOUR, 3600):   # many accounts, one number
+        messages.error(request, "Too many codes were sent to this number. Please try again in an hour.")
+        return None
+    if settings.OTP_DAILY_LIMIT and not hit("otp-day", settings.OTP_DAILY_LIMIT, 86400):   # protects the SMS balance
+        _alert_team_otp_limit()
+        messages.error(request, "We cannot send codes right now. Please try again later, or contact us on WhatsApp.")
+        return None
     code = "%06d" % secrets.randbelow(1000000)
     request.session["otp"] = {"m": user.mobile, "h": _otp_hash(code, user.mobile), "t": time.time(), "n": 0}
     provider = messaging.sms()
@@ -38,6 +53,25 @@ def _send_otp(request, user):
     if provider.shows_code_on_screen:
         request.session["otp_demo_code"] = code
     return code
+
+
+def _alert_team_otp_limit():
+    """Once a day: tell the admins the SMS codes stopped because OTP_DAILY_LIMIT was reached."""
+    if not cache.add("otp-day-alert:%s" % datetime.date.today(), 1, 86400 + 60):
+        return
+    log.error("OTP_DAILY_LIMIT (%s) reached: no more SMS codes today", settings.OTP_DAILY_LIMIT)
+    to = list(User.objects.filter(Q(is_superuser=True) | Q(groups__name="Admin"), is_active=True)
+              .exclude(email="").values_list("email", flat=True).distinct())
+    if not to:
+        return
+    text = ("Today %s sign-up codes (SMS) were sent, the daily limit set in OTP_DAILY_LIMIT. New owners cannot verify "
+            "their mobile until the limit resets (within 24 hours).\n\nIf these sign-ups are real, raise "
+            "OTP_DAILY_LIMIT in .env and restart the app. If not, someone may be misusing the sign-up page."
+            % settings.OTP_DAILY_LIMIT)
+    try:
+        send_branded(to, "SMS codes paused: daily limit reached", text)
+    except Exception as e:      # never break the sign-up page because email is down
+        log.warning("OTP limit alert email failed: %s", e)
 
 
 def _welcome(request, user):

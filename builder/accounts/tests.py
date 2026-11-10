@@ -268,3 +268,38 @@ class Fast2SMSTests(BaseTestCase):
         msg = OutgoingMessage.objects.get()
         self.assertEqual((msg.status, msg.error), ("failed", "Invalid Authentication"))
         self.assertFalse(messaging.Fast2SMS.shows_code_on_screen)
+
+
+class OtpLimitTests(BaseTestCase):
+    """SMS codes cost money: at most N per mobile number per hour and OTP_DAILY_LIMIT for the whole site."""
+
+    def _open_otp_screen(self, n, mobile="9123456789"):
+        """Account number n (details given, mobile not verified yet) opens the code screen, which sends a code."""
+        u = User.objects.create_user(email="otp%d@test.local" % n, name="Otp User", mobile=mobile, city="Indore",
+                                     business_name="Shop", business_category="bakery", contact_consent=True)
+        self.client.force_login(u)
+        return self.client.get(reverse("onboarding"))
+
+    def _sms_count(self):
+        from core.models import OutgoingMessage
+        return OutgoingMessage.objects.filter(channel="sms").count()
+
+    @override_settings(OTP_PER_MOBILE_PER_HOUR=2)
+    def test_many_accounts_cannot_flood_one_number(self):
+        for n in range(3):
+            r = self._open_otp_screen(n)
+        self.assertEqual(self._sms_count(), 2)
+        self.assertContains(r, "Too many codes were sent to this number")
+        self._open_otp_screen(9, mobile="9000000001")                     # another number still gets its code
+        self.assertEqual(self._sms_count(), 3)
+
+    @override_settings(OTP_DAILY_LIMIT=2)
+    def test_daily_limit_stops_codes_and_tells_admins_once(self):
+        from django.core import mail
+        self.make_team("Admin", email="boss@team.local")
+        for n in range(4):
+            r = self._open_otp_screen(n, mobile="900000000%d" % n)
+        self.assertEqual(self._sms_count(), 2)
+        self.assertContains(r, "We cannot send codes right now")
+        alerts = [m for m in mail.outbox if "daily limit" in m.subject]
+        self.assertEqual([m.to for m in alerts], [["boss@team.local"]])

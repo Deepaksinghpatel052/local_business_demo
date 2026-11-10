@@ -211,6 +211,9 @@ COMPANY = {
 # --- Messaging providers ------------------------------------------------------
 # False = owners give their mobile number at sign-up but skip the SMS code (until the SMS provider is ready)
 PHONE_OTP_REQUIRED = env.bool("PHONE_OTP_REQUIRED") if env("PHONE_OTP_REQUIRED", default="") else True
+# Sign-up codes: most per mobile number per hour, and most for the whole site per day (0 = no daily limit)
+OTP_PER_MOBILE_PER_HOUR = env.int("OTP_PER_MOBILE_PER_HOUR", default=5)
+OTP_DAILY_LIMIT = env.int("OTP_DAILY_LIMIT", default=200)
 SMS_PROVIDER = env("SMS_PROVIDER", default="mock")                 # mock | msg91 | fast2sms
 MSG91_AUTH_KEY = env("MSG91_AUTH_KEY", default="")
 MSG91_TEMPLATE_ID = env("MSG91_TEMPLATE_ID", default="")
